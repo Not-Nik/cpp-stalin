@@ -1,0 +1,75 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_LOCALE_
+#define METAXX_LOCALE_
+
+// These are stub classes, implementation coming soon™
+
+#include "string"
+#include "cstddef"
+
+namespace std {
+class locale {
+public:
+    typedef int category;
+
+    class facet;
+
+    class id;
+
+    locale() noexcept {}
+
+    locale(const locale &x) noexcept {}
+
+    explicit locale(const char *std_name) {}
+    explicit locale(const string &std_name) {}
+
+    locale(const locale &x, const char *std_name, category cats) {}
+    locale(const locale &x, const string &std_name, category cats) {}
+    locale(const locale &x, const locale &y, category cats) {}
+
+    template <class Facet>
+    locale(const locale &x, Facet *f) {}
+
+    ~locale() {}
+
+    static const locale &classic();
+
+    template <class Facet>
+    locale combine(const locale &x) const;
+
+    static locale global(const locale &loc);
+
+    string name() const;
+
+    bool operator!=(const locale &x) const;
+
+    template <class charT, class Traits, class Allocator>
+    bool operator()(const basic_string<charT, Traits, Allocator> &s1, const basic_string<charT, Traits, Allocator> &s2) const;
+
+    const locale& operator= (const locale& x) noexcept { return *this; }
+
+    bool operator== (const locale& x) const;
+};
+
+class locale::facet {
+protected:
+    explicit facet(size_t refs = 0);
+    virtual ~facet();
+    facet(const facet &);
+    void operator=(const facet &);
+};
+
+class locale::id {
+public:
+    id();
+    void operator=(const id &);
+    id(const id &);
+};
+}
+
+#endif //METAXX_LOCALE_

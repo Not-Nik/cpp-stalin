@@ -1,0 +1,216 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_SRC_STRING__
+#define METAXX_SRC_STRING__
+
+#include "memory"
+#include "cstring"
+#include "__stream_types"
+#include "type_traits"
+
+namespace std {
+
+template <class charT>
+class char_traits {
+public:
+    typedef charT char_type;
+    typedef charT int_type;
+    typedef streamoff off_type;
+    typedef streampos pos_type;
+    typedef mbstate_t state_type;
+
+    static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
+    static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
+    static inline size_t length(const char_type *s) { return strlen(s); }
+
+    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static char_type *assign(char_type *p, size_t n, char_type c);
+
+    static int compare(const char_type *p, const char_type *q, size_t n);
+    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+
+    static char_type *move(char_type *dest, const char_type *src, size_t n);
+    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+
+    static constexpr int_type eof() noexcept { return char_type(EOF); }
+    static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
+    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    static constexpr int_type to_int_type(char_type c) noexcept { return c; }
+    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+};
+
+template <class charT>
+typename char_traits<charT>::char_type *char_traits<charT>::assign(char_type *p, size_t n, char_type c) {
+    for (size_t i = 0; i < n; i++) p[i] = c;
+    return p;
+}
+
+template <class charT>
+int char_traits<charT>::compare(const char_type *p, const char_type *q, size_t n) {
+    while (n--) {
+        if (!eq(*p, *q)) return lt(*p, *q) ? -1 : 1;
+        ++p;
+        ++q;
+    }
+    return 0;
+}
+
+template <class charT>
+const typename char_traits<charT>::char_type *char_traits<charT>::find(const char_type *p, size_t n, const char_type &c) {
+    for (size_t i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
+    return nullptr;
+}
+
+template <class charT>
+typename char_traits<charT>::char_type *char_traits<charT>::move(char_type *dest, const char_type *src, size_t n) {
+    char_type t[n];
+    for (size_t i = 0; i < n; i++) t[i] = src[i];
+    for (size_t i = 0; i < n; i++) dest[i] = t[i];
+    return dest;
+}
+
+template <class charT>
+typename char_traits<charT>::char_type *char_traits<charT>::copy(char_type *dest, const char_type *src, size_t n) {
+    for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    return dest;
+}
+
+template <>
+class char_traits<char> {
+public:
+    typedef char char_type;
+    typedef int int_type;
+    typedef streamoff off_type;
+    typedef streampos pos_type;
+    typedef mbstate_t state_type;
+
+    static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
+    static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
+    static inline size_t length(const char_type *s) { return strlen(s); }
+
+    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static char_type *assign(char_type *p, size_t n, char_type c);
+
+    static int compare(const char_type *p, const char_type *q, size_t n);
+    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+
+    static char_type *move(char_type *dest, const char_type *src, size_t n);
+    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+
+    static constexpr int_type eof() noexcept { return EOF; }
+    static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
+    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    static constexpr int_type to_int_type(char_type c) noexcept { return c; }
+    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+};
+
+template <>
+class char_traits<wchar_t> {
+public:
+    typedef wchar_t char_type;
+    typedef wint_t int_type;
+    typedef streamoff off_type;
+    typedef streampos pos_type;
+    typedef mbstate_t state_type;
+
+    static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
+    static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
+    static inline size_t length(const char_type *s) { return wcslen(s); }
+
+    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static char_type *assign(char_type *p, size_t n, char_type c);
+
+    static int compare(const char_type *p, const char_type *q, size_t n);
+    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+
+    static char_type *move(char_type *dest, const char_type *src, size_t n);
+    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+
+    static constexpr int_type eof() noexcept { return WEOF; }
+    static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
+    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    static constexpr int_type to_int_type(char_type c) noexcept { return c; }
+    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+};
+
+template <>
+class char_traits<char16_t> {
+public:
+    typedef char16_t char_type;
+    typedef uint_least16_t int_type;
+    typedef streamoff off_type;
+    typedef streampos pos_type;
+    typedef mbstate_t state_type;
+
+    static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
+    static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
+    static size_t length(const char_type *s);
+
+    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static char_type *assign(char_type *p, size_t n, char_type c);
+
+    static int compare(const char_type *p, const char_type *q, size_t n);
+    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+
+    static char_type *move(char_type *dest, const char_type *src, size_t n);
+    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+
+    static constexpr int_type eof() noexcept { return 0xEEEE; }
+    static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
+    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    static constexpr int_type to_int_type(char_type c) noexcept { return c; }
+    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+};
+
+template <>
+class char_traits<char32_t> {
+public:
+    typedef char32_t char_type;
+    typedef uint_least32_t int_type;
+    typedef streamoff off_type;
+    typedef streampos pos_type;
+    typedef mbstate_t state_type;
+
+    static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
+    static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
+    static size_t length(const char_type *s);
+
+    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static char_type *assign(char_type *p, size_t n, char_type c);
+
+    static int compare(const char_type *p, const char_type *q, size_t n);
+    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+
+    static char_type *move(char_type *dest, const char_type *src, size_t n);
+    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+
+    static constexpr int_type eof() noexcept { return 0x800; }
+    static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
+    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    static constexpr int_type to_int_type(char_type c) noexcept { return c; }
+    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+};
+
+template <class T>
+struct is_char_traits : false_type {};
+
+template <class T>
+struct is_char_traits<char_traits<T>> : true_type {};
+
+template <class charT, class traits = char_traits<charT>, class Alloc = allocator<charT> >
+class basic_string;
+
+typedef basic_string<char> string;
+
+typedef basic_string<char16_t> u16string;
+
+typedef basic_string<char32_t> u32string;
+
+typedef basic_string<wchar_t> wstring;
+}
+
+#endif //METAXX_SRC_STRING__

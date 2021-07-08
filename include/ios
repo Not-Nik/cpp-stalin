@@ -1,0 +1,362 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_IOS__
+#define METAXX_IOS__
+
+#include "cstdint"
+#include "locale"
+#include "utility"
+#include "cstdlib"
+#include "system_error"
+#include "__stream_types"
+#include "iosfwd"
+
+namespace std {
+
+class ios_base {
+public:
+    enum event { erase_event, imbue_event, copyfmt_event };
+
+    typedef void (*event_callback)(event ev, ios_base &obj, int index);
+
+    struct callback {
+        event_callback ec;
+        int arg;
+    };
+
+    typedef uint16_t fmtflags;
+
+    static constexpr fmtflags boolalpha = 1 << 0;
+    static constexpr fmtflags showbase = 1 << 1;
+    static constexpr fmtflags showpoint = 1 << 2;
+    static constexpr fmtflags showpos = 1 << 3;
+    static constexpr fmtflags skipws = 1 << 4;
+    static constexpr fmtflags unitbuf = 1 << 5;
+    static constexpr fmtflags uppercase = 1 << 6;
+    static constexpr fmtflags dec = 1 << 7;
+    static constexpr fmtflags hex = 1 << 8;
+    static constexpr fmtflags oct = 1 << 9;
+    static constexpr fmtflags fixed = 1 << 10;
+    static constexpr fmtflags scientific = 1 << 11;
+    static constexpr fmtflags internal = 1 << 12;
+    static constexpr fmtflags left = 1 << 13;
+    static constexpr fmtflags right = 1 << 14;
+
+    static constexpr fmtflags basefield = dec | oct | hex;
+    static constexpr fmtflags adjustfield = left | right | internal;
+    static constexpr fmtflags floatfield = scientific | fixed;
+
+    typedef uint8_t iostate;
+
+    const static iostate eofbit = 1 << 0;
+    const static iostate failbit = 1 << 1;
+    const static iostate badbit = 1 << 2;
+    const static iostate goodbit = 0 << 0;
+
+    typedef uint8_t openmode;
+
+    const static openmode app = 1 << 0;
+    const static openmode ate = 1 << 1;
+    const static openmode binary = 1 << 2;
+    const static openmode in = 1 << 3;
+    const static openmode out = 1 << 4;
+    const static openmode trunc = 1 << 5;
+
+    enum seekdir { beg = SEEK_SET, cur = SEEK_CUR, end = SEEK_END };
+
+    class Init;
+    static Init init_;
+
+    class failure;
+
+protected:
+    fmtflags flags_;
+    streamsize width_;
+    streamsize precision_;
+    locale locale_;
+    callback *callbacks_;
+    streamsize callback_count_;
+
+    union iea_el {
+        long l;
+        void *vp;
+    };
+
+    static iea_el *iea_; // internal extensible array
+
+    static int iea_size_;
+
+    void emit_event(event ev);
+
+protected:
+    ios_base() = default;
+public:
+    ios_base(const ios_base &) = delete;
+
+    ios_base &operator=(const ios_base &) = delete;
+
+    virtual ~ios_base();
+
+    fmtflags flags() const { return flags_; }
+    fmtflags flags(fmtflags fmtfl);
+
+    fmtflags setf(fmtflags fmtfl);
+    fmtflags setf(fmtflags fmtfl, fmtflags mask);
+
+    void unsetf(fmtflags mask) { flags_ &= ~mask; }
+
+    streamsize precision() const { return precision_; }
+    streamsize precision(streamsize prec);
+
+    streamsize width() const;
+    streamsize width(streamsize wide);
+
+    locale imbue(const locale &loc);
+    locale getloc() const { return locale_; }
+
+    static int xalloc();
+    long &iword(int idx);
+    void *&pword(int idx);
+
+    void register_callback(event_callback fn, int index);
+
+    bool sync_with_stdio(bool sync = true);
+};
+
+class ios_base::Init {
+    static int init_cnt;
+public:
+    Init();
+    ~Init();
+};
+
+template <class charT, class traits>
+class basic_ios : public ios_base {
+    static_assert(is_char_traits<traits>());
+public:
+    typedef charT char_type;
+    typedef traits traits_type;
+    typedef typename traits::int_type int_type;
+    typedef typename traits::pos_type pos_type;
+    typedef typename traits::off_type off_type;
+
+protected:
+    iostate state_;
+    iostate exception_mask_;
+
+    char_type fill_;
+
+    basic_streambuf<char_type, traits_type> *buf_ = nullptr;
+    basic_ostream<char_type, traits_type> *tie_ = nullptr;
+
+    basic_ios() = default;
+public:
+    explicit basic_ios(basic_streambuf<char_type, traits_type> *sb) { init(sb); }
+
+    basic_ios(const basic_ios &) = delete;
+    basic_ios &operator=(const basic_ios &) = delete;
+
+    virtual ~basic_ios() = default;
+
+    bool good() const { return state_ == goodbit; }
+    bool eof() const { return (state_ & eofbit) != 0; }
+    bool fail() const { return (state_ & (failbit | badbit)) != 0; }
+    bool bad() const { return (state_ & badbit) != 0; }
+
+    bool operator!() const { return (state_ & (failbit | badbit)) != 0; }
+    explicit operator bool() const { return !fail(); }
+
+    iostate rdstate() const { return state_; }
+    void setstate(iostate state);
+    void clear(iostate state = goodbit) { state_ = state; }
+
+    basic_ios &copyfmt(const basic_ios &rhs);
+
+    char_type fill() const { return fill_; }
+    char_type fill(char_type fillch);
+
+    iostate exceptions() const;
+    void exceptions(iostate except);
+
+    locale imbue(const locale &loc);
+
+    basic_ostream<char_type, traits_type> *tie() const { return tie_; }
+    basic_ostream<char_type, traits_type> *tie(basic_ostream<char_type, traits_type> *tiestr);
+
+    basic_streambuf<char_type, traits_type> *rdbuf() const { return buf_; }
+    basic_streambuf<char_type, traits_type> *rdbuf(basic_streambuf<char_type, traits_type> *sb);
+
+    char narrow (char_type wc, char dfault) const; // Internal workings require Todo: locale implementation
+    char_type widen (char c) const;
+
+protected:
+    void init(basic_streambuf<char_type, traits_type> *sb);
+
+    void move(basic_ios &x);
+    void move(basic_ios &&x);
+
+    void swap(basic_ios &x) noexcept;
+
+    //void set_rdbuf (basic_streambuf<char_type,traits_type>* sb);
+};
+
+typedef basic_ios<char> ios;
+typedef basic_ios<wchar_t> wios;
+
+template <class charT, class traits>
+void basic_ios<charT, traits>::setstate(ios_base::iostate state) {
+    state_ |= state;
+    if (state & exception_mask_) {
+        throw; // Todo: exceptions
+    }
+}
+
+template <class charT, class traits>
+basic_ios<charT, traits> &basic_ios<charT, traits>::copyfmt(const basic_ios &rhs) {
+    this->flags_ = rhs.flags_;
+    this->width_ = rhs.width_;
+    this->precision_ = rhs.precision_;
+    this->locale_ = rhs.locale_;
+    this->callbacks_ = malloc(rhs.callback_count_ * sizeof(callback));
+    memcpy(this->callbacks_, rhs.callbacks_, rhs.callback_count_ * sizeof(callback));
+    this->callback_count_ = rhs.callback_count_;
+    this->fill_ = rhs.fill_;
+
+    return *this;
+}
+
+template <class charT, class traits>
+typename basic_ios<charT, traits>::char_type basic_ios<charT, traits>::fill(char_type fillch) {
+    char_type t = fill_;
+    fill_ = fillch;
+    return t;
+}
+
+template <class charT, class traits>
+ios_base::iostate basic_ios<charT, traits>::exceptions() const {
+    return exception_mask_;
+}
+
+template <class charT, class traits>
+void basic_ios<charT, traits>::exceptions(ios_base::iostate except) {
+    exception_mask_ = except;
+    clear();
+}
+
+template <class charT, class traits>
+locale basic_ios<charT, traits>::imbue(const locale &loc) {
+    locale t = ios_base::imbue(loc);
+    rdbuf()->pubimbue(loc);
+    return t;
+}
+
+template <class charT, class traits>
+basic_ostream<typename basic_ios<charT, traits>::char_type, typename basic_ios<charT, traits>::traits_type> *basic_ios<charT, traits>::tie(
+    basic_ostream<char_type, traits_type> *tiestr) {
+    basic_ostream<char_type, traits_type> *t = tie_;
+    tie_ = tiestr;
+    return t;
+}
+
+template <class charT, class traits>
+basic_streambuf<typename basic_ios<charT, traits>::char_type, typename basic_ios<charT, traits>::traits_type> *basic_ios<charT, traits>::rdbuf(
+    basic_streambuf<char_type, traits_type> *sb) {
+    if (!sb) {
+        throw; // Todo: Exceptions
+    }
+    basic_streambuf<char_type, traits_type> *t = buf_;
+    buf_ = sb;
+    return t;
+}
+
+template <class charT, class traits>
+void basic_ios<charT, traits>::init(basic_streambuf<char_type, traits_type> *sb) {
+    state_ = (sb) ? goodbit : badbit;
+    flags_ = skipws | dec;
+    width_ = 0;
+    precision_ = 6;
+    fill_ = ' ';
+    locale_ = locale();
+    buf_ = sb;
+}
+
+template <class charT, class traits>
+void basic_ios<charT, traits>::move(basic_ios &x) {
+    this->flags_ = x.flags_;
+    this->width_ = x.width_;
+    this->precision_ = x.precision_;
+    this->locale_ = x.locale_;
+    this->callbacks_ = x.callbacks_;
+    this->callback_count_ = x.callback_count_;
+    this->fill_ = x.fill_;
+    this->tie_ = x.tie_;
+
+    x.tie_ = nullptr;
+    x.callbacks_ = nullptr;
+    x.callback_count_ = 0;
+}
+
+template <class charT, class traits>
+void basic_ios<charT, traits>::move(basic_ios &&x) {
+    this->flags_ = x.flags_;
+    this->width_ = x.width_;
+    this->precision_ = x.precision_;
+    this->locale_ = x.locale_;
+    this->callbacks_ = x.callbacks_;
+    this->callback_count_ = x.callback_count_;
+    this->fill_ = x.fill_;
+    this->tie_ = x.tie_;
+    this->buf_ = nullptr;
+
+    x.tie_ = nullptr;
+    x.callbacks_ = nullptr;
+    x.callback_count_ = 0;
+}
+template <class charT, class traits>
+void basic_ios<charT, traits>::swap(basic_ios &x) noexcept {
+    swap(flags_, x.flags_);
+    swap(width_, x.width_);
+    swap(precision_, x.precision_);
+    swap(locale_, x.locale_);
+    swap(callbacks_, x.callbacks_);
+    swap(callback_count_, x.callback_count_);
+
+    swap(state_, x.state_);
+    swap(fill_, x.fill_);
+}
+
+enum class io_errc {
+    stream = 1
+};
+
+template <>
+struct is_error_code_enum<io_errc> : public true_type {};
+
+ios_base &boolalpha(ios_base &str);
+ios_base &showbase(ios_base &str);
+ios_base &showpoint(ios_base &str);
+ios_base &showpos(ios_base &str);
+ios_base &skipws(ios_base &str);
+ios_base &unitbuf(ios_base &str);
+ios_base &uppercase(ios_base &str);
+ios_base &noboolalpha(ios_base &str);
+ios_base &noshowbase(ios_base &str);
+ios_base &noshowpoint(ios_base &str);
+ios_base &noshowpos(ios_base &str);
+ios_base &noskipws(ios_base &str);
+ios_base &nounitbuf(ios_base &str);
+ios_base &nouppercase(ios_base &str);
+ios_base &dec(ios_base &str);
+ios_base &hex(ios_base &str);
+ios_base &oct(ios_base &str);
+ios_base &fixed(ios_base &str);
+ios_base &scientific(ios_base &str);
+ios_base &hexfloat(ios_base &str);
+ios_base &defaultfloat(ios_base &str);
+}
+
+#endif //METAXX_IOS__

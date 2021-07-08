@@ -1,0 +1,224 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_INCLUDE_STREAMBUF__
+#define METAXX_INCLUDE_STREAMBUF__
+
+#include "ios"
+#include "locale"
+
+namespace std {
+template <class charT, class traits/*= char_traits<charT>*/> // default argument defined in `iosfwd`
+class basic_streambuf {
+    static_assert(is_char_traits<traits>());
+public:
+    typedef charT char_type;
+    typedef traits traits_type;
+    typedef typename traits::int_type int_type;
+    typedef typename traits::pos_type pos_type;
+    typedef typename traits::off_type off_type;
+protected:
+    locale locale_ = locale();
+
+    // input
+    char_type *eback_ = nullptr, *gptr_ = nullptr, *egptr_ = nullptr;
+    // output
+    char_type *pbase_ = nullptr, *pptr_ = nullptr, *epptr_ = nullptr;
+
+public:
+    locale pubimbue(const locale &loc) { return imbue(loc); }
+    locale getloc() const { return locale_; }
+
+    basic_streambuf *pubsetbuf(char_type *s, streamsize n) { return setbuf(s, n); }
+    pos_type pubseekoff(off_type off, ios_base::seekdir way, ios_base::openmode which = ios_base::in | ios_base::out);
+    pos_type pubseekpos(pos_type pos, ios_base::openmode which = ios_base::in | ios_base::out) { return seekpos(pos, which); }
+    int pubsync() { return sync(); }
+
+    streamsize in_avail() { return streamsize(egptr_ - gptr_) / sizeof(char_type); }
+    int_type snextc();
+    int_type sbumpc();
+    int_type sgetc();
+    streamsize sgetn(char_type *s, streamsize n) { return xsgetn(s, n); }
+    int_type sputbackc(char_type c);
+    int_type sungetc();
+
+    int_type sputc(char_type c);
+    streamsize sputn(const char_type *s, streamsize n) { return xsputn(s, n); }
+
+protected:
+    basic_streambuf() = default;
+    basic_streambuf(const basic_streambuf &x) = default;
+
+    char_type *eback() const { return eback_; }
+    char_type *gptr() const { return gptr_; }
+    char_type *egptr() const { return egptr_; }
+
+    void gbump(int n);
+    void setg(char_type *new_eback, char_type *new_gptr, char_type *new_egptr);
+
+    char_type *pbase() const { return pbase_; }
+    char_type *pptr() const { return pptr_; }
+    char *epptr() const { return epptr_; }
+
+    void pbump(int n);
+    void setp(char_type *new_pbase, char_type *new_epptr);
+
+    basic_streambuf &operator=(const basic_streambuf &rhs);
+    void swap(basic_streambuf &x);
+
+    virtual void imbue(const locale &loc) { locale_ = loc; }
+
+    virtual basic_streambuf *setbuf(char_type *s, streamsize n) { return this; }
+    virtual pos_type seekoff(off_type off, ios_base::seekdir way, ios_base::openmode which = ios_base::in | ios_base::out) { return -1; }
+    virtual pos_type seekpos(pos_type pos, ios_base::openmode which = ios_base::in | ios_base::out) { return -1; }
+    virtual int sync() { return 0; }
+
+    virtual streamsize showmanyc() { return 0; }
+    virtual streamsize xsgetn(char_type *s, streamsize n);
+    virtual int_type underflow() { return traits_type::eof(); }
+    virtual int_type uflow();
+    virtual int_type pbackfail(int_type c = traits_type::eof()) { return traits_type::eof(); }
+
+    virtual streamsize xsputn(const char_type *s, streamsize n);
+    virtual int_type overflow(int_type c = traits_type::eof()) { return traits_type::eof(); }
+};
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::pos_type basic_streambuf<charT, traits>::pubseekoff(off_type off,
+                                                                                             ios_base::seekdir way,
+                                                                                             ios_base::openmode which) {
+    return seekoff(off, way, which);
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::snextc() {
+    if (sbumpc() == traits_type::eof()) return traits_type::eof();
+    else return sgetc();
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::sbumpc() {
+    if (gptr_ == egptr_) return uflow(); // checks if gptr_ is null to, because if it is egptr_ is too
+    gbump(1);
+    return traits_type::to_int_type(gptr_[-1]);
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::sgetc() {
+    if (gptr_ == egptr_) return underflow(); // checks if gptr_ is null to, because if it is egptr_ is too
+    else return traits_type::to_int_type(*gptr_);
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::sputbackc(char_type c) {
+    if (gptr_ == eback_ || !traits_type::eq(c, gptr_[-1])) // checks if gptr_ is null to, because if it is egptr_ is too
+        return pbackfail(traits_type::to_int_type(c));
+    gbump(-1);
+    return traits_type::to_int_type(*gptr_);
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::sungetc() {
+    if (gptr_ == eback_) return pbackfail(); // checks if gptr_ is null to, because if it is egptr_ is too
+    gbump(-1);
+    return traits_type::to_int_type(*gptr_);
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::sputc(char_type c) {
+    if (pptr_ == epptr_) // checks if pptr_ is null to, because if it is epptr_ is too
+        return overflow(traits_type::to_int_type(c));
+    *pptr_ = c;
+    pbump(1);
+    return traits_type::to_int_type(c);
+}
+
+template <class charT, class traits>
+void basic_streambuf<charT, traits>::gbump(int n) {
+    if (gptr_ + n >= egptr_ or gptr_ + n < eback_) {
+        throw; // Todo: Exceptions
+    }
+    gptr_ += n;
+}
+
+template <class charT, class traits>
+void basic_streambuf<charT, traits>::setg(char_type *new_eback, char_type *new_gptr, char_type *new_egptr) {
+    eback_ = new_eback;
+    gptr_ = new_gptr;
+    egptr_ = new_egptr;
+}
+
+template <class charT, class traits>
+void basic_streambuf<charT, traits>::pbump(int n) {
+    if (pptr_ + n > epptr_ or pptr_ + n <= pbase_) {
+        throw; // Todo: Exceptions
+    }
+    pptr_ += n;
+}
+
+template <class charT, class traits>
+void basic_streambuf<charT, traits>::setp(char_type *new_pbase, char_type *new_epptr) {
+    pbase_ = new_pbase;
+    epptr_ = new_epptr;
+    pptr_ = pbase_;
+}
+
+template <class charT, class traits>
+basic_streambuf<charT, traits> &basic_streambuf<charT, traits>::operator=(const basic_streambuf &rhs) {
+    locale_ = rhs.locale_;
+
+    eback_ = rhs.eback_;
+    gptr_ = rhs.gptr_;
+    egptr_ = rhs.egptr_;
+
+    pbase_ = rhs.pbase_;
+    pptr_ = rhs.pptr_;
+    epptr_ = rhs.epptr_;
+
+    return *this;
+}
+
+template <class charT, class traits>
+void basic_streambuf<charT, traits>::swap(basic_streambuf &x) {
+    std::swap(locale_, x.locale_);
+
+    std::swap(eback_, x.eback_);
+    std::swap(gptr_, x.gptr_);
+    std::swap(egptr_, x.egptr_);
+
+    std::swap(pbase_, x.pbase_);
+    std::swap(pptr_, x.pptr_);
+    std::swap(epptr_, x.epptr_);
+}
+
+template <class charT, class traits>
+streamsize basic_streambuf<charT, traits>::xsgetn(char_type *s, streamsize n) {
+    for (streamsize i = 0; i < n; i++) {
+        int_type t = sbumpc();
+        if (t == traits_type::eof()) return i;
+        s[i] = t;
+    }
+    return n;
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::uflow() {
+    if (underflow() == traits_type::eof()) return traits_type::eof();
+    gbump(1);
+    return traits_type::to_int_type(gptr()[-1]);
+}
+
+template <class charT, class traits>
+streamsize basic_streambuf<charT, traits>::xsputn(const char_type *s, streamsize n) {
+    for (streamsize i = 0; i < n; i++) {
+        int_type r = sputc(s[i]);
+        if (r == traits_type::eof()) return i;
+    }
+    return n;
+}
+}
+
+#endif //METAXX_INCLUDE_STREAMBUF__

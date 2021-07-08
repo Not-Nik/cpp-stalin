@@ -1,0 +1,18 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_CLOCALE_
+#define METAXX_CLOCALE_
+
+#include <locale.h>
+
+namespace std {
+using ::lconv;
+using ::setlocale;
+using ::localeconv;
+}
+
+#endif //METAXX_CLOCALE_

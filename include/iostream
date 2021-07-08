@@ -1,0 +1,25 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_INCLUDE_IOSTREAM__
+#define METAXX_INCLUDE_IOSTREAM__
+
+#include "ios"
+#include "iosfwd"
+#include "ostream"
+#include "streambuf"
+
+namespace std {
+extern ostream cout;
+extern ostream cerr;
+extern ostream clog;
+
+extern wostream wcout;
+extern wostream wcerr;
+extern wostream wclog;
+}
+
+#endif //METAXX_INCLUDE_IOSTREAM__

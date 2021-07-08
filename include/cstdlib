@@ -1,0 +1,66 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_INCLUDE_CSTDLIB__
+#define METAXX_INCLUDE_CSTDLIB__
+
+#include <stdlib.h>
+
+namespace std {
+using ::atof;
+using ::atoi;
+using ::atol;
+using ::atoll;
+using ::strtod;
+using ::strtof;
+using ::strtol;
+using ::strtold;
+using ::strtoll;
+using ::strtoul;
+using ::strtoull;
+
+using ::rand;
+using ::srand;
+
+using ::calloc;
+using ::free;
+using ::malloc;
+using ::realloc;
+
+using ::abort;
+using ::atexit;
+//using ::at_quick_exit;
+using ::exit;
+using ::getenv;
+//sing ::quick_exit;
+using ::system;
+using ::_Exit;
+
+using ::bsearch;
+using ::qsort;
+
+using ::abs;
+using ::div;
+using ::labs;
+using ::ldiv;
+using ::llabs;
+using ::lldiv;
+
+using ::mblen;
+using ::mbtowc;
+using ::wctomb;
+
+using ::mbstowcs;
+using ::wcstombs;
+
+using ::div_t;
+using ::ldiv_t;
+using ::lldiv_t;
+using ::size_t;
+
+}
+
+#endif //METAXX_INCLUDE_CSTDLIB__

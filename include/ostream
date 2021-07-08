@@ -1,0 +1,190 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_INCLUDE_OSTREAM__
+#define METAXX_INCLUDE_OSTREAM__
+
+#include "streambuf"
+
+namespace std {
+template <class charT, class traits /*= char_traits<charT>*/> // default argument defined in `iosfwd`
+class basic_ostream : public basic_ios<charT, traits> {
+    static_assert(is_char_traits<traits>());
+public:
+    class sentry;
+
+    typedef charT char_type;
+    typedef traits traits_type;
+    typedef typename traits::int_type int_type;
+    typedef typename traits::pos_type pos_type;
+    typedef typename traits::off_type off_type;
+
+    explicit basic_ostream(basic_streambuf<char_type, traits_type> *sb) { basic_ios<charT, traits>::init(sb); }
+    basic_ostream(const basic_ostream &) = delete;
+protected:
+    basic_ostream(basic_ostream &&x) { basic_ios<charT, traits>::move(x); }
+public:
+    basic_ostream &operator<<(bool val);
+    basic_ostream &operator<<(short val);
+    basic_ostream &operator<<(unsigned short val);
+    basic_ostream &operator<<(int val);
+    basic_ostream &operator<<(unsigned int val);
+    basic_ostream &operator<<(long val);
+    basic_ostream &operator<<(unsigned long val);
+    basic_ostream &operator<<(long long val);
+    basic_ostream &operator<<(unsigned long long val);
+    basic_ostream &operator<<(float val);
+    basic_ostream &operator<<(double val);
+    basic_ostream &operator<<(long double val);
+    basic_ostream &operator<<(void *val);
+
+    basic_ostream &operator<<(basic_streambuf<char_type, traits_type> *sb);
+
+    basic_ostream &operator<<(basic_ostream &(*pf)(basic_ostream &));
+    basic_ostream &operator<<(basic_ios<char_type, traits_type> &(*pf)(basic_ios<char_type, traits_type> &));
+    basic_ostream &operator<<(ios_base &(*pf)(ios_base &));
+
+    basic_ostream &put(char_type c);
+    basic_ostream &write(const char_type *s, streamsize n);
+
+    pos_type tellp();
+    basic_ostream &seekp(pos_type pos);
+    basic_ostream &seekp(off_type off, ios_base::seekdir way);
+
+    basic_ostream &flush();
+
+    basic_ostream &operator=(const basic_ostream &) = delete;
+protected:
+    basic_ostream &operator=(basic_ostream &&rhs);
+
+    void swap(basic_ostream &x);
+};
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator<<(basic_ostream &(*pf)(basic_ostream &)) {
+    pf(*this);
+    return *this;
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator<<(basic_ios<char_type, traits_type> &(*pf)(basic_ios<char_type, traits_type> &)) {
+    pf(*this);
+    return *this;
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator<<(ios_base &(*pf)(ios_base &)) {
+    pf(*this);
+    return *this;
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::put(char_type c) {
+    sentry s(*this);
+    if (s and basic_ios<charT, traits>::buf_) {
+        int_type r = basic_ios<charT, traits>::buf_->sputc(c);
+    } else {
+        basic_ios<charT, traits>::setstate(basic_ios<charT, traits>::badbit);
+    }
+    return *this;
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::write(const char_type *s, streamsize n) {
+    sentry sen(*this);
+    if (sen and basic_ios<charT, traits>::buf_) {
+        int_type r = basic_ios<charT, traits>::buf_->sputn(s, n);
+    } else {
+        basic_ios<charT, traits>::setstate(basic_ios<charT, traits>::badbit);
+    }
+    return *this;
+}
+
+template <class charT, class traits>
+typename basic_ostream<charT, traits>::pos_type basic_ostream<charT, traits>::tellp() {
+    sentry s(*this);
+    if (basic_ios<charT, traits>::fail()) return -1;
+    basic_ios<charT, traits>::rdbuf()->pubseekoff(0, ios_base::cur, ios_base::out);
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::seekp(pos_type pos) {
+    sentry s(*this);
+    if (basic_ios<charT, traits>::fail()) return -1;
+    basic_ios<charT, traits>::rdbuf()->pubseekpos(pos, ios_base::out);
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::seekp(off_type off, ios_base::seekdir way) {
+    sentry s(*this);
+    if (basic_ios<charT, traits>::fail()) return -1;
+    basic_ios<charT, traits>::rdbuf()->pubseekoff(off, way, ios_base::out);
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::flush() {
+    sentry s(*this);
+    if (s) {
+        basic_ios<charT, traits>::rdbuf()->pubsync();
+    } else {
+        basic_ios<charT, traits>::setstate(basic_ios<charT, traits>::badbit);
+    }
+    return *this;
+}
+template <class charT, class traits>
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator=(basic_ostream &&rhs) {
+    basic_ios<charT, traits>::swap(rhs);
+}
+
+template <class charT, class traits>
+void basic_ostream<charT, traits>::swap(basic_ostream &x) {
+    basic_ios<charT, traits>::swap(x);
+}
+
+template <class charT, class traits>
+class basic_ostream<charT, traits>::sentry {
+    bool state_ = true;
+    basic_ostream<charT, traits> &stream_;
+
+public:
+    explicit sentry(basic_ostream<charT, traits> &os);
+    ~sentry();
+    explicit operator bool() const;
+    sentry(const sentry &) = delete;
+    sentry &operator=(const sentry &) = delete;
+};
+
+template <class charT, class traits>
+basic_ostream<charT, traits>::sentry::sentry(basic_ostream<charT, traits> &os)
+    : stream_(os) {
+    if (os.fail() or os.eof()) {
+        os.setstate(ios_base::failbit);
+        state_ = false;
+    }
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits>::sentry::~sentry() {
+    if (stream_.rdbuf()->pubsync() == -1)
+        stream_.setstate(ios_base::badbit);
+}
+
+template <class charT, class traits>
+basic_ostream<charT, traits>::sentry::operator bool() const {
+    return state_;
+}
+
+ostream &endl(ostream &os);
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &endl(basic_ostream<charT, traits> &os) {
+    os.put(os.widen('\n'));
+    os.flush();
+    return os;
+}
+}
+
+#endif //METAXX_INCLUDE_OSTREAM__

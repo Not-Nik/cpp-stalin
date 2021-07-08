@@ -1,0 +1,73 @@
+// metaxx (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef METAXX_INCLUDE___STREAM_TYPES__
+#define METAXX_INCLUDE___STREAM_TYPES__
+
+#include <cwchar>
+
+namespace std {
+[[maybe_unused]] typedef intptr_t streamoff;
+[[maybe_unused]] typedef intptr_t streamsize;
+
+template <class stateT>
+class fpos {
+private:
+    stateT state_;
+    streamoff off_;
+public:
+    fpos(streamoff __off = streamoff())
+        : state_(), off_(__off) {}
+
+    operator streamoff() const { return off_; }
+
+    stateT state() const { return state_; }
+
+    void state(stateT st) { state_ = st; }
+
+    bool operator==(const fpos<stateT> &f) { return off_ == f.off_; }
+
+    bool operator!=(const fpos<stateT> &f) { return off_ != f.off_; }
+
+    streamoff operator-(const fpos<stateT> &f) { return off_ - f.off_; }
+
+    fpos &operator+=(streamoff off);
+    fpos operator+(streamoff off) const;
+    fpos &operator-=(streamoff off);
+    fpos operator-(streamoff off) const;
+};
+
+template <class stateT>
+fpos<stateT> &fpos<stateT>::operator+=(streamoff off) {
+    off_ += off;
+    return *this;
+}
+
+template <class stateT>
+fpos<stateT> fpos<stateT>::operator+(streamoff off) const {
+    fpos t(*this);
+    t += off;
+    return t;
+}
+
+template <class stateT>
+fpos<stateT> &fpos<stateT>::operator-=(streamoff off) {
+    off_ -= off;
+    return *this;
+}
+
+template <class stateT>
+fpos<stateT> fpos<stateT>::operator-(streamoff off) const {
+    fpos t(*this);
+    t -= off;
+    return t;
+}
+
+[[maybe_unused]] typedef fpos<mbstate_t> streampos;
+[[maybe_unused]] typedef fpos<mbstate_t> wstreampos;
+}
+
+#endif //METAXX_INCLUDE___STREAM_TYPES__
