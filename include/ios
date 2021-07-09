@@ -74,7 +74,7 @@ public:
     class failure;
 
 protected:
-    fmtflags flags_;
+    fmtflags flags_ = skipws | dec;
     streamsize width_;
     streamsize precision_;
     locale locale_;
@@ -190,8 +190,8 @@ public:
     basic_streambuf<char_type, traits_type> *rdbuf() const { return buf_; }
     basic_streambuf<char_type, traits_type> *rdbuf(basic_streambuf<char_type, traits_type> *sb);
 
-    char narrow (char_type wc, char dfault) const; // Internal workings require Todo: locale implementation
-    char_type widen (char c) const;
+    char narrow (char_type wc, char dfault) const { return dfault; } // Internal workings require Todo: locale implementation
+    char_type widen (char c) const { return c; }
 
 protected:
     void init(basic_streambuf<char_type, traits_type> *sb);
@@ -318,15 +318,15 @@ void basic_ios<charT, traits>::move(basic_ios &&x) {
 }
 template <class charT, class traits>
 void basic_ios<charT, traits>::swap(basic_ios &x) noexcept {
-    swap(flags_, x.flags_);
-    swap(width_, x.width_);
-    swap(precision_, x.precision_);
-    swap(locale_, x.locale_);
-    swap(callbacks_, x.callbacks_);
-    swap(callback_count_, x.callback_count_);
+    std::swap(flags_, x.flags_);
+    std::swap(width_, x.width_);
+    std::swap(precision_, x.precision_);
+    std::swap(locale_, x.locale_);
+    std::swap(callbacks_, x.callbacks_);
+    std::swap(callback_count_, x.callback_count_);
 
-    swap(state_, x.state_);
-    swap(fill_, x.fill_);
+    std::swap(state_, x.state_);
+    std::swap(fill_, x.fill_);
 }
 
 enum class io_errc {

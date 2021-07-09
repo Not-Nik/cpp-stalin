@@ -8,14 +8,25 @@
 #include <fstream>
 #include <iostream>
 
+std::filebuf fcin = std::filebuf();
 std::filebuf fcout = std::filebuf();
+std::filebuf fcerr = std::filebuf();
+std::filebuf fclog = std::filebuf();
+
+std::wfilebuf fwcin = std::wfilebuf();
+std::wfilebuf fwcout = std::wfilebuf();
+std::wfilebuf fwcerr = std::wfilebuf();
+std::wfilebuf fwclog = std::wfilebuf();
+
+std::istream std::cin = istream (&fcin);
 std::ostream std::cout = ostream(&fcout);
-//ostream cerr;
-//ostream clog;
-//
-//wostream wcout;
-//wostream wcerr;
-//wostream wclog;
+std::ostream std::cerr = ostream(&fcerr);
+std::ostream std::clog = ostream(&fclog);
+
+std::wistream std::wcin = wistream (&fwcin);
+std::wostream std::wcout = wostream(&fwcout);
+std::wostream std::wcerr = wostream(&fwcerr);
+std::wostream std::wclog = wostream(&fwclog);
 
 // This is after the streams to ensure they get initialised first
 std::ios_base::Init std::ios_base::init_;
@@ -112,9 +123,19 @@ std::ios_base::Init::Init() {
     if (init_cnt == 0) {
         // c's default streams are all buffered
         // but cout/-err/-log should be synced with the default streams
+        setbuf(stdin, nullptr);
         setbuf(stdout, nullptr);
+        setbuf(stderr, nullptr);
 
+        fcin.__open(stdin, ios_base::in);
         fcout.__open(stdout, ios_base::out);
+        fcerr.__open(stderr, ios_base::out);
+        fclog.__open(stdout, ios_base::out); // log uses out
+
+        fwcin.__open(stdin, ios_base::in);
+        fwcout.__open(stdout, ios_base::out);
+        fwcerr.__open(stderr, ios_base::out);
+        fwclog.__open(stdout, ios_base::out); // log uses out
     }
     init_cnt++;
 }
@@ -123,108 +144,107 @@ std::ios_base::Init::~Init() {
     init_cnt--;
     if (init_cnt == 0) {
         cout.flush();
-        //cerr.flush();
-        //clog.flush();
+        cerr.flush();
+        clog.flush();
 
-        //wcout.flush();
-        //wcerr.flush();
-        //wclog.flush();
-        // Todo: flush standard streams
+        wcout.flush();
+        wcerr.flush();
+        wclog.flush();
     }
 }
 
 std::ios_base &std::boolalpha(ios_base &str) {
-    str.setf(std::ios_base::boolalpha);
+    str.setf(ios_base::boolalpha);
     return str;
 }
 
 std::ios_base &std::showbase(ios_base &str) {
-    str.setf(std::ios_base::showbase);
+    str.setf(ios_base::showbase);
     return str;
 }
 
 std::ios_base &std::showpoint(ios_base &str) {
-    str.setf(std::ios_base::showpoint);
+    str.setf(ios_base::showpoint);
     return str;
 }
 
 std::ios_base &std::showpos(ios_base &str) {
-    str.setf(std::ios_base::showpos);
+    str.setf(ios_base::showpos);
     return str;
 }
 
 std::ios_base &std::skipws(ios_base &str) {
-    str.setf(std::ios_base::skipws);
+    str.setf(ios_base::skipws);
     return str;
 }
 
 std::ios_base &std::unitbuf(ios_base &str) {
-    str.setf(std::ios_base::unitbuf);
+    str.setf(ios_base::unitbuf);
     return str;
 }
 
 std::ios_base &std::uppercase(ios_base &str) {
-    str.setf(std::ios_base::uppercase);
+    str.setf(ios_base::uppercase);
     return str;
 }
 
 std::ios_base &std::noboolalpha(ios_base &str) {
-    str.unsetf(std::ios_base::boolalpha);
+    str.unsetf(ios_base::boolalpha);
     return str;
 }
 
 std::ios_base &std::noshowbase(ios_base &str) {
-    str.unsetf(std::ios_base::showbase);
+    str.unsetf(ios_base::showbase);
     return str;
 }
 
 std::ios_base &std::noshowpoint(ios_base &str) {
-    str.unsetf(std::ios_base::showpoint);
+    str.unsetf(ios_base::showpoint);
     return str;
 }
 
 std::ios_base &std::noshowpos(ios_base &str) {
-    str.unsetf(std::ios_base::showpos);
+    str.unsetf(ios_base::showpos);
     return str;
 }
 
 std::ios_base &std::noskipws(ios_base &str) {
-    str.unsetf(std::ios_base::skipws);
+    str.unsetf(ios_base::skipws);
     return str;
 }
 
 std::ios_base &std::nounitbuf(ios_base &str) {
-    str.unsetf(std::ios_base::unitbuf);
+    str.unsetf(ios_base::unitbuf);
     return str;
 }
 
 std::ios_base &std::nouppercase(ios_base &str) {
-    str.unsetf(std::ios_base::uppercase);
+    str.unsetf(ios_base::uppercase);
     return str;
 }
 
 std::ios_base &std::dec(ios_base &str) {
-    str.setf(std::ios_base::dec);
+    str.setf(ios_base::dec);
     return str;
 }
 
 std::ios_base &std::hex(ios_base &str) {
-    str.setf(std::ios_base::hex);
+    str.setf(ios_base::hex);
     return str;
 }
 
 std::ios_base &std::oct(ios_base &str) {
-    str.setf(std::ios_base::oct);
+    str.setf(ios_base::oct);
     return str;
 }
 
 std::ios_base &std::fixed(ios_base &str) {
-    str.setf(std::ios_base::fixed);
+    str.setf(ios_base::fixed);
     return str;
 }
 
 std::ios_base &std::scientific(ios_base &str) {
-    str.setf(std::ios_base::scientific);
+    str.setf(ios_base::scientific);
     return str;
 }
 

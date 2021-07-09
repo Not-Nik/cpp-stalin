@@ -22,11 +22,13 @@ public:
     typedef typename traits::pos_type pos_type;
     typedef typename traits::off_type off_type;
 
-    explicit basic_ostream(basic_streambuf<char_type, traits_type> *sb) { basic_ios<charT, traits>::init(sb); }
+    explicit basic_ostream(basic_streambuf<char_type, traits_type> *sb) { this->init(sb); }
     basic_ostream(const basic_ostream &) = delete;
 protected:
-    basic_ostream(basic_ostream &&x) { basic_ios<charT, traits>::move(x); }
+    basic_ostream(basic_ostream &&x) { this->move(x); }
 public:
+    virtual ~basic_ostream() = default;
+
     basic_ostream &operator<<(bool val);
     basic_ostream &operator<<(short val);
     basic_ostream &operator<<(unsigned short val);
@@ -70,7 +72,8 @@ basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator<<(basic_ost
 }
 
 template <class charT, class traits>
-basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator<<(basic_ios<char_type, traits_type> &(*pf)(basic_ios<char_type, traits_type> &)) {
+basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator<<(basic_ios<char_type, traits_type> &(*pf)(basic_ios<char_type,
+                                                                                                                          traits_type> &)) {
     pf(*this);
     return *this;
 }
@@ -84,10 +87,10 @@ basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator<<(ios_base 
 template <class charT, class traits>
 basic_ostream<charT, traits> &basic_ostream<charT, traits>::put(char_type c) {
     sentry s(*this);
-    if (s and basic_ios<charT, traits>::buf_) {
-        int_type r = basic_ios<charT, traits>::buf_->sputc(c);
+    if (s and this->buf_) {
+        int_type r = this->buf_->sputc(c);
     } else {
-        basic_ios<charT, traits>::setstate(basic_ios<charT, traits>::badbit);
+        this->setstate(basic_ios<charT, traits>::badbit);
     }
     return *this;
 }
@@ -95,10 +98,10 @@ basic_ostream<charT, traits> &basic_ostream<charT, traits>::put(char_type c) {
 template <class charT, class traits>
 basic_ostream<charT, traits> &basic_ostream<charT, traits>::write(const char_type *s, streamsize n) {
     sentry sen(*this);
-    if (sen and basic_ios<charT, traits>::buf_) {
-        int_type r = basic_ios<charT, traits>::buf_->sputn(s, n);
+    if (sen and this->buf_) {
+        int_type r = this->buf_->sputn(s, n);
     } else {
-        basic_ios<charT, traits>::setstate(basic_ios<charT, traits>::badbit);
+        this->setstate(ios_base::badbit);
     }
     return *this;
 }
@@ -106,53 +109,53 @@ basic_ostream<charT, traits> &basic_ostream<charT, traits>::write(const char_typ
 template <class charT, class traits>
 typename basic_ostream<charT, traits>::pos_type basic_ostream<charT, traits>::tellp() {
     sentry s(*this);
-    if (basic_ios<charT, traits>::fail()) return -1;
-    basic_ios<charT, traits>::rdbuf()->pubseekoff(0, ios_base::cur, ios_base::out);
+    if (this->fail()) return -1;
+    this->rdbuf_->pubseekoff(0, ios_base::cur, ios_base::out);
 }
 
 template <class charT, class traits>
 basic_ostream<charT, traits> &basic_ostream<charT, traits>::seekp(pos_type pos) {
     sentry s(*this);
-    if (basic_ios<charT, traits>::fail()) return -1;
-    basic_ios<charT, traits>::rdbuf()->pubseekpos(pos, ios_base::out);
+    if (this->fail()) return -1;
+    this->rdbuf()->pubseekpos(pos, ios_base::out);
 }
 
 template <class charT, class traits>
 basic_ostream<charT, traits> &basic_ostream<charT, traits>::seekp(off_type off, ios_base::seekdir way) {
     sentry s(*this);
-    if (basic_ios<charT, traits>::fail()) return -1;
-    basic_ios<charT, traits>::rdbuf()->pubseekoff(off, way, ios_base::out);
+    if (this->fail()) return -1;
+    this->rdbuf()->pubseekoff(off, way, ios_base::out);
 }
 
 template <class charT, class traits>
 basic_ostream<charT, traits> &basic_ostream<charT, traits>::flush() {
     sentry s(*this);
     if (s) {
-        basic_ios<charT, traits>::rdbuf()->pubsync();
+        this->rdbuf()->pubsync();
     } else {
-        basic_ios<charT, traits>::setstate(basic_ios<charT, traits>::badbit);
+        this->setstate(ios_base::badbit);
     }
     return *this;
 }
 template <class charT, class traits>
 basic_ostream<charT, traits> &basic_ostream<charT, traits>::operator=(basic_ostream &&rhs) {
-    basic_ios<charT, traits>::swap(rhs);
+    this->swap(rhs);
 }
 
 template <class charT, class traits>
 void basic_ostream<charT, traits>::swap(basic_ostream &x) {
-    basic_ios<charT, traits>::swap(x);
+    this->swap(x);
 }
 
 template <class charT, class traits>
 class basic_ostream<charT, traits>::sentry {
     bool state_ = true;
-    basic_ostream<charT, traits> &stream_;
+    basic_ostream &stream_;
 
 public:
     explicit sentry(basic_ostream<charT, traits> &os);
     ~sentry();
-    explicit operator bool() const;
+    explicit operator bool() const { return state_; }
     sentry(const sentry &) = delete;
     sentry &operator=(const sentry &) = delete;
 };
@@ -168,13 +171,16 @@ basic_ostream<charT, traits>::sentry::sentry(basic_ostream<charT, traits> &os)
 
 template <class charT, class traits>
 basic_ostream<charT, traits>::sentry::~sentry() {
-    if (stream_.rdbuf()->pubsync() == -1)
-        stream_.setstate(ios_base::badbit);
-}
+    if (stream_.fail() or stream_.eof()) {
+        stream_.setstate(ios_base::failbit);
+        return;
+    }
 
-template <class charT, class traits>
-basic_ostream<charT, traits>::sentry::operator bool() const {
-    return state_;
+    if (stream_.flags_ & ios_base::unitbuf) {
+        if (stream_.rdbuf()->pubsync() == -1)
+            stream_.state_ |= ios_base::badbit;
+    }
+    if (stream_.tie_) stream_.tie_->flush();
 }
 
 ostream &endl(ostream &os);

@@ -84,6 +84,9 @@ protected:
 
     virtual streamsize xsputn(const char_type *s, streamsize n);
     virtual int_type overflow(int_type c = traits_type::eof()) { return traits_type::eof(); }
+
+    int_type __getc_some();
+    int_type __sbumpc_some();
 };
 
 template <class charT, class traits>
@@ -218,6 +221,23 @@ streamsize basic_streambuf<charT, traits>::xsputn(const char_type *s, streamsize
         if (r == traits_type::eof()) return i;
     }
     return n;
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::__getc_some() {
+    if (gptr_ != egptr_) { // checks if gptr_ is null to, because if it is egptr_ is too
+        return traits_type::to_int_type(*gptr_);
+    }
+    return traits_type::eof();
+}
+
+template <class charT, class traits>
+typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>::__sbumpc_some() {
+    if (gptr_ != egptr_) { // checks if gptr_ is null to, because if it is egptr_ is too
+        gbump(1);
+        return traits_type::to_int_type(gptr_[-1]);
+    }
+    return traits_type::eof();
 }
 }
 

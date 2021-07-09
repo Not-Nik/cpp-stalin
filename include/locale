@@ -70,6 +70,13 @@ public:
     void operator=(const id &);
     id(const id &);
 };
+
+template <class charT>
+bool isspace (charT c, const locale& loc) {
+    // Todo: Proper isspace implementation
+    // This is just here for the `skipws` flag in streams
+    return ::isspace(c);
+}
 }
 
 #endif //METAXX_LOCALE_

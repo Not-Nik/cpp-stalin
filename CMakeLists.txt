@@ -14,6 +14,7 @@ add_definitions(-nostdinc++ -Wall -Wextra -Wpedantic)
 add_library(stalin
         include/__declval
         include/__stream_types
+        include/cassert
         include/clocale
         include/cstddef
         include/cstdint
@@ -24,6 +25,7 @@ add_library(stalin
         include/ios
         include/iosfwd
         include/iostream
+        include/istream
         include/locale
         include/memory
         include/ostream
@@ -34,10 +36,11 @@ add_library(stalin
         include/utility
 
         src/ios.cpp
-        src/string.cpp src/ostream.cpp)
+        src/ostream.cpp
+        src/string.cpp)
 
 target_include_directories(stalin PUBLIC include)
 
 add_executable(iotest
-        test/io.cpp include/cassert)
+        test/io.cpp)
 target_link_libraries(iotest stalin)

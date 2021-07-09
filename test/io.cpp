@@ -24,8 +24,17 @@ int main() {
 
     std::cout << std::endl;
 
-    strcpy(comp_buf, "Second, Line!");
-    std::cout.write("Second, Line!", 13);
+    strcpy(comp_buf, "Second, Line!\n");
+    std::cout.write("Second, Line!\n", 14); // this also overwrites the '\n' from endl
 
     assert(memcmp(cout_buf, comp_buf, 1024) == 0);
+
+    std::cout << std::unitbuf;
+    std::cout.write("Please supply some input: ", 26);
+
+    char in_comp[1024];
+    memset(in_comp, 0, 1024);
+
+    std::cin.getline(in_comp, 1024);
+    std::cout.write(in_comp, strlen(in_comp));
 }

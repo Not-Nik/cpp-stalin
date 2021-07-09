@@ -1,0 +1,388 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_ISTREAM__
+#define CPP_STALIN_INCLUDE_ISTREAM__
+
+#include "ios"
+
+namespace std {
+template <class charT, class traits /*= char_traits<charT>*/> // default argument defined in `iosfwd`
+class basic_istream : public basic_ios<charT, traits> {
+    static_assert(is_char_traits<traits>());
+
+    streamsize gcount_ = 0;
+public:
+    class sentry;
+
+    typedef charT char_type;
+    typedef traits traits_type;
+    typedef typename traits::int_type int_type;
+    typedef typename traits::pos_type pos_type;
+    typedef typename traits::off_type off_type;
+
+    explicit basic_istream(basic_streambuf<char_type, traits_type> *sb) { this->init(sb); }
+    basic_istream(const basic_istream &) = delete;
+protected:
+    basic_istream(basic_istream &&x);
+public:
+    virtual ~basic_istream() = default;
+
+    basic_istream &operator>>(bool &val);
+    basic_istream &operator>>(short &val);
+    basic_istream &operator>>(unsigned short &val);
+    basic_istream &operator>>(int &val);
+    basic_istream &operator>>(unsigned int &val);
+    basic_istream &operator>>(long &val);
+    basic_istream &operator>>(unsigned long &val);
+    basic_istream &operator>>(long long &val);
+    basic_istream &operator>>(unsigned long long &val);
+    basic_istream &operator>>(float &val);
+    basic_istream &operator>>(double &val);
+    basic_istream &operator>>(long double &val);
+    basic_istream &operator>>(void *&val);
+
+    basic_istream &operator>>(basic_streambuf<char_type, traits_type> *sb);
+
+    basic_istream &operator>>(basic_istream &(*pf)(basic_istream &));
+    basic_istream &operator>>(basic_ios<char_type, traits_type> &(*pf)(basic_ios<char_type, traits_type> &));
+    basic_istream &operator>>(ios_base &(*pf)(ios_base &));
+
+    streamsize gcount() const { return gcount_; }
+
+    int_type get();
+    basic_istream &get(char_type &c);
+    basic_istream &get(char_type *s, streamsize n) { return this->get(s, n, '\n'); }
+    basic_istream &get(char_type *s, streamsize n, char_type delim);
+    basic_istream &get(basic_streambuf<char_type, traits_type> &sb) { get(sb, traits_type::eof()); }
+    basic_istream &get(basic_streambuf<char_type, traits_type> &sb, char_type delim);
+
+    basic_istream &getline(char_type *s, streamsize n) { return getline(s, n, '\n'); }
+    basic_istream &getline(char_type *s, streamsize n, char_type delim);
+
+    basic_istream &ignore(streamsize n = 1, int_type delim = traits_type::eof());
+
+    int_type peek();
+
+    basic_istream &read(char_type *s, streamsize n);
+    streamsize readsome(char_type *s, streamsize n);
+
+    basic_istream &putback(char_type c);
+    basic_istream &unget();
+
+    pos_type tellg();
+
+    basic_istream &seekg(pos_type pos);
+    basic_istream &seekg(off_type off, ios_base::seekdir way);
+
+    int sync();
+
+    basic_istream &operator=(const basic_istream &) = delete;
+    basic_istream &operator=(basic_istream &&rhs) { swap(rhs); }
+
+    void swap(basic_istream &x);
+};
+
+template <class charT, class traits>
+basic_istream<charT, traits>::basic_istream(basic_istream &&x) {
+    gcount_ = x.gcount_;
+    x.gcount_ = 0;
+    this->move(x);
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::operator>>(basic_istream &(*pf)(basic_istream &)) {
+    pf(*this);
+    return *this;
+}
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT,
+                                            traits>::operator>>(basic_ios<char_type, traits_type> &(*pf)(basic_ios<char_type, traits_type> &)) {
+    pf(*this);
+    return *this;
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::operator>>(ios_base &(*pf)(ios_base &)) {
+    pf(*this);
+    return *this;
+}
+
+template <class charT, class traits>
+typename basic_istream<charT, traits>::int_type basic_istream<charT, traits>::get() {
+    sentry s(*this, true);
+    if (s) {
+        gcount_ = 1;
+        char_type c = this->buf_->sbumpc();
+        if (c == traits_type::eof()) this->setstate(ios_base::eofbit);
+        return c;
+    }
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::get(char_type &c) {
+    c = get();
+    return *this;
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::get(char_type *s, streamsize n, char_type delim) {
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    for (gcount_ = 0; gcount_ < n; gcount_++) {
+        int_type c = this->buf_->sgetc();
+        if (c == this->widen(delim) or c == traits_type::eof()) {
+            if (c == traits_type::eof()) this->setstate(ios_base::eofbit);
+            break;
+        }
+        s[gcount_] = this->buf_->sbumpc();
+    }
+
+    return *this;
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::get(basic_streambuf<char_type, traits_type> &sb, char_type delim) {
+    while (1) {
+        int_type c = this->buf_->sgetc();
+        if (c == this->widen(delim) or c == traits_type::eof()) {
+            if (c == traits_type::eof()) this->setstate(ios_base::eofbit);
+            break;
+        }
+        if (sb.sputc(c) == traits_type::eof()) break;
+        this->buf_->sbumpc();
+        gcount_++;
+    }
+    return *this;
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::getline(char_type *s, streamsize n, char_type delim) {
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    for (gcount_ = 0; gcount_ < n;) {
+        int_type c = this->buf_->sbumpc();
+
+        if (c == this->widen(delim) or c == traits_type::eof()) {
+            if (c == traits_type::eof()) this->setstate(ios_base::eofbit);
+            gcount_++;
+            break;
+        }
+        s[gcount_] = c;
+        gcount_++;
+    }
+
+    if (gcount_ == 0 or (gcount_ == n and this->buf_->sgetc() != this->widen(delim))) {
+        this->setstate(ios_base::failbit);
+    }
+
+    return *this;
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::ignore(streamsize n, int_type delim) {
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    for (gcount_ = 0; gcount_ < n;) {
+        int_type c = this->buf_->sbumpc();
+        gcount_++;
+        if (c == this->widen(delim) or c == traits_type::eof()) {
+            if (c == traits_type::eof()) this->setstate(ios_base::eofbit);
+            break;
+        }
+    }
+
+    return *this;
+}
+
+template <class charT, class traits>
+typename basic_istream<charT, traits>::int_type basic_istream<charT, traits>::peek() {
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    return this->buf_->sgetc();
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::read(char_type *s, streamsize n) {
+    get(s, n, traits_type::eof());
+    if (this->flags_ & ios_base::eofbit) this->setstate(ios_base::failbit);
+
+    return *this;
+}
+
+template <class charT, class traits>
+streamsize basic_istream<charT, traits>::readsome(char_type *s, streamsize n) {
+    // Technically the spec requires us to use buf_->in_avail(), but no
+
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    for (gcount_ = 0; gcount_ < n; gcount_++) {
+        int_type c = this->buf_->__sbumpc_some();
+        if (c == traits_type::eof()) return gcount_;
+        s[gcount_] = c;
+    }
+
+    return n;
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::putback(char_type c) {
+    this->clear(this->rdstate() & ~ios_base::eofbit); // Clear eofbit
+    gcount_ = 0;
+
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    if (this->buf_->sputbackc(c) == traits_type::eof())
+        this->setstate(ios_base::badbit);
+    return *this;
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::unget() {
+    this->clear(this->rdstate() & ~ios_base::eofbit); // Clear eofbit
+    gcount_ = 0;
+
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    if (this->buf_->sungetc() == traits_type::eof())
+        this->setstate(ios_base::badbit);
+    return *this;
+}
+
+template <class charT, class traits>
+typename basic_istream<charT, traits>::pos_type basic_istream<charT, traits>::tellg() {
+    sentry sen(*this, true);
+    if (this->fail()) return -1;
+    return this->buf_->pubseekoff(0, ios_base::cur, ios_base::in);
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::seekg(pos_type pos) {
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    this->buf_->pubseekpos(pos, ios_base::in);
+
+    return *this;
+}
+
+template <class charT, class traits>
+basic_istream<charT, traits> &basic_istream<charT, traits>::seekg(off_type off, ios_base::seekdir way) {
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    this->buf_->pubseekoff(off, way, ios_base::in);
+
+    return *this;
+}
+
+template <class charT, class traits>
+int basic_istream<charT, traits>::sync() {
+    sentry sen(*this, true);
+    if (!sen) {
+        gcount_ = 0;
+        return *this;
+    }
+    if (!this->buf_) return -1; // Should this be everywhere else too?
+    return this->buf_->pubsync();
+}
+
+template <class charT, class traits>
+void basic_istream<charT, traits>::swap(basic_istream &x) {
+    basic_ios<charT, traits>::swap(x);
+    std::swap(gcount_, x.gcount_);
+}
+
+template <class charT, class traits>
+class basic_istream<charT, traits>::sentry {
+    bool state_ = false;
+    basic_istream &stream_;
+public:
+    explicit sentry(basic_istream &is, bool noskipws = false);
+    ~sentry() = default;
+
+    explicit operator bool() const { return state_; }
+
+    sentry(const sentry &) = delete;
+    sentry &operator=(const sentry &) = delete;
+};
+
+template <class charT, class traits>
+basic_istream<charT, traits>::sentry::sentry(basic_istream<charT, traits> &is, bool noskipws)
+    : stream_(is) {
+    if (stream_.fail() or stream_.eof()) {
+        stream_.setstate(ios_base::failbit);
+        return;
+    }
+
+    if (stream_.tie_) stream_.tie_->flush();
+
+    if (stream_.flags_ & ios_base::skipws and !noskipws) {
+        while (isspace(stream_.buf_->sgetc(), stream_.locale_)) {
+            stream_.buf_->sbumpc();
+        }
+        if (stream_.buf_->sgetc() == traits_type::eof()) {
+            stream_.setstate(ios_base::failbit | ios_base::eofbit);
+        }
+    }
+    state_ = true;
+}
+
+template <class charT, class traits /*= char_traits<charT>*/> // default argument defined in `iosfwd`
+class basic_iostream : public basic_istream<charT, traits>, public basic_ostream<charT, traits> {
+    static_assert(is_char_traits<traits>());
+public:
+    typedef charT char_type;
+    typedef traits traits_type;
+    typedef typename traits::int_type int_type;
+    typedef typename traits::pos_type pos_type;
+    typedef typename traits::off_type off_type;
+
+    explicit basic_iostream(basic_streambuf<char_type, traits_type> *sb);
+    basic_iostream(const basic_iostream &) = delete;
+protected:
+    basic_iostream(basic_iostream &&x)
+        : basic_istream<charT, traits>(x) {}
+public:
+    virtual ~basic_iostream() = default;
+
+    basic_iostream &operator=(const basic_iostream &) = delete;
+    basic_iostream &operator=(basic_iostream &&rhs) { swap(rhs); }
+
+    void swap(basic_iostream &x) { basic_istream<charT, traits>::swap(x); }
+};
+
+template <class charT, class traits>
+basic_iostream<charT, traits>::basic_iostream(basic_streambuf<char_type, traits_type> *sb)
+    : basic_istream<charT, traits>(sb), basic_ostream<charT, traits>(sb) {}
+}
+
+#endif //CPP_STALIN_INCLUDE_ISTREAM__

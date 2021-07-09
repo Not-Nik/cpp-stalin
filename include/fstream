@@ -51,7 +51,6 @@ protected:
     friend class ios_base::Init;
 
     basic_filebuf *__open(FILE *f, ios_base::openmode which);
-    size_t __fill_input_buffer();
     int_type __clean_output_buffer();
 };
 
@@ -94,7 +93,7 @@ bool basic_filebuf<charT, traits>::is_open() const {
 
 template <class charT, class traits>
 basic_filebuf<charT, traits> *basic_filebuf<charT, traits>::close() {
-    if (!file_ || basic_streambuf<charT, traits>::overflow() == traits_type::eof() || ::fclose(file_)) return nullptr;
+    if (!file_ || this->overflow() == traits_type::eof() || ::fclose(file_)) return nullptr;
     file_ = nullptr;
     return this;
 }
@@ -103,20 +102,13 @@ template <class charT, class traits>
 typename basic_filebuf<charT, traits>::int_type basic_filebuf<charT, traits>::underflow() {
     if (!file_) return traits_type::eof();
     used_ = true;
-    if (basic_streambuf<charT, traits>::egptr_ and basic_streambuf<charT, traits>::eback_) {
-        // fill buffer, duh, underflow is only called when we read everything in the buffer, so no data is lost
-        __fill_input_buffer();
-        // get current char
-        return traits::to_int_type(*basic_streambuf<charT, traits>::gptr_);
-        // Pointer was never advanced so we don't need to wind it back
-    } else {
-        // Reposition after write, before read
-        ::fseek(file_, 0, SEEK_CUR);
-        int_type r = traits::to_int_type(fgetc(file_));
-        // Wind back pointer which fgetc previously advanced
-        ::fseek(file_, -1, SEEK_CUR);
-        return r;
-    }
+
+    // Reposition after write, before read
+    ::fseek(file_, 0, SEEK_CUR);
+    int_type r = traits::to_int_type(fgetc(file_));
+    // Wind back pointer which fgetc previously advanced
+    ::fseek(file_, -1, SEEK_CUR);
+    return r;
 }
 
 template <class charT, class traits>
@@ -124,20 +116,11 @@ typename basic_filebuf<charT, traits>::int_type basic_filebuf<charT, traits>::uf
     if (!file_) return traits_type::eof();
     int_type r;
     used_ = true;
-    // buffer exists
-    if (basic_streambuf<charT, traits>::egptr_ and basic_streambuf<charT, traits>::eback_) {
-        // fill buffer, duh, uflow is only called when we read everything in the buffer, so no data is lost
-        __fill_input_buffer();
-        // get current char
-        r = traits::to_int_type(*basic_streambuf<charT, traits>::gptr_);
-        // Advance pointer
-        basic_streambuf<charT, traits>::gptr_++;
-    } else {
-        // Reposition after read, before write
-        ::fseek(file_, 0, SEEK_CUR);
-        r = traits::to_int_type(fgetc(file_));
-        // fgetc advanced the pointer so we don't need to do it
-    }
+
+    // Reposition after read, before write
+    ::fseek(file_, 0, SEEK_CUR);
+    r = traits::to_int_type(fgetc(file_));
+    // fgetc advanced the pointer so we don't need to do it
     return r;
 }
 
@@ -145,18 +128,8 @@ template <class charT, class traits>
 typename basic_filebuf<charT, traits>::int_type basic_filebuf<charT, traits>::pbackfail(int_type c) {
     if (!file_) return traits_type::eof();
 
-    // buffer exists
-    if (basic_streambuf<charT, traits>::egptr_ and basic_streambuf<charT, traits>::eback_) {
-        // pointer isn't in danger of going out of bounds
-        if (basic_streambuf<charT, traits>::gptr_ > basic_streambuf<charT, traits>::eback_) {
-            // decrease pointer
-            basic_streambuf<charT, traits>::gptr_--;
-            *basic_streambuf<charT, traits>::gptr_ = c;
-        } else return traits_type::eof();
-    } else {
-        used_ = true;
-        ungetc(c, file_);
-    }
+    used_ = true;
+    ungetc(c, file_);
     return traits_type::not_eof(c);
 }
 
@@ -164,7 +137,7 @@ template <class charT, class traits>
 typename basic_filebuf<charT, traits>::int_type basic_filebuf<charT, traits>::overflow(int_type c) {
     if (!file_) return traits_type::eof();
 
-    if (basic_streambuf<charT, traits>::epptr_ and basic_streambuf<charT, traits>::pbase_) {
+    if (this->epptr_ and this->pbase_) {
         used_ = true;
         // flush buffer
         if (__clean_output_buffer() != 0) return traits_type::eof(); // we could throw here
@@ -186,19 +159,16 @@ basic_filebuf<charT, traits> *basic_filebuf<charT, traits>::setbuf(char_type *s,
     // we cant indicate failure by returning so just throw?
     if (n < 0 && s) throw; // Todo: Exceptions
     if (s && n && !used_) {
-        char_type *mid = s + n / 2;
-        if (dir_ & ios_base::in) {
-            basic_streambuf<charT, traits>::setg(s, s, mid);
-            s = mid;
-            n -= n/2;
-        }
+        // Buffer is ignore if the stream is input only, because input buffering is hard
+        // We always have to assume that an input stream might be interactive so reading
+        // anything in advance is ambiguous
         if (dir_ & ios_base::out) {
-            basic_streambuf<charT, traits>::setp(s, s + n);
+            this->setp(s, s + n);
         }
     } else if (!s and !n) {
         // disable buffering completely
-        basic_streambuf<charT, traits>::setg(nullptr, nullptr, nullptr);
-        basic_streambuf<charT, traits>::setp(nullptr, nullptr);
+        this->setg(nullptr, nullptr, nullptr);
+        this->setp(nullptr, nullptr);
     } else {
         // everything else is invalid
         throw;
@@ -216,29 +186,14 @@ typename basic_filebuf<charT, traits>::pos_type basic_filebuf<charT, traits>::se
         // Give up directly because we need to flush the write buffer anyways
         __clean_output_buffer();
         ::fseek(file_, off, way);
-        __fill_input_buffer();
     } else if (which == ios_base::in) {
-        // Read buffer exists
-        if (basic_streambuf<charT, traits>::egptr_ and basic_streambuf<charT, traits>::eback_) {
-            // Calculate possible pointer location
-            char_type *r = basic_streambuf<charT, traits>::gptr_ + off;
-            // Is in bounds and origin is current location
-            // fixme: we can check if the desired location is buffered even when way != ios_base:cur using ::ftell
-            if (way == ios_base::cur and r < basic_streambuf<charT, traits>::egptr_ and r >= basic_streambuf<charT, traits>::eback_) {
-                // Update pointer location
-                basic_streambuf<charT, traits>::gptr_ = r;
-            } else {
-                // Buffer exists but desired location is not buffered
-                ::fseek(file_, off, way);
-                __fill_input_buffer();
-            }
-            // Buffer doesnt exist
-        } else ::fseek(file_, off, way);
+        // We don't have input buffers, ever
+        ::fseek(file_, off, way);
     } else if (which == ios_base::out) {
         // Seeking with the write buffer is hard, especially forwards
         // fixme: we can seek with the write buffer by reading the from the file if the desired location is after the current one,
         //  this doesnt mess with the contents when flushing
-        if (basic_streambuf<charT, traits>::epptr_ and basic_streambuf<charT, traits>::pbase_) __clean_output_buffer();
+        if (this->epptr_ and this->pbase_) __clean_output_buffer();
         ::fseek(file_, off, way);
     }
 
@@ -252,10 +207,8 @@ typename basic_filebuf<charT, traits>::pos_type basic_filebuf<charT, traits>::se
     if (!file_) return -1;
 
     // Flush buffer to current position
-    if (which == ios_base::out and basic_streambuf<charT, traits>::epptr_ and basic_streambuf<charT, traits>::pbase_) __clean_output_buffer();
+    if (which == ios_base::out and this->epptr_ and this->pbase_) __clean_output_buffer();
     ::fseek(file_, pos, SEEK_SET);
-    // Read into buffer from new position
-    if (which == ios_base::in and basic_streambuf<charT, traits>::egptr_ and basic_streambuf<charT, traits>::eback_) __fill_input_buffer();
 
     return pos;
 }
@@ -263,7 +216,7 @@ typename basic_filebuf<charT, traits>::pos_type basic_filebuf<charT, traits>::se
 template <class charT, class traits>
 int basic_filebuf<charT, traits>::sync() {
     if (!file_) return -1;
-    if (basic_streambuf<charT, traits>::epptr_ and basic_streambuf<charT, traits>::pbase_)
+    if (this->epptr_ and this->pbase_)
         // Flush buffer
         return __clean_output_buffer();
     // Flush in case file_ was buffered
@@ -273,7 +226,7 @@ int basic_filebuf<charT, traits>::sync() {
 
 template <class charT, class traits>
 void basic_filebuf<charT, traits>::imbue(const locale &loc) {
-    basic_streambuf<charT, traits>::imbue(loc);
+    this->imbue(loc);
 }
 
 template <class charT, class traits>
@@ -284,34 +237,19 @@ basic_filebuf<charT, traits> *basic_filebuf<charT, traits>::__open(FILE *f, ios_
 }
 
 template <class charT, class traits>
-size_t basic_filebuf<charT, traits>::__fill_input_buffer() {
-    // Get total buffer size in bytes
-    size_t diff = basic_streambuf<charT, traits>::egptr_ - basic_streambuf<charT, traits>::eback_;
-    // Amount of charT's in the buffer
-    size_t size = diff / sizeof(charT);
-
-    // Reset pptr
-    basic_streambuf<charT, traits>::gptr_ = basic_streambuf<charT, traits>::eback_;
-    // Reposition after write, before read
-    ::fseek(file_, 0, SEEK_CUR);
-    // Read into buffer
-    return fread(basic_streambuf<charT, traits>::eback_, sizeof(charT), size, file_);
-}
-
-template <class charT, class traits>
 typename basic_filebuf<charT, traits>::int_type basic_filebuf<charT, traits>::__clean_output_buffer() {
     // Get total size of writen chars in bytes
-    size_t diff = basic_streambuf<charT, traits>::pptr_ - basic_streambuf<charT, traits>::pbase_;
+    size_t diff = this->pptr_ - this->pbase_;
     // Amount of written charT's
     size_t size = diff / sizeof(charT);
 
     // Reset pptr
-    basic_streambuf<charT, traits>::pptr_ = basic_streambuf<charT, traits>::pbase_;
+    this->pptr_ = this->pbase_;
 
     // Reposition after read, before write
     ::fseek(file_, 0, SEEK_CUR);
     // Write everything buffered previously
-    return fwrite(basic_streambuf<charT, traits>::pbase_, sizeof(charT), size, file_) == size ? 0 : -1;
+    return fwrite(this->pbase_, sizeof(charT), size, file_) == size ? 0 : -1;
 }
 }
 
