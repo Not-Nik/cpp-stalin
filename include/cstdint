@@ -1,11 +1,11 @@
-// metaxx (c) Nikolas Wipper 2021
+// cpp-stalin (c) Nikolas Wipper 2021
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef METAXX_SRC_CSTDINT__
-#define METAXX_SRC_CSTDINT__
+#ifndef CPP_STALIN_SRC_CSTDINT__
+#define CPP_STALIN_SRC_CSTDINT__
 
 #include <stdint.h>
 
@@ -38,4 +38,4 @@ using ::intptr_t;
 using ::uintptr_t;
 }
 
-#endif //METAXX_SRC_CSTDINT__
+#endif //CPP_STALIN_SRC_CSTDINT__

@@ -1,11 +1,11 @@
-// metaxx (c) Nikolas Wipper 2021
+// cpp-stalin (c) Nikolas Wipper 2021
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef METAXX_IOS__
-#define METAXX_IOS__
+#ifndef CPP_STALIN_INCLUDE_IOS__
+#define CPP_STALIN_INCLUDE_IOS__
 
 #include "iosfwd"
 #include "locale"
@@ -377,4 +377,4 @@ ios_base &hexfloat(ios_base &str);
 ios_base &defaultfloat(ios_base &str);
 }
 
-#endif //METAXX_IOS__
+#endif //CPP_STALIN_INCLUDE_IOS__

@@ -1,11 +1,11 @@
-// metaxx (c) Nikolas Wipper 2021
+// cpp-stalin (c) Nikolas Wipper 2021
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef METAXX_INCLUDE_SYSTEM_ERROR__
-#define METAXX_INCLUDE_SYSTEM_ERROR__
+#ifndef CPP_STALIN_INCLUDE_SYSTEM_ERROR__
+#define CPP_STALIN_INCLUDE_SYSTEM_ERROR__
 
 #include "cerrno"
 #include "iosfwd"
@@ -263,4 +263,4 @@ public:
 };
 }
 
-#endif //METAXX_INCLUDE_SYSTEM_ERROR__
+#endif //CPP_STALIN_INCLUDE_SYSTEM_ERROR__

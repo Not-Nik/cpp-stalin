@@ -1,11 +1,11 @@
-// metaxx (c) Nikolas Wipper 2021
+// cpp-stalin (c) Nikolas Wipper 2021
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef METAXX_LOCALE_
-#define METAXX_LOCALE_
+#ifndef CPP_STALIN_LOCALE_
+#define CPP_STALIN_LOCALE_
 
 // These are stub classes, implementation coming soon™
 
@@ -79,4 +79,4 @@ bool isspace (charT c, const locale& loc) {
 }
 }
 
-#endif //METAXX_LOCALE_
+#endif //CPP_STALIN_LOCALE_

@@ -1,11 +1,11 @@
-// metaxx (c) Nikolas Wipper 2021
+// cpp-stalin (c) Nikolas Wipper 2021
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef METAXX_INCLUDE_STREAMBUF__
-#define METAXX_INCLUDE_STREAMBUF__
+#ifndef CPP_STALIN_INCLUDE_STREAMBUF__
+#define CPP_STALIN_INCLUDE_STREAMBUF__
 
 #include "ios"
 #include "locale"
@@ -244,4 +244,4 @@ typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>
 }
 }
 
-#endif //METAXX_INCLUDE_STREAMBUF__
+#endif //CPP_STALIN_INCLUDE_STREAMBUF__

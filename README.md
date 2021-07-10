@@ -8,4 +8,4 @@ something new.
 
  * `include/` - The main include directory
  * `src/` - The source directory. Any implementations for non-template functions are here
- * `test/` - Test directory. Contains tests to ensure the functionality of metaxx
+ * `test/` - Test directory. Contains tests to ensure the functionality of cpp-stalin

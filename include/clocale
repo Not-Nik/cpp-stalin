@@ -1,11 +1,11 @@
-// metaxx (c) Nikolas Wipper 2021
+// cpp-stalin (c) Nikolas Wipper 2021
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef METAXX_CLOCALE_
-#define METAXX_CLOCALE_
+#ifndef CPP_STALIN_INCLUDE_CLOCALE_
+#define CPP_STALIN_INCLUDE_CLOCALE_
 
 #include <locale.h>
 
@@ -15,4 +15,4 @@ using ::setlocale;
 using ::localeconv;
 }
 
-#endif //METAXX_CLOCALE_
+#endif //CPP_STALIN_INCLUDE_CLOCALE_

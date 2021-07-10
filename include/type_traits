@@ -1,11 +1,11 @@
-// untitled (c) Nikolas Wipper 2021
+// cpp-stalin (c) Nikolas Wipper 2021
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef UNTITLED_SRC_INC_TYPETRAITS_H_
-#define UNTITLED_SRC_INC_TYPETRAITS_H_
+#ifndef CPP_STALIN_INCLUDE_TYPETRAITS_H_
+#define CPP_STALIN_INCLUDE_TYPETRAITS_H_
 
 #include "cstddef"
 #include "cstdint"
@@ -503,10 +503,10 @@ struct is_trivially_constructible<T, T &> : integral_constant<bool, is_scalar<T>
 };
 
 template <bool, bool, class T, class... Args>
-struct __metaxx_is_nothrow_constructible;
+struct __stalin_is_nothrow_constructible;
 
 template <class T, class... Args>
-struct __metaxx_is_nothrow_constructible</*is constructible*/true, /*is reference*/false, T, Args...> : public integral_constant<bool,
+struct __stalin_is_nothrow_constructible</*is constructible*/true, /*is reference*/false, T, Args...> : public integral_constant<bool,
                                                                                                                                  noexcept(T(declval<
                                                                                                                                      Args>()...))> {
 };
@@ -515,21 +515,21 @@ template <class T>
 void __implicit_conversion_to(T) noexcept {}
 
 template <class T, class Arg>
-struct __metaxx_is_nothrow_constructible</*is constructible*/true, /*is reference*/true, T, Arg> : public integral_constant<bool,
+struct __stalin_is_nothrow_constructible</*is constructible*/true, /*is reference*/true, T, Arg> : public integral_constant<bool,
                                                                                                                             noexcept(__implicit_conversion_to<
                                                                                                                                 T>(declval<Arg>()))> {
 };
 
 template <class T, bool _IsReference, class... Args>
-struct __metaxx_is_nothrow_constructible</*is constructible*/false, _IsReference, T, Args...> : public false_type {
+struct __stalin_is_nothrow_constructible</*is constructible*/false, _IsReference, T, Args...> : public false_type {
 };
 
 template <class T, class... Args>
-struct is_nothrow_constructible : __metaxx_is_nothrow_constructible<is_constructible<T, Args...>::value, is_reference<T>::value, T, Args...> {
+struct is_nothrow_constructible : __stalin_is_nothrow_constructible<is_constructible<T, Args...>::value, is_reference<T>::value, T, Args...> {
 };
 
 template <class T, size_t Ns>
-struct is_nothrow_constructible<T[Ns]> : __metaxx_is_nothrow_constructible<is_constructible<T>::value, is_reference<T>::value, T> {
+struct is_nothrow_constructible<T[Ns]> : __stalin_is_nothrow_constructible<is_constructible<T>::value, is_reference<T>::value, T> {
 };
 
 template <class T>
@@ -576,18 +576,18 @@ template <class T>
 struct is_trivially_assignable<T &, T &&> : integral_constant<bool, is_scalar<T>::value> {};
 
 template <bool, class T, class Arg>
-struct __metaxx_is_nothrow_assignable;
+struct __stalin_is_nothrow_assignable;
 
 template <class T, class Arg>
-struct __metaxx_is_nothrow_assignable<false, T, Arg> : public false_type {
+struct __stalin_is_nothrow_assignable<false, T, Arg> : public false_type {
 };
 
 template <class T, class Arg>
-struct __metaxx_is_nothrow_assignable<true, T, Arg> : public integral_constant<bool, noexcept(declval<T>() = declval<Arg>())> {
+struct __stalin_is_nothrow_assignable<true, T, Arg> : public integral_constant<bool, noexcept(declval<T>() = declval<Arg>())> {
 };
 
 template <class T, class Arg>
-struct is_nothrow_assignable : public __metaxx_is_nothrow_assignable<is_assignable<T, Arg>::value, T, Arg> {
+struct is_nothrow_assignable : public __stalin_is_nothrow_assignable<is_assignable<T, Arg>::value, T, Arg> {
 };
 
 template <class T>
@@ -622,4 +622,4 @@ struct is_base_of : integral_constant<bool,
 };
 }
 
-#endif //UNTITLED_SRC_INC_TYPETRAITS_H_
+#endif //CPP_STALIN_INCLUDE_TYPETRAITS_H_
