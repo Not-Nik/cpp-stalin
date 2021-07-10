@@ -7,7 +7,7 @@
 #ifndef METAXX_INCLUDE___STREAM_TYPES__
 #define METAXX_INCLUDE___STREAM_TYPES__
 
-#include <cwchar>
+#include "cwchar"
 
 namespace std {
 [[maybe_unused]] typedef intptr_t streamoff;

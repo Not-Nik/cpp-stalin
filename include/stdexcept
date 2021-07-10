@@ -1,0 +1,34 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_STDEXCEPT__
+#define CPP_STALIN_INCLUDE_STDEXCEPT__
+
+#include "exception"
+
+namespace std {
+
+class runtime_error : public exception {
+public:
+    //runtime_error(const std::string &what_arg); // TODO: Implement std::string
+    runtime_error(const char *what_arg)
+        : exception() { this->what_ = what_arg; }
+
+    runtime_error(const runtime_error &other) noexcept = default;
+};
+
+class logic_error : public exception {
+public:
+    //explicit logic_error(const string &what_arg); // todo string
+    explicit logic_error(const char *what_arg) : exception() { this->what_ = what_arg; }
+};
+
+class invalid_argument : public logic_error {
+    using logic_error::logic_error;
+};
+}
+
+#endif //CPP_STALIN_INCLUDE_STDEXCEPT__

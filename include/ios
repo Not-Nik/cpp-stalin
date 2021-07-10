@@ -7,13 +7,13 @@
 #ifndef METAXX_IOS__
 #define METAXX_IOS__
 
-#include "cstdint"
+#include "iosfwd"
 #include "locale"
+#include "cstdint"
 #include "utility"
 #include "cstdlib"
 #include "system_error"
 #include "__stream_types"
-#include "iosfwd"
 
 namespace std {
 
@@ -69,6 +69,7 @@ public:
     enum seekdir { beg = SEEK_SET, cur = SEEK_CUR, end = SEEK_END };
 
     class Init;
+
     static Init init_;
 
     class failure;
@@ -125,6 +126,28 @@ public:
     void register_callback(event_callback fn, int index);
 
     bool sync_with_stdio(bool sync = true);
+};
+
+enum class io_errc {
+    stream = 1,
+    eof [[maybe_unused]] = ios_base::eofbit,
+    fail [[maybe_unused]] = ios_base::failbit,
+    bad [[maybe_unused]] = ios_base::badbit,
+
+    eof_fail [[maybe_unused]] = eof | fail,
+    eof_bad [[maybe_unused]] = eof | bad,
+    fail_bad [[maybe_unused]] = fail | bad,
+    eof_fail_bad [[maybe_unused]] = eof | fail | bad
+};
+
+template <>
+struct is_error_code_enum<io_errc> : public true_type {};
+
+class ios_base::failure : public system_error {
+public:
+    //explicit failure (const string& msg, const error_code& ec = io_errc::stream); // todo strings
+    explicit failure(const char *msg, const error_code &ec = io_errc::stream)
+        : system_error(ec, msg) {}
 };
 
 class ios_base::Init {
@@ -190,8 +213,8 @@ public:
     basic_streambuf<char_type, traits_type> *rdbuf() const { return buf_; }
     basic_streambuf<char_type, traits_type> *rdbuf(basic_streambuf<char_type, traits_type> *sb);
 
-    char narrow (char_type wc, char dfault) const { return dfault; } // Internal workings require Todo: locale implementation
-    char_type widen (char c) const { return c; }
+    char narrow(char_type wc, char dfault) const { return dfault; } // Internal workings require Todo: locale implementation
+    char_type widen(char c) const { return c; }
 
 protected:
     void init(basic_streambuf<char_type, traits_type> *sb);
@@ -201,7 +224,7 @@ protected:
 
     void swap(basic_ios &x) noexcept;
 
-    //void set_rdbuf (basic_streambuf<char_type,traits_type>* sb);
+    void set_rdbuf (basic_streambuf<char_type,traits_type>* sb) { buf_ = sb; }
 };
 
 typedef basic_ios<char> ios;
@@ -211,7 +234,7 @@ template <class charT, class traits>
 void basic_ios<charT, traits>::setstate(ios_base::iostate state) {
     state_ |= state;
     if (state & exception_mask_) {
-        throw; // Todo: exceptions
+        throw failure("", error_code((io_errc) (state & exception_mask_)));
     }
 }
 
@@ -266,7 +289,9 @@ template <class charT, class traits>
 basic_streambuf<typename basic_ios<charT, traits>::char_type, typename basic_ios<charT, traits>::traits_type> *basic_ios<charT, traits>::rdbuf(
     basic_streambuf<char_type, traits_type> *sb) {
     if (!sb) {
-        throw; // Todo: Exceptions
+        this->setstate(ios_base::badbit);
+    } else {
+        state_ = 0;
     }
     basic_streambuf<char_type, traits_type> *t = buf_;
     buf_ = sb;
@@ -328,13 +353,6 @@ void basic_ios<charT, traits>::swap(basic_ios &x) noexcept {
     std::swap(state_, x.state_);
     std::swap(fill_, x.fill_);
 }
-
-enum class io_errc {
-    stream = 1
-};
-
-template <>
-struct is_error_code_enum<io_errc> : public true_type {};
 
 ios_base &boolalpha(ios_base &str);
 ios_base &showbase(ios_base &str);

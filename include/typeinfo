@@ -1,0 +1,44 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_TYPEINFO__
+#define CPP_STALIN_INCLUDE_TYPEINFO__
+
+#include "cstddef"
+#include "cstdint"
+#include "exception"
+
+namespace std {
+class type_info {
+    char typename_[sizeof(uintptr_t) + 1] = {0};
+public:
+    type_info(const type_info &) = delete;
+    virtual ~type_info() = default;
+
+    type_info &operator=(const type_info &) = delete;
+    constexpr bool operator==(const type_info &rhs) const noexcept { return this == &rhs; }
+
+    bool before(const type_info &rhs) const noexcept;
+    size_t hash_code() const noexcept;
+    const char *name() const noexcept;
+};
+
+class bad_typeid : public std::exception {
+    bad_typeid([[maybe_unused]] const char *what_arg)
+        : exception() { this->what_ = "bad typeid"; }
+
+    bad_typeid(const bad_typeid &other) noexcept = default;
+};
+
+class bad_cast : public std::exception {
+    bad_cast([[maybe_unused]] const char *what_arg)
+        : exception() { this->what_ = "bad cast"; }
+
+    bad_cast(const bad_cast &other) noexcept = default;
+};
+}
+
+#endif //CPP_STALIN_INCLUDE_TYPEINFO__

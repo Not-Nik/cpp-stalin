@@ -5,6 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include <ios>
+
 #include <fstream>
 #include <iostream>
 
@@ -114,7 +115,7 @@ void std::ios_base::register_callback(ios_base::event_callback fn, int index) {
     };
 }
 
-bool std::ios_base::sync_with_stdio(bool sync) { // Todo
+bool std::ios_base::sync_with_stdio([[maybe_unused]] bool sync) { // Todo
     throw; // Todo: Exceptions
     return false;
 }

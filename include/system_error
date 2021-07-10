@@ -7,12 +7,260 @@
 #ifndef METAXX_INCLUDE_SYSTEM_ERROR__
 #define METAXX_INCLUDE_SYSTEM_ERROR__
 
+#include "cerrno"
+#include "iosfwd"
+#include "stdexcept"
+#include "type_traits"
+
 namespace std {
 
-template <class T>
-struct is_error_code_enum;
+class error_code;
 
-template <class T> inline constexpr bool is_error_code_enum_v = is_error_code_enum<T>::value;
+class error_category;
+
+class error_condition;
+
+template <class T>
+struct is_error_code_enum : public false_type {};
+
+template <class T> [[maybe_unused]] inline constexpr bool is_error_code_enum_v = is_error_code_enum<T>::value;
+
+enum class errc {
+    address_family_not_supported [[maybe_unused]] = EAFNOSUPPORT,
+    address_in_use [[maybe_unused]] = EADDRINUSE,
+    address_not_available [[maybe_unused]] = EADDRNOTAVAIL,
+    already_connected [[maybe_unused]] = EISCONN,
+    argument_list_too_long [[maybe_unused]] = E2BIG,
+    argument_out_of_domain [[maybe_unused]] = EDOM,
+    bad_address [[maybe_unused]] = EFAULT,
+    bad_file_descriptor [[maybe_unused]] = EBADF,
+    bad_message [[maybe_unused]] = EBADMSG,
+    broken_pipe [[maybe_unused]] = EPIPE,
+    connection_aborted [[maybe_unused]] = ECONNABORTED,
+    connection_already_in_progress [[maybe_unused]] = EALREADY,
+    connection_refused [[maybe_unused]] = ECONNREFUSED,
+    connection_reset [[maybe_unused]] = ECONNRESET,
+    cross_device_link [[maybe_unused]] = EXDEV,
+    destination_address_required [[maybe_unused]] = EDESTADDRREQ,
+    device_or_resource_busy [[maybe_unused]] = EBUSY,
+    directory_not_empty [[maybe_unused]] = ENOTEMPTY,
+    executable_format_error [[maybe_unused]] = ENOEXEC,
+    file_exists [[maybe_unused]] = EEXIST,
+    file_too_large [[maybe_unused]] = EFBIG,
+    filename_too_long [[maybe_unused]] = ENAMETOOLONG,
+    function_not_supported [[maybe_unused]] = ENOSYS,
+    host_unreachable [[maybe_unused]] = EHOSTUNREACH,
+    identifier_removed [[maybe_unused]] = EIDRM,
+    illegal_byte_sequence [[maybe_unused]] = EILSEQ,
+    inappropriate_io_control_operation [[maybe_unused]] = ENOTTY,
+    interrupted [[maybe_unused]] = EINTR,
+    invalid_argument [[maybe_unused]] = EINVAL,
+    invalid_seek [[maybe_unused]] = ESPIPE,
+    io_error [[maybe_unused]] = EIO,
+    is_a_directory [[maybe_unused]] = EISDIR,
+    message_size [[maybe_unused]] = EMSGSIZE,
+    network_down [[maybe_unused]] = ENETDOWN,
+    network_reset [[maybe_unused]] = ENETRESET,
+    network_unreachable [[maybe_unused]] = ENETUNREACH,
+    no_buffer_space [[maybe_unused]] = ENOBUFS,
+    no_child_process [[maybe_unused]] = ECHILD,
+    no_link [[maybe_unused]] = ENOLINK,
+    //no_lock_available [[maybe_unused]] = ENOLOCK, // not available with gcc and clang
+    no_message [[maybe_unused]] = ENOMSG,
+    no_message_available [[maybe_unused]] = ENODATA,
+    no_protocol_option [[maybe_unused]] = ENOPROTOOPT,
+    no_space_on_device [[maybe_unused]] = ENOSPC,
+    no_stream_resources [[maybe_unused]] = ENOSR,
+    no_such_device [[maybe_unused]] = ENODEV,
+    no_such_device_or_address [[maybe_unused]] = ENXIO,
+    no_such_file_or_directory [[maybe_unused]] = ENOENT,
+    no_such_process [[maybe_unused]] = ESRCH,
+    not_a_directory [[maybe_unused]] = ENOTDIR,
+    not_a_socket [[maybe_unused]] = ENOTSOCK,
+    not_a_stream [[maybe_unused]] = ENOSTR,
+    not_connected [[maybe_unused]] = ENOTCONN,
+    not_enough_memory [[maybe_unused]] = ENOMEM,
+    not_supported [[maybe_unused]] = ENOTSUP,
+    operation_canceled [[maybe_unused]] = ECANCELED,
+    operation_in_progress [[maybe_unused]] = EINPROGRESS,
+    operation_not_permitted [[maybe_unused]] = EPERM,
+    operation_not_supported [[maybe_unused]] = EOPNOTSUPP,
+    operation_would_block [[maybe_unused]] = EWOULDBLOCK,
+    owner_dead [[maybe_unused]] = EOWNERDEAD,
+    permission_denied [[maybe_unused]] = EACCES,
+    protocol_error [[maybe_unused]] = EPROTO,
+    protocol_not_supported [[maybe_unused]] = EPROTONOSUPPORT,
+    read_only_file_system [[maybe_unused]] = EROFS,
+    resource_deadlock_would_occur [[maybe_unused]] = EDEADLK,
+    resource_unavailable_try_again [[maybe_unused]] = EAGAIN,
+    result_out_of_range [[maybe_unused]] = ERANGE,
+    state_not_recoverable [[maybe_unused]] = ENOTRECOVERABLE,
+    stream_timeout [[maybe_unused]] = ETIME,
+    text_file_busy [[maybe_unused]] = ETXTBSY,
+    timed_out [[maybe_unused]] = ETIMEDOUT,
+    too_many_files_open [[maybe_unused]] = EMFILE,
+    too_many_files_open_in_system [[maybe_unused]] = ENFILE,
+    too_many_links [[maybe_unused]] = EMLINK,
+    too_many_symbolic_link_levels [[maybe_unused]] = ELOOP,
+    value_too_large [[maybe_unused]] = EOVERFLOW,
+    wrong_protocol_type [[maybe_unused]] = EPROTOTYPE
+};
+
+template <class T>
+struct is_error_condition_enum : public false_type {};
+template<>
+struct is_error_condition_enum<errc> : true_type {};
+
+const error_category &generic_category() noexcept;
+const error_category &system_category() noexcept;
+error_code make_error_code(errc e) noexcept;
+error_condition make_error_condition (errc e) noexcept;
+
+class error_code {
+    int value_ = 0;
+    error_category &cat_;
+
+    friend bool operator==(const error_code &lhs, const error_code &rhs) noexcept;
+    friend bool operator!=(const error_code &lhs, const error_code &rhs) noexcept;
+    friend bool operator<(const error_code &lhs, const error_code &rhs) noexcept;
+
+    friend bool operator==(const error_code &lhs, const error_condition &rhs) noexcept;
+    friend bool operator==(const error_condition &lhs, const error_code &rhs) noexcept;
+    friend bool operator!=(const error_code &lhs, const error_condition &rhs) noexcept;
+    friend bool operator!=(const error_condition &lhs, const error_code &rhs) noexcept;
+
+    template <class charT, class traits>
+    friend basic_ostream<charT, traits> &operator<<(basic_ostream<charT, traits> &os, const error_code &ec);
+public:
+    error_code() noexcept
+        : value_(0), cat_((error_category &) system_category()) {}
+    error_code(int val, const error_category &cat) noexcept
+        : value_(val), cat_((error_category &) cat) {}
+    template <class ErrorCodeEnum>
+    error_code(ErrorCodeEnum e) noexcept;
+
+    void assign(int val, const error_category &cat) noexcept;
+
+    template <class ErrorCodeEnum>
+    error_code &operator=(ErrorCodeEnum e) noexcept;
+
+    void clear() noexcept;
+    [[nodiscard]] int value() const noexcept { return value_; }
+    [[nodiscard]] const error_category &category() const noexcept { return cat_; }
+    [[nodiscard]] error_condition default_error_condition() const noexcept;
+    //[[nodiscard]] string message() const; // todo strings
+
+    explicit operator bool() const noexcept { return value_ != 0; }
+};
+
+template <class ErrorCodeEnum>
+error_code &error_code::operator=(ErrorCodeEnum e) noexcept {
+    if (is_error_code_enum<ErrorCodeEnum>::value)
+        *this = make_error_code(e);
+    return *this;
+}
+
+bool operator==(const error_code &lhs, const error_code &rhs) noexcept;
+bool operator!=(const error_code &lhs, const error_code &rhs) noexcept;
+bool operator<(const error_code &lhs, const error_code &rhs) noexcept;
+
+bool operator== (const error_condition& lhs, const error_condition& rhs) noexcept;
+bool operator!= (const error_condition& lhs, const error_condition& rhs) noexcept;
+bool operator<  (const error_condition& lhs, const error_condition& rhs) noexcept;
+
+bool operator==(const error_code &lhs, const error_condition &rhs) noexcept;
+bool operator==(const error_condition &lhs, const error_code &rhs) noexcept;
+bool operator!=(const error_code &lhs, const error_condition &rhs) noexcept;
+bool operator!=(const error_condition &lhs, const error_code &rhs) noexcept;
+
+class error_condition {
+    int value_;
+    error_category &cat_;
+
+    friend bool operator== (const error_condition& lhs, const error_condition& rhs) noexcept;
+    friend bool operator!= (const error_condition& lhs, const error_condition& rhs) noexcept;
+    friend bool operator<  (const error_condition& lhs, const error_condition& rhs) noexcept;
+
+    friend bool operator==(const error_code &lhs, const error_condition &rhs) noexcept;
+    friend bool operator==(const error_condition &lhs, const error_code &rhs) noexcept;
+    friend bool operator!=(const error_code &lhs, const error_condition &rhs) noexcept;
+    friend bool operator!=(const error_condition &lhs, const error_code &rhs) noexcept;
+
+public:
+    error_condition() noexcept
+        : value_(0), cat_((error_category &) system_category()) {}
+    error_condition(int val, const error_category &cat) noexcept
+        : value_(val), cat_((error_category &) cat) {}
+    template <class ErrorConditionEnum>
+    error_condition(ErrorConditionEnum e) noexcept { if (is_error_condition_enum<ErrorConditionEnum>::value) *this = make_error_condition(e); }
+
+    void assign (int val, const error_category& cat) noexcept;
+
+    template <class ErrorConditionEnum>
+    error_condition& operator= (ErrorConditionEnum e) noexcept;
+
+    void clear() noexcept;
+    [[nodiscard]] int value() const noexcept { return value_; }
+    [[nodiscard]] const error_category& category() const noexcept { return cat_; }
+    //[[nodiscard]] string message() const; // todo strings
+
+    explicit operator bool() const noexcept { return value_ != 0; }
+};
+
+template <class ErrorConditionEnum>
+error_condition &error_condition::operator=(ErrorConditionEnum e) noexcept {
+    if (is_error_condition_enum<ErrorConditionEnum>::value)
+        *this = make_error_condition(e);
+    return *this;
+}
+
+class error_category {
+public:
+    error_category() = default;
+    error_category(const error_category &) = delete;
+
+    virtual ~error_category() = default;
+
+    bool operator==(const error_category &rhs) const noexcept { return this == &rhs; }
+    bool operator!=(const error_category &rhs) const noexcept { return this != &rhs; }
+    bool operator<(const error_category &rhs) const noexcept { return this < &rhs; }
+
+    [[nodiscard]] virtual const char *name() const noexcept = 0;
+    [[nodiscard]] virtual error_condition default_error_condition(int val) const noexcept { return error_condition(val, *this); }
+    [[nodiscard]] virtual bool equivalent(int valcode, const error_condition &cond) const noexcept {
+        return default_error_condition(valcode) == cond;
+    }
+    [[nodiscard]] virtual bool equivalent(const error_code &code, int valcond) const noexcept {
+        return *this == code.category() && code.value() == valcond;
+    }
+    //virtual string message(int val) const = 0; // todo strings
+};
+
+template <class charT, class traits>
+basic_ostream<charT, traits> &operator<<(basic_ostream<charT, traits> &os, const error_code &ec) {
+    os << ec.cat_.name() << ':' << ec.value_;
+}
+
+template <class ErrorCodeEnum>
+std::error_code::error_code(ErrorCodeEnum e) noexcept
+    : cat_((error_category &) generic_category()) {
+    if (is_error_code_enum<ErrorCodeEnum>::value) {
+        auto code = make_error_code((errc) e);
+        this->cat_ = code.cat_;
+        this->value_ = code.value_;
+    }
+}
+
+class system_error : public runtime_error {
+    error_code code_;
+public:
+    //system_error(error_code ec, const string &what_arg); // todo strings
+    system_error(error_code ec, const char *what_arg) : runtime_error(what_arg), code_(ec) {}
+    system_error(error_code ec) : runtime_error("system_error"), code_(ec) {}
+    //system_error(int val, const error_category &cat, const string &what_arg); // todo strings
+    system_error(int val, const error_category &cat, const char *what_arg) : runtime_error(what_arg), code_(val, cat) {}
+    system_error(int val, const error_category &cat) : runtime_error("system_error"), code_(val, cat) {}
+};
 }
 
 #endif //METAXX_INCLUDE_SYSTEM_ERROR__

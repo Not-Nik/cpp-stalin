@@ -9,18 +9,20 @@ project(cpp-stalin)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_definitions(-nostdinc++ -Wall -Wextra -Wpedantic)
+add_definitions(-nostdinc++ -pedantic -Wunused-parameter) #-Wall -Wextra -Wpedantic)
 
 add_library(stalin
         include/__declval
         include/__stream_types
         include/cassert
+        include/cerrno
         include/clocale
         include/cstddef
         include/cstdint
         include/cstdlib
         include/cstring
         include/cwchar
+        include/exception
         include/fstream
         include/ios
         include/iosfwd
@@ -29,15 +31,20 @@ add_library(stalin
         include/locale
         include/memory
         include/ostream
+        include/stdexcept
         include/streambuf
         include/string
         include/system_error
         include/type_traits
+        include/typeinfo
         include/utility
 
+        src/exception.cpp
         src/ios.cpp
         src/ostream.cpp
-        src/string.cpp)
+        src/string.cpp
+        src/system_error.cpp
+        src/typeinfo.cpp)
 
 target_include_directories(stalin PUBLIC include)
 

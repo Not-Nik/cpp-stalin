@@ -7,8 +7,8 @@
 #ifndef METAXX_INCLUDE_UTILITY__
 #define METAXX_INCLUDE_UTILITY__
 
-#include "type_traits"
 #include "__declval"
+#include "type_traits"
 
 namespace std {
 

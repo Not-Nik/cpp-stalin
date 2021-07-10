@@ -1,0 +1,28 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_EXCEPTION__
+#define CPP_STALIN_INCLUDE_EXCEPTION__
+
+namespace std {
+
+class exception {
+protected:
+    const char *what_;
+public:
+    exception() noexcept
+        : what_("generic exception") {}
+    exception(const exception &other) noexcept;
+
+    virtual ~exception() = default;
+
+    exception &operator=(const exception &other) noexcept;
+
+    virtual const char* what() const noexcept { return what_; }
+};
+}
+
+#endif //CPP_STALIN_INCLUDE_EXCEPTION__

@@ -9,8 +9,8 @@
 
 #include "memory"
 #include "cstring"
-#include "__stream_types"
 #include "type_traits"
+#include "__stream_types"
 
 namespace std {
 
@@ -67,9 +67,9 @@ const typename char_traits<charT>::char_type *char_traits<charT>::find(const cha
 
 template <class charT>
 typename char_traits<charT>::char_type *char_traits<charT>::move(char_type *dest, const char_type *src, size_t n) {
-    char_type temp[n];
-    for (size_t i = 0; i < n; i++) temp[i] = src[i];
-    for (size_t i = 0; i < n; i++) dest[i] = temp[i];
+    char_type t[n];
+    for (size_t i = 0; i < n; i++) t[i] = src[i];
+    for (size_t i = 0; i < n; i++) dest[i] = t[i];
     return dest;
 }
 

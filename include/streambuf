@@ -9,6 +9,7 @@
 
 #include "ios"
 #include "locale"
+#include "stdexcept"
 
 namespace std {
 template <class charT, class traits/*= char_traits<charT>*/> // default argument defined in `iosfwd`
@@ -71,19 +72,21 @@ protected:
 
     virtual void imbue(const locale &loc) { locale_ = loc; }
 
-    virtual basic_streambuf *setbuf(char_type *s, streamsize n) { return this; }
-    virtual pos_type seekoff(off_type off, ios_base::seekdir way, ios_base::openmode which = ios_base::in | ios_base::out) { return -1; }
-    virtual pos_type seekpos(pos_type pos, ios_base::openmode which = ios_base::in | ios_base::out) { return -1; }
+    virtual basic_streambuf *setbuf([[maybe_unused]] char_type *s, [[maybe_unused]] streamsize n) { return this; }
+    virtual pos_type seekoff([[maybe_unused]] off_type off,
+                             [[maybe_unused]] ios_base::seekdir way,
+                             [[maybe_unused]] ios_base::openmode which = ios_base::in | ios_base::out) { return -1; }
+    virtual pos_type seekpos([[maybe_unused]] pos_type pos, [[maybe_unused]] ios_base::openmode which = ios_base::in | ios_base::out) { return -1; }
     virtual int sync() { return 0; }
 
     virtual streamsize showmanyc() { return 0; }
     virtual streamsize xsgetn(char_type *s, streamsize n);
     virtual int_type underflow() { return traits_type::eof(); }
     virtual int_type uflow();
-    virtual int_type pbackfail(int_type c = traits_type::eof()) { return traits_type::eof(); }
+    virtual int_type pbackfail([[maybe_unused]] int_type c = traits_type::eof()) { return traits_type::eof(); }
 
     virtual streamsize xsputn(const char_type *s, streamsize n);
-    virtual int_type overflow(int_type c = traits_type::eof()) { return traits_type::eof(); }
+    virtual int_type overflow([[maybe_unused]] int_type c = traits_type::eof()) { return traits_type::eof(); }
 
     int_type __getc_some();
     int_type __sbumpc_some();
@@ -142,7 +145,7 @@ typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>
 template <class charT, class traits>
 void basic_streambuf<charT, traits>::gbump(int n) {
     if (gptr_ + n >= egptr_ or gptr_ + n < eback_) {
-        throw; // Todo: Exceptions
+        throw invalid_argument("gptr()+n out of bounds");
     }
     gptr_ += n;
 }
@@ -157,7 +160,7 @@ void basic_streambuf<charT, traits>::setg(char_type *new_eback, char_type *new_g
 template <class charT, class traits>
 void basic_streambuf<charT, traits>::pbump(int n) {
     if (pptr_ + n > epptr_ or pptr_ + n <= pbase_) {
-        throw; // Todo: Exceptions
+        throw invalid_argument("pptr()+n out of bounds");
     }
     pptr_ += n;
 }

@@ -7,6 +7,8 @@
 #ifndef METAXX_INCLUDE_IOSFWD__
 #define METAXX_INCLUDE_IOSFWD__
 
+#include "cwchar"
+
 namespace std {
 template <class charT>
 struct char_traits;

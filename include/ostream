@@ -89,6 +89,7 @@ basic_ostream<charT, traits> &basic_ostream<charT, traits>::put(char_type c) {
     sentry s(*this);
     if (s and this->buf_) {
         int_type r = this->buf_->sputc(c);
+        if (r == traits_type::eof()) this->setstate(ios_base::badbit);
     } else {
         this->setstate(basic_ios<charT, traits>::badbit);
     }
