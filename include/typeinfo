@@ -9,6 +9,7 @@
 
 #include "cstddef"
 #include "cstdint"
+#include "__config"
 #include "exception"
 
 namespace std {
@@ -19,7 +20,12 @@ public:
     virtual ~type_info() = default;
 
     type_info &operator=(const type_info &) = delete;
-    constexpr bool operator==(const type_info &rhs) const noexcept { return this == &rhs; }
+
+    STALIN_CONSTEXPR_SINCE_23 bool operator==(const type_info &rhs) const noexcept { return this == &rhs; }
+
+    #ifndef STALIN_CXX_STD_SINCE_20
+    bool operator!=( const type_info& rhs ) const noexcept { return !(*this == rhs); }
+    #endif
 
     bool before(const type_info &rhs) const noexcept;
     size_t hash_code() const noexcept;

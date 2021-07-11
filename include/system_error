@@ -108,13 +108,13 @@ enum class errc {
 
 template <class T>
 struct is_error_condition_enum : public false_type {};
-template<>
+template <>
 struct is_error_condition_enum<errc> : true_type {};
 
 const error_category &generic_category() noexcept;
 const error_category &system_category() noexcept;
 error_code make_error_code(errc e) noexcept;
-error_condition make_error_condition (errc e) noexcept;
+error_condition make_error_condition(errc e) noexcept;
 
 class error_code {
     int value_ = 0;
@@ -161,25 +161,30 @@ error_code &error_code::operator=(ErrorCodeEnum e) noexcept {
 }
 
 bool operator==(const error_code &lhs, const error_code &rhs) noexcept;
+bool operator==(const error_condition &lhs, const error_condition &rhs) noexcept;
+bool operator==(const error_code &lhs, const error_condition &rhs) noexcept;
+#ifndef STALIN_CXX_STD_SINCE_20
 bool operator!=(const error_code &lhs, const error_code &rhs) noexcept;
 bool operator<(const error_code &lhs, const error_code &rhs) noexcept;
 
-bool operator== (const error_condition& lhs, const error_condition& rhs) noexcept;
-bool operator!= (const error_condition& lhs, const error_condition& rhs) noexcept;
-bool operator<  (const error_condition& lhs, const error_condition& rhs) noexcept;
+bool operator!=(const error_condition &lhs, const error_condition &rhs) noexcept;
+bool operator<(const error_condition &lhs, const error_condition &rhs) noexcept;
 
-bool operator==(const error_code &lhs, const error_condition &rhs) noexcept;
 bool operator==(const error_condition &lhs, const error_code &rhs) noexcept;
 bool operator!=(const error_code &lhs, const error_condition &rhs) noexcept;
 bool operator!=(const error_condition &lhs, const error_code &rhs) noexcept;
+#else
+//std::strong_ordering operator<=>( const std::error_code& lhs, const std::error_code& rhs ) noexcept; // todo <compare>
+//std::strong_ordering operator<=>( const std::error_condition& lhs, const std::error_condition& rhs ) noexcept; // todo <compare>
+#endif
 
 class error_condition {
     int value_;
     error_category &cat_;
 
-    friend bool operator== (const error_condition& lhs, const error_condition& rhs) noexcept;
-    friend bool operator!= (const error_condition& lhs, const error_condition& rhs) noexcept;
-    friend bool operator<  (const error_condition& lhs, const error_condition& rhs) noexcept;
+    friend bool operator==(const error_condition &lhs, const error_condition &rhs) noexcept;
+    friend bool operator!=(const error_condition &lhs, const error_condition &rhs) noexcept;
+    friend bool operator<(const error_condition &lhs, const error_condition &rhs) noexcept;
 
     friend bool operator==(const error_code &lhs, const error_condition &rhs) noexcept;
     friend bool operator==(const error_condition &lhs, const error_code &rhs) noexcept;
@@ -194,14 +199,14 @@ public:
     template <class ErrorConditionEnum>
     error_condition(ErrorConditionEnum e) noexcept { if (is_error_condition_enum<ErrorConditionEnum>::value) *this = make_error_condition(e); }
 
-    void assign (int val, const error_category& cat) noexcept;
+    void assign(int val, const error_category &cat) noexcept;
 
     template <class ErrorConditionEnum>
-    error_condition& operator= (ErrorConditionEnum e) noexcept;
+    error_condition &operator=(ErrorConditionEnum e) noexcept;
 
     void clear() noexcept;
     [[nodiscard]] int value() const noexcept { return value_; }
-    [[nodiscard]] const error_category& category() const noexcept { return cat_; }
+    [[nodiscard]] const error_category &category() const noexcept { return cat_; }
     //[[nodiscard]] string message() const; // todo strings
 
     explicit operator bool() const noexcept { return value_ != 0; }
@@ -222,8 +227,12 @@ public:
     virtual ~error_category() = default;
 
     bool operator==(const error_category &rhs) const noexcept { return this == &rhs; }
+    #ifndef STALIN_CXX_STD_SINCE_20
     bool operator!=(const error_category &rhs) const noexcept { return this != &rhs; }
     bool operator<(const error_category &rhs) const noexcept { return this < &rhs; }
+    #else
+    //std::strong_ordering operator<=>( const error_category& rhs ) const noexcept; // todo <compare>
+    #endif
 
     [[nodiscard]] virtual const char *name() const noexcept = 0;
     [[nodiscard]] virtual error_condition default_error_condition(int val) const noexcept { return error_condition(val, *this); }
@@ -255,11 +264,15 @@ class system_error : public runtime_error {
     error_code code_;
 public:
     //system_error(error_code ec, const string &what_arg); // todo strings
-    system_error(error_code ec, const char *what_arg) : runtime_error(what_arg), code_(ec) {}
-    system_error(error_code ec) : runtime_error("system_error"), code_(ec) {}
+    system_error(error_code ec, const char *what_arg)
+        : runtime_error(what_arg), code_(ec) {}
+    system_error(error_code ec)
+        : runtime_error("system_error"), code_(ec) {}
     //system_error(int val, const error_category &cat, const string &what_arg); // todo strings
-    system_error(int val, const error_category &cat, const char *what_arg) : runtime_error(what_arg), code_(val, cat) {}
-    system_error(int val, const error_category &cat) : runtime_error("system_error"), code_(val, cat) {}
+    system_error(int val, const error_category &cat, const char *what_arg)
+        : runtime_error(what_arg), code_(val, cat) {}
+    system_error(int val, const error_category &cat)
+        : runtime_error("system_error"), code_(val, cat) {}
 };
 }
 

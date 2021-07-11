@@ -8,13 +8,19 @@
 #define CPP_STALIN_INCLUDE_IOSFWD__
 
 #include "cwchar"
+#include "__config"
 
 namespace std {
 template <class charT>
-struct char_traits;
+class char_traits;
 
 template <>
 class char_traits<char>;
+
+#ifdef STALIN_CXX_STD_SINCE_20
+template <>
+class char_traits<char8_t>;
+#endif
 
 template <>
 class char_traits<char16_t>;

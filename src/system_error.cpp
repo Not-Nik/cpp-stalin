@@ -55,16 +55,21 @@ bool std::operator==(const error_code &lhs, const error_code &rhs) noexcept {
     return lhs.category() == rhs.category() && lhs.value() == rhs.value();
 }
 
+bool std::operator==(const error_condition &lhs, const error_condition &rhs) noexcept {
+    return lhs.category() == rhs.category() && lhs.value() == rhs.value();
+}
+
+bool std::operator==(const error_code &lhs, const error_condition &rhs) noexcept {
+    return lhs.cat_.equivalent(lhs.value_, rhs) || rhs.cat_.equivalent(lhs, rhs.value_);
+}
+
+#ifndef STALIN_CXX_STD_SINCE_20
 bool std::operator!=(const error_code &lhs, const error_code &rhs) noexcept {
     return !(lhs == rhs);
 }
 
 bool std::operator<(const error_code &lhs, const error_code &rhs) noexcept {
     return lhs.category() < rhs.category() || (lhs.category() == rhs.category() && lhs.value() < rhs.value());
-}
-
-bool std::operator==(const error_condition &lhs, const error_condition &rhs) noexcept {
-    return lhs.category() == rhs.category() && lhs.value() == rhs.value();
 }
 
 bool std::operator!=(const error_condition &lhs, const error_condition &rhs) noexcept {
@@ -75,16 +80,13 @@ bool std::operator<(const error_condition &lhs, const error_condition &rhs) noex
     return lhs.category() < rhs.category() || lhs.category() == rhs.category() && lhs.value() < rhs.value();
 }
 
-bool std::operator==(const error_code &lhs, const error_condition &rhs) noexcept {
-    return lhs.cat_.equivalent(lhs.value_, rhs) || rhs.cat_.equivalent(lhs, rhs.value_);
-}
-
 bool std::operator==(const error_condition &lhs, const error_code &rhs) noexcept {
     return lhs.cat_.equivalent(rhs, lhs.value_) || rhs.category().equivalent(rhs.value(), lhs);
 }
 
 bool std::operator!=(const error_code &lhs, const error_condition &rhs) noexcept { return !(lhs == rhs); }
 bool std::operator!=(const error_condition &lhs, const error_code &rhs) noexcept { return !(lhs == rhs); }
+#endif
 
 void std::error_condition::assign(int val, const std::error_category &cat) noexcept {
     value_ = val;

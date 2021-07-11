@@ -8,6 +8,7 @@
 #define CPP_STALIN_INCLUDE_FSTREAM__
 
 #include "cstdlib"
+#include "__config"
 #include "streambuf"
 
 namespace std {
@@ -32,6 +33,13 @@ public:
     virtual ~basic_filebuf();
 
     basic_filebuf *open(const char *filename, ios_base::openmode mode);
+    //std::basic_filebuf<charT, traits> *open(const std::string &str, std::ios_base::openmode mode); // todo string
+
+    #ifdef STALIN_CXX_STD_SINCE_17
+    //std::basic_filebuf<charT, traits> *open(const std::filesystem::path &p, std::ios_base::openmode mode);
+    //std::basic_filebuf<charT, traits> *open(const std::filesystem::path::value_type *s, std::ios_base::openmode mode);
+    #endif
+
     bool is_open() const;
     basic_filebuf *close();
 

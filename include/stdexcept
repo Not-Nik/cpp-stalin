@@ -20,13 +20,37 @@ public:
     runtime_error(const runtime_error &other) noexcept = default;
 };
 
+class range_error : public runtime_error {
+    using runtime_error::runtime_error;
+};
+
+class overflow_error : public runtime_error {
+    using runtime_error::runtime_error;
+};
+
+class underflow_error : public runtime_error {
+    using runtime_error::runtime_error;
+};
+
 class logic_error : public exception {
 public:
     //explicit logic_error(const string &what_arg); // todo string
     explicit logic_error(const char *what_arg) : exception() { this->what_ = what_arg; }
 };
 
+class domain_error : public logic_error {
+    using logic_error::logic_error;
+};
+
 class invalid_argument : public logic_error {
+    using logic_error::logic_error;
+};
+
+class length_error : public logic_error {
+    using logic_error::logic_error;
+};
+
+class out_of_range : public logic_error {
     using logic_error::logic_error;
 };
 }

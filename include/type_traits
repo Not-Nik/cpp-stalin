@@ -620,6 +620,11 @@ struct is_base_of : integral_constant<bool,
                                            is_class<Base>::value && is_class<Derived>::value
                                                && decltype(details::test_pre_is_base_of<Base, Derived>(0))::value> {
 };
+
+template <class T>
+typename remove_reference<T>::type &&move(T &&arg) noexcept {
+    return arg;
+}
 }
 
 #endif //CPP_STALIN_INCLUDE_TYPETRAITS_H_

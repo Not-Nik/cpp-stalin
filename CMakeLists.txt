@@ -9,9 +9,16 @@ project(cpp-stalin)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_definitions(-nostdinc++ -pedantic -Wunused-parameter) #-Wall -Wextra -Wpedantic)
+set(STALIN_COMPILE_OPTIONS "-nostdinc++ -nodefaultlibs -pedantic -Wall -Wextra -Wpedantic -lc")
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(STALIN_COMPILE_OPTIONS "${STALIN_COMPILE_OPTIONS} -lgcc")
+endif()
+
+add_definitions(${STALIN_COMPILE_OPTIONS})
 
 add_library(stalin
+        include/__config
         include/__declval
         include/__stream_types
         include/cassert
@@ -41,7 +48,6 @@ add_library(stalin
 
         src/exception.cpp
         src/ios.cpp
-        src/ostream.cpp
         src/string.cpp
         src/system_error.cpp
         src/typeinfo.cpp)

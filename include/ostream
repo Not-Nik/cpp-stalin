@@ -41,7 +41,11 @@ public:
     basic_ostream &operator<<(float val);
     basic_ostream &operator<<(double val);
     basic_ostream &operator<<(long double val);
-    basic_ostream &operator<<(void *val);
+    basic_ostream &operator<<(const void *val);
+
+    #ifdef STALIN_CXX_STD_SINCE_17
+    basic_ostream &operator<<(std::nullptr_t);
+    #endif
 
     basic_ostream &operator<<(basic_streambuf<char_type, traits_type> *sb);
 
@@ -184,14 +188,44 @@ basic_ostream<charT, traits>::sentry::~sentry() {
     if (stream_.tie_) stream_.tie_->flush();
 }
 
-ostream &endl(ostream &os);
-
 template <class charT, class traits>
 basic_ostream<charT, traits> &endl(basic_ostream<charT, traits> &os) {
     os.put(os.widen('\n'));
     os.flush();
     return os;
 }
+
+template <class charT, class traits>
+std::basic_ostream<charT, traits> &ends(std::basic_ostream<charT, traits> &os) {
+    os.put(charT());
+    return os;
+}
+
+template <class charT, class traits>
+std::basic_ostream<charT, traits> &flush(std::basic_ostream<charT, traits> &os) {
+    os.flush();
+    return os;
+}
+
+#ifdef STALIN_CXX_STD_SINCE_20
+template <class charT, class traits>
+std::basic_ostream<charT, traits> &emit_on_flush(std::basic_ostream<charT, traits> &os) {
+    // todo syncbuf
+    return os;
+}
+
+template <class charT, class traits>
+std::basic_ostream<charT, traits> &noemit_on_flush(std::basic_ostream<charT, traits> &os) {
+    // todo syncbuf
+    return os;
+}
+
+template <class charT, class traits>
+std::basic_ostream<charT, traits> &flush_emit(std::basic_ostream<charT, traits> &os) {
+    // todo syncbuf
+    return os;
+}
+#endif
 }
 
 #endif //CPP_STALIN_INCLUDE_OSTREAM__

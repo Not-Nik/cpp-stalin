@@ -7,7 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE___STREAM_TYPES__
 #define CPP_STALIN_INCLUDE___STREAM_TYPES__
 
+#include "iosfwd"
 #include "cwchar"
+#include "__config"
 
 namespace std {
 [[maybe_unused]] typedef intptr_t streamoff;
@@ -68,6 +70,12 @@ fpos<stateT> fpos<stateT>::operator-(streamoff off) const {
 
 [[maybe_unused]] typedef fpos<mbstate_t> streampos;
 [[maybe_unused]] typedef fpos<mbstate_t> wstreampos;
+#ifdef STALIN_CXX_STD_SINCE_20
+[[maybe_unused]] typedef fpos<mbstate_t> u8streampos;
+#endif
+[[maybe_unused]] typedef std::fpos<mbstate_t> u16streampos;
+[[maybe_unused]] typedef std::fpos<mbstate_t> u32streampos;
+
 }
 
 #endif //CPP_STALIN_INCLUDE___STREAM_TYPES__

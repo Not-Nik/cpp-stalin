@@ -7,25 +7,21 @@
 #ifndef CPP_STALIN_INCLUDE_UTILITY__
 #define CPP_STALIN_INCLUDE_UTILITY__
 
+#include "__config"
 #include "__declval"
 #include "type_traits"
 
 namespace std {
 
 template <class T>
-typename remove_reference<T>::type &&move(T &&arg) noexcept {
-    return arg;
-}
-
-template <class T>
-void swap(T &a, T &b) noexcept(is_nothrow_move_constructible<T>::value && is_nothrow_move_assignable<T>::value) {
+STALIN_CONSTEXPR_SINCE_20 void swap(T &a, T &b) noexcept(is_nothrow_move_constructible<T>::value && is_nothrow_move_assignable<T>::value) {
     T c(std::move(a));
     a = std::move(b);
     b = std::move(c);
 }
 
 template <class T, size_t N>
-void swap(T (&a)[N], T (&b)[N]) noexcept(noexcept(swap(*a, *b))) {
+STALIN_CONSTEXPR_SINCE_20 void swap(T (&a)[N], T (&b)[N]) noexcept(noexcept(swap(*a, *b))) {
     for (size_t i = 0; i < N; ++i) swap(a[i], b[i]);
 }
 }

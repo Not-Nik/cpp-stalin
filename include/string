@@ -9,6 +9,7 @@
 
 #include "memory"
 #include "cstring"
+#include "__config"
 #include "type_traits"
 #include "__stream_types"
 
@@ -25,16 +26,21 @@ public:
 
     static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
     static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
-    static inline size_t length(const char_type *s) { return strlen(s); }
+    static STALIN_CONSTEXPR_SINCE_17 inline size_t length(const char_type *s)
+    #ifndef STALIN_CXX_STD_SINCE_17
+    { return strlen(s); }
+    #else
+    ;
+    #endif
 
-    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
-    static char_type *assign(char_type *p, size_t n, char_type c);
+    static STALIN_CONSTEXPR_SINCE_17 void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static STALIN_CONSTEXPR_SINCE_20 char_type *assign(char_type *p, size_t n, char_type c);
 
-    static int compare(const char_type *p, const char_type *q, size_t n);
-    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+    static STALIN_CONSTEXPR_SINCE_17 int compare(const char_type *p, const char_type *q, size_t n);
+    static STALIN_CONSTEXPR_SINCE_17 const char_type *find(const char_type *p, size_t n, const char_type &c);
 
-    static char_type *move(char_type *dest, const char_type *src, size_t n);
-    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *move(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *copy(char_type *dest, const char_type *src, size_t n);
 
     static constexpr int_type eof() noexcept { return char_type(EOF); }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
@@ -43,14 +49,23 @@ public:
     static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
 
+#ifdef STALIN_CXX_STD_SINCE_17
 template <class charT>
-typename char_traits<charT>::char_type *char_traits<charT>::assign(char_type *p, size_t n, char_type c) {
+constexpr inline size_t char_traits<charT>::length(const char_type *s) {
+    size_t len = 0;
+    while (!eq(*s++, char_type())) len++;
+    return len;
+}
+#endif
+
+template <class charT>
+STALIN_CONSTEXPR_SINCE_20 typename char_traits<charT>::char_type *char_traits<charT>::assign(char_type *p, size_t n, char_type c) {
     for (size_t i = 0; i < n; i++) p[i] = c;
     return p;
 }
 
 template <class charT>
-int char_traits<charT>::compare(const char_type *p, const char_type *q, size_t n) {
+STALIN_CONSTEXPR_SINCE_17 int char_traits<charT>::compare(const char_type *p, const char_type *q, size_t n) {
     while (n--) {
         if (!eq(*p, *q)) return lt(*p, *q) ? -1 : 1;
         ++p;
@@ -60,21 +75,23 @@ int char_traits<charT>::compare(const char_type *p, const char_type *q, size_t n
 }
 
 template <class charT>
-const typename char_traits<charT>::char_type *char_traits<charT>::find(const char_type *p, size_t n, const char_type &c) {
+STALIN_CONSTEXPR_SINCE_17 const typename char_traits<charT>::char_type *char_traits<charT>::find(const char_type *p, size_t n, const char_type &c) {
     for (size_t i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
     return nullptr;
 }
 
 template <class charT>
-typename char_traits<charT>::char_type *char_traits<charT>::move(char_type *dest, const char_type *src, size_t n) {
-    char_type t[n];
-    for (size_t i = 0; i < n; i++) t[i] = src[i];
-    for (size_t i = 0; i < n; i++) dest[i] = t[i];
+STALIN_CONSTEXPR_SINCE_20 typename char_traits<charT>::char_type *char_traits<charT>::move(char_type *dest, const char_type *src, size_t n) {
+    if (dest < src) {
+        for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    } else {
+        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+    }
     return dest;
 }
 
 template <class charT>
-typename char_traits<charT>::char_type *char_traits<charT>::copy(char_type *dest, const char_type *src, size_t n) {
+STALIN_CONSTEXPR_SINCE_20 typename char_traits<charT>::char_type *char_traits<charT>::copy(char_type *dest, const char_type *src, size_t n) {
     for (size_t i = 0; i < n; i++) dest[i] = src[i];
     return dest;
 }
@@ -87,19 +104,27 @@ public:
     typedef streamoff off_type;
     typedef streampos pos_type;
     typedef mbstate_t state_type;
+    #ifdef STALIN_CXX_STD_SINCE_20
+    //typedef strong_ordering comparison_category; // todo <compare>
+    #endif
 
     static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
     static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
-    static inline size_t length(const char_type *s) { return strlen(s); }
+    static STALIN_CONSTEXPR_SINCE_17 inline size_t length(const char_type *s)
+    #ifndef STALIN_CXX_STD_SINCE_17
+    { return strlen(s); }
+    #else
+    ;
+    #endif
 
-    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
-    static char_type *assign(char_type *p, size_t n, char_type c);
+    static STALIN_CONSTEXPR_SINCE_17 void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static STALIN_CONSTEXPR_SINCE_20 char_type *assign(char_type *p, size_t n, char_type c);
 
-    static int compare(const char_type *p, const char_type *q, size_t n);
-    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+    static STALIN_CONSTEXPR_SINCE_17 int compare(const char_type *p, const char_type *q, size_t n);
+    static STALIN_CONSTEXPR_SINCE_17 const char_type *find(const char_type *p, size_t n, const char_type &c);
 
-    static char_type *move(char_type *dest, const char_type *src, size_t n);
-    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *move(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *copy(char_type *dest, const char_type *src, size_t n);
 
     static constexpr int_type eof() noexcept { return EOF; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
@@ -107,6 +132,49 @@ public:
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
     static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
+
+#ifdef STALIN_CXX_STD_SINCE_17
+constexpr inline size_t char_traits<char>::length(const char_type *s) {
+    size_t len = 0;
+    while (!eq(*s++, char_type())) len++;
+    return len;
+}
+
+constexpr int char_traits<char>::compare(const char_type *p, const char_type *q, size_t n) {
+    while (n--) {
+        if (!eq(*p, *q)) return lt(*p, *q) ? -1 : 1;
+        ++p;
+        ++q;
+    }
+    return 0;
+}
+
+constexpr const char_traits<char>::char_type *char_traits<char>::find(const char_type *p, size_t n, const char_type &c) {
+    for (size_t i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
+    return nullptr;
+}
+#endif
+
+#ifdef STALIN_CXX_STD_SINCE_20
+constexpr char_traits<char>::char_type *char_traits<char>::assign(char_type *p, size_t n, char_type c) {
+    for (size_t i = 0; i < n; i++) p[i] = c;
+    return p;
+}
+
+constexpr char_traits<char>::char_type *char_traits<char>::move(char_type *dest, const char_type *src, size_t n) {
+    if (dest < src) {
+        for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    } else {
+        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+    }
+    return dest;
+}
+
+constexpr char_traits<char>::char_type *char_traits<char>::copy(char_type *dest, const char_type *src, size_t n) {
+    for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    return dest;
+}
+#endif
 
 template <>
 class char_traits<wchar_t> {
@@ -116,19 +184,27 @@ public:
     typedef streamoff off_type;
     typedef streampos pos_type;
     typedef mbstate_t state_type;
+    #ifdef STALIN_CXX_STD_SINCE_20
+    //typedef strong_ordering comparison_category; // todo <compare>
+    #endif
 
     static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
     static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
-    static inline size_t length(const char_type *s) { return wcslen(s); }
+    static STALIN_CONSTEXPR_SINCE_17 inline size_t length(const char_type *s)
+    #ifndef STALIN_CXX_STD_SINCE_17
+    { return wcslen(s); }
+    #else
+    ;
+    #endif
 
-    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
-    static char_type *assign(char_type *p, size_t n, char_type c);
+    static STALIN_CONSTEXPR_SINCE_17 void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static STALIN_CONSTEXPR_SINCE_20 char_type *assign(char_type *p, size_t n, char_type c);
 
-    static int compare(const char_type *p, const char_type *q, size_t n);
-    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+    static STALIN_CONSTEXPR_SINCE_17 int compare(const char_type *p, const char_type *q, size_t n);
+    static STALIN_CONSTEXPR_SINCE_17 const char_type *find(const char_type *p, size_t n, const char_type &c);
 
-    static char_type *move(char_type *dest, const char_type *src, size_t n);
-    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *move(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *copy(char_type *dest, const char_type *src, size_t n);
 
     static constexpr int_type eof() noexcept { return WEOF; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
@@ -136,6 +212,121 @@ public:
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
     static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
+
+#ifdef STALIN_CXX_STD_SINCE_17
+constexpr inline size_t char_traits<wchar_t>::length(const char_type *s) {
+    size_t len = 0;
+    while (!eq(*s++, char_type())) len++;
+    return len;
+}
+
+constexpr int char_traits<wchar_t>::compare(const char_type *p, const char_type *q, size_t n) {
+    while (n--) {
+        if (!eq(*p, *q)) return lt(*p, *q) ? -1 : 1;
+        ++p;
+        ++q;
+    }
+    return 0;
+}
+
+constexpr const char_traits<wchar_t>::char_type *char_traits<wchar_t>::find(const char_type *p, size_t n, const char_type &c) {
+    for (size_t i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
+    return nullptr;
+}
+#endif
+
+#ifdef STALIN_CXX_STD_SINCE_20
+constexpr char_traits<wchar_t>::char_type *char_traits<wchar_t>::assign(char_type *p, size_t n, char_type c) {
+    for (size_t i = 0; i < n; i++) p[i] = c;
+    return p;
+}
+
+constexpr char_traits<wchar_t>::char_type *char_traits<wchar_t>::move(char_type *dest, const char_type *src, size_t n) {
+    if (dest < src) {
+        for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    } else {
+        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+    }
+    return dest;
+}
+
+constexpr char_traits<wchar_t>::char_type *char_traits<wchar_t>::copy(char_type *dest, const char_type *src, size_t n) {
+    for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    return dest;
+}
+#endif
+
+#ifdef STALIN_CXX_STD_SINCE_20
+
+template <>
+class char_traits<char8_t> {
+public:
+    typedef char8_t char_type;
+    typedef unsigned int int_type;
+    typedef streamoff off_type;
+    typedef streampos pos_type;
+    typedef mbstate_t state_type;
+    //typedef strong_ordering comparison_category; // todo <compare>
+
+    static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
+    static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
+    static STALIN_CONSTEXPR_SINCE_17 size_t length(const char_type *s);
+
+    static constexpr void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static constexpr char_type *assign(char_type *p, size_t n, char_type c);
+
+    static constexpr int compare(const char_type *p, const char_type *q, size_t n);
+    static constexpr const char_type *find(const char_type *p, size_t n, const char_type &c);
+
+    static constexpr char_type *move(char_type *dest, const char_type *src, size_t n);
+    static constexpr char_type *copy(char_type *dest, const char_type *src, size_t n);
+
+    static constexpr int_type eof() noexcept { return 0xEEEE; }
+    static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
+    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    static constexpr int_type to_int_type(char_type c) noexcept { return c; }
+    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+};
+
+constexpr size_t char_traits<char8_t>::length(const char_type *s) {
+    size_t len = 0;
+    while (!eq(*s++, char_type())) len++;
+    return len;
+}
+
+constexpr char_traits<char8_t>::char_type *char_traits<char8_t>::assign(char_type *p, size_t n, char_type c) {
+    for (size_t i = 0; i < n; i++) p[i] = c;
+    return p;
+}
+
+constexpr int char_traits<char8_t>::compare(const char_type *p, const char_type *q, size_t n) {
+    while (n--) {
+        if (!eq(*p, *q)) return lt(*p, *q) ? -1 : 1;
+        ++p;
+        ++q;
+    }
+    return 0;
+}
+
+constexpr const char_traits<char8_t>::char_type *char_traits<char8_t>::find(const char_type *p, size_t n, const char_type &c) {
+    for (size_t i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
+    return nullptr;
+}
+
+constexpr char_traits<char8_t>::char_type *char_traits<char8_t>::move(char_type *dest, const char_type *src, size_t n) {
+    if (dest < src) {
+        for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    } else {
+        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+    }
+    return dest;
+}
+
+constexpr char_traits<char8_t>::char_type *char_traits<char8_t>::copy(char_type *dest, const char_type *src, size_t n) {
+    for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    return dest;
+}
+#endif
 
 template <>
 class char_traits<char16_t> {
@@ -145,19 +336,22 @@ public:
     typedef streamoff off_type;
     typedef streampos pos_type;
     typedef mbstate_t state_type;
+    #ifdef STALIN_CXX_STD_SINCE_20
+    //typedef strong_ordering comparison_category; // todo <compare>
+    #endif
 
     static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
     static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
-    static size_t length(const char_type *s);
+    static STALIN_CONSTEXPR_SINCE_17 size_t length(const char_type *s);
 
-    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
-    static char_type *assign(char_type *p, size_t n, char_type c);
+    static STALIN_CONSTEXPR_SINCE_17 void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static STALIN_CONSTEXPR_SINCE_20 char_type *assign(char_type *p, size_t n, char_type c);
 
-    static int compare(const char_type *p, const char_type *q, size_t n);
-    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+    static STALIN_CONSTEXPR_SINCE_17 int compare(const char_type *p, const char_type *q, size_t n);
+    static STALIN_CONSTEXPR_SINCE_17 const char_type *find(const char_type *p, size_t n, const char_type &c);
 
-    static char_type *move(char_type *dest, const char_type *src, size_t n);
-    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *move(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *copy(char_type *dest, const char_type *src, size_t n);
 
     static constexpr int_type eof() noexcept { return 0xEEEE; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
@@ -165,6 +359,49 @@ public:
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
     static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
+
+#ifdef STALIN_CXX_STD_SINCE_17
+constexpr size_t char_traits<char16_t>::length(const char16_t *s) {
+    size_t len = 0;
+    while (!eq(*s++, char_type())) len++;
+    return len;
+}
+
+constexpr int char_traits<char16_t>::compare(const char_type *p, const char_type *q, size_t n) {
+    while (n--) {
+        if (!eq(*p, *q)) return lt(*p, *q) ? -1 : 1;
+        ++p;
+        ++q;
+    }
+    return 0;
+}
+
+constexpr const char_traits<char16_t>::char_type *char_traits<char16_t>::find(const char_type *p, size_t n, const char_type &c) {
+    for (size_t i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
+    return nullptr;
+}
+#endif
+
+#ifdef STALIN_CXX_STD_SINCE_20
+constexpr char_traits<char16_t>::char_type *char_traits<char16_t>::assign(char_type *p, size_t n, char_type c) {
+    for (size_t i = 0; i < n; i++) p[i] = c;
+    return p;
+}
+
+constexpr char_traits<char16_t>::char_type *char_traits<char16_t>::move(char_type *dest, const char_type *src, size_t n) {
+    if (dest < src) {
+        for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    } else {
+        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+    }
+    return dest;
+}
+
+constexpr char_traits<char16_t>::char_type *char_traits<char16_t>::copy(char_type *dest, const char_type *src, size_t n) {
+    for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    return dest;
+}
+#endif
 
 template <>
 class char_traits<char32_t> {
@@ -174,19 +411,22 @@ public:
     typedef streamoff off_type;
     typedef streampos pos_type;
     typedef mbstate_t state_type;
+    #ifdef STALIN_CXX_STD_SINCE_20
+    //typedef strong_ordering comparison_category; // todo <compare>
+    #endif
 
     static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
     static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
-    static size_t length(const char_type *s);
+    static STALIN_CONSTEXPR_SINCE_17 size_t length(const char_type *s);
 
-    static void assign(char_type &r, const char_type &c) noexcept { r = c; }
-    static char_type *assign(char_type *p, size_t n, char_type c);
+    static STALIN_CONSTEXPR_SINCE_17 void assign(char_type &r, const char_type &c) noexcept { r = c; }
+    static STALIN_CONSTEXPR_SINCE_20 char_type *assign(char_type *p, size_t n, char_type c);
 
-    static int compare(const char_type *p, const char_type *q, size_t n);
-    static const char_type *find(const char_type *p, size_t n, const char_type &c);
+    static STALIN_CONSTEXPR_SINCE_17 int compare(const char_type *p, const char_type *q, size_t n);
+    static STALIN_CONSTEXPR_SINCE_17 const char_type *find(const char_type *p, size_t n, const char_type &c);
 
-    static char_type *move(char_type *dest, const char_type *src, size_t n);
-    static char_type *copy(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *move(char_type *dest, const char_type *src, size_t n);
+    static STALIN_CONSTEXPR_SINCE_20 char_type *copy(char_type *dest, const char_type *src, size_t n);
 
     static constexpr int_type eof() noexcept { return 0x800; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
@@ -194,6 +434,49 @@ public:
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
     static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
+
+#ifdef STALIN_CXX_STD_SINCE_17
+constexpr size_t char_traits<char32_t>::length(const char_type *s) {
+    size_t len = 0;
+    while (!eq(*s++, char_type())) len++;
+    return len;
+}
+
+constexpr int char_traits<char32_t>::compare(const char_type *p, const char_type *q, size_t n) {
+    while (n--) {
+        if (!eq(*p, *q)) return lt(*p, *q) ? -1 : 1;
+        ++p;
+        ++q;
+    }
+    return 0;
+}
+
+const char_traits<char32_t>::char_type *char_traits<char32_t>::find(const char_type *p, size_t n, const char_type &c) {
+    for (int i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
+    return nullptr;
+}
+#endif
+
+#ifdef STALIN_CXX_STD_SINCE_20
+constexpr char32_t *char_traits<char32_t>::assign(char32_t *p, size_t n, char32_t c) {
+    for (size_t i = 0; i < n; i++) p[i] = c;
+    return p;
+}
+
+constexpr char_traits<char32_t>::char_type *char_traits<char32_t>::move(char_type *dest, const char_type *src, size_t n) {
+    if (dest < src) {
+        for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    } else {
+        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+    }
+    return dest;
+}
+
+constexpr char_traits<char32_t>::char_type *char_traits<char32_t>::copy(char_type *dest, const char_type *src, size_t n) {
+    for (size_t i = 0; i < n; i++) dest[i] = src[i];
+    return dest;
+}
+#endif
 
 template <class T>
 struct is_char_traits : false_type {};
