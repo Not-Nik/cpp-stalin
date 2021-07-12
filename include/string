@@ -85,7 +85,7 @@ STALIN_CONSTEXPR_SINCE_20 typename char_traits<charT>::char_type *char_traits<ch
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }
@@ -165,7 +165,7 @@ constexpr char_traits<char>::char_type *char_traits<char>::move(char_type *dest,
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }
@@ -245,7 +245,7 @@ constexpr char_traits<wchar_t>::char_type *char_traits<wchar_t>::move(char_type 
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }
@@ -317,7 +317,7 @@ constexpr char_traits<char8_t>::char_type *char_traits<char8_t>::move(char_type 
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }
@@ -392,7 +392,7 @@ constexpr char_traits<char16_t>::char_type *char_traits<char16_t>::move(char_typ
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }
@@ -451,8 +451,8 @@ constexpr int char_traits<char32_t>::compare(const char_type *p, const char_type
     return 0;
 }
 
-const char_traits<char32_t>::char_type *char_traits<char32_t>::find(const char_type *p, size_t n, const char_type &c) {
-    for (int i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
+constexpr const char_traits<char32_t>::char_type *char_traits<char32_t>::find(const char_type *p, size_t n, const char_type &c) {
+    for (size_t i = 0; i < n; i++) if (eq(p[i], c)) return &p[i];
     return nullptr;
 }
 #endif
@@ -467,7 +467,7 @@ constexpr char_traits<char32_t>::char_type *char_traits<char32_t>::move(char_typ
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n - 1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }

@@ -205,7 +205,6 @@ typename basic_filebuf<charT, traits>::pos_type basic_filebuf<charT, traits>::se
         ::fseek(file_, off, way);
     }
 
-RETURN:
     // return current position
     return ::ftell(file_);
 }

@@ -7,11 +7,141 @@
 #ifndef CPP_STALIN_SRC_MEMORY__
 #define CPP_STALIN_SRC_MEMORY__
 
-// These are stub classes, implementation coming soon™
+#include "new"
+#include "cstddef"
+#include "utility"
+#include "__config"
+#include "__memory"
+#include "type_traits"
 
 namespace std {
 
-template <class T> class allocator;
+#ifdef STALIN_CXX_STD_SINCE_23
+template <class Pointer>
+struct allocation_result {
+    Pointer ptr;
+    std::size_t count;
+};
+#endif
+
+template <class T>
+class allocator {
+public:
+    typedef T value_type;
+    #ifndef STALIN_CXX_STD_SINCE_20
+    typedef T *pointer;
+    typedef T &reference;
+    typedef const T *const_pointer;
+    typedef const T &const_reference;
+
+    template <class Type>
+    struct rebind {
+        typedef allocator<Type> other;
+    };
+    typedef true_type is_always_equal;
+    #endif
+    typedef size_t size_type;
+    typedef ptrdiff_t difference_type;
+    #ifdef STALIN_CXX_STD_SINCE_14
+    typedef true_type propagate_on_container_move_assignment;
+    #endif
+
+    STALIN_CONSTEXPR_SINCE_20 allocator() noexcept = default;
+
+    STALIN_CONSTEXPR_SINCE_20 allocator(const allocator &alloc) noexcept = default;
+    template <class U>
+    STALIN_CONSTEXPR_SINCE_20 allocator(const allocator<U> &alloc) noexcept {}
+
+    STALIN_CONSTEXPR_SINCE_20 ~allocator() noexcept = default;
+
+#ifndef STALIN_CXX_STD_SINCE_20
+    pointer address(reference x) const noexcept { return &x; }
+    const_pointer address(const_reference x) const noexcept { return &x; }
+#endif
+
+#ifndef STALIN_CXX_STD_SINCE_17
+    pointer allocate(size_type n, const void *hint = 0) {
+        //if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length(); // todo numeric_limits
+        return ::operator new(n * sizeof(T));
+    }
+#elif !defined(STALIN_CXX_STD_SINCE_20)
+    T *allocate(std::size_t n, const void *hint) {
+        //if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length(); // todo numeric_limits
+        return ::operator new(n * sizeof(T), (align_val_t) alignof(T));
+    }
+
+    T *allocate(std::size_t n) {
+        //if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length(); // todo numeric_limits
+        return ::operator new(n * sizeof(T), (align_val_t) alignof(T));
+    }
+#else
+    STALIN_NODISCARD_SINCE_20 STALIN_CONSTEXPR_SINCE_20 T *allocate(std::size_t n) {
+        //if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length(); // todo numeric_limits
+        return ::operator new(n * sizeof(T), (align_val_t) alignof(T));
+    }
+#endif
+
+#ifdef STALIN_CXX_STD_SINCE_23
+    [[nodiscard]] constexpr std::allocation_result<T *> allocate_at_least(std::size_t n) {
+        n *= sizeof(T);
+        size_t r = n % __STDCPP_DEFAULT_NEW_ALIGNMENT__;
+        size_t count = r ? n + (__STDCPP_DEFAULT_NEW_ALIGNMENT__ - r) : n;
+
+        return allocation_result<T *>{
+            .ptr = ::operator new(count, (align_val_t) alignof(T)), .count = count
+        };
+    }
+#endif
+
+    STALIN_CONSTEXPR_SINCE_20 void deallocate(T *p, std::size_t n) {
+        ::operator delete(p
+#ifdef STALIN_CXX_STD_SINCE_17
+            , (align_val_t) alignof(T)
+#endif
+        );
+    }
+
+#ifndef STALIN_CXX_STD_SINCE_20
+    size_type max_size() const noexcept {
+        //return std::numeric_limits<size_type>::max() / sizeof(value_type); // todo numeric_limits
+    }
+
+    template <class U, class... Args>
+    void construct(U *p, Args &&... args) {
+        ::new((void *) p) U(std::forward<Args>(args)...);
+    }
+
+    template <class U>
+    void destroy(U *p) {
+        p->~U();
+    }
+#endif
+};
+
+template <class T1, class T2>
+STALIN_CONSTEXPR_SINCE_20 bool operator==(const allocator<T1> &lhs, const allocator<T2> &rhs) noexcept { return true; }
+
+#ifndef STALIN_CXX_STD_SINCE_20
+template <class T1, class T2>
+bool operator!=(const allocator<T1> &lhs, const allocator<T2> &rhs) noexcept { return false; }
+
+template <>
+class allocator<void> {
+    typedef void value_type;
+    typedef void *pointer;
+    typedef const void *const_pointer;
+
+    template <class Type>
+    struct rebind {
+        typedef allocator<Type> other;
+    };
+    typedef true_type is_always_equal;
+    #ifdef STALIN_CXX_STD_SINCE_14
+    typedef true_type propagate_on_container_move_assignment;
+    #endif
+};
+
+#endif
 }
 
 #endif //CPP_STALIN_SRC_MEMORY__

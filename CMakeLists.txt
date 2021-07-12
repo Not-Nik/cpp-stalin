@@ -20,6 +20,7 @@ add_definitions(${STALIN_COMPILE_OPTIONS})
 add_library(stalin
         include/__config
         include/__declval
+        include/__memory
         include/__stream_types
         include/cassert
         include/cerrno
@@ -37,6 +38,7 @@ add_library(stalin
         include/istream
         include/locale
         include/memory
+        include/new
         include/ostream
         include/stdexcept
         include/streambuf
@@ -48,6 +50,8 @@ add_library(stalin
 
         src/exception.cpp
         src/ios.cpp
+        src/new.cpp
+        src/memory.cpp
         src/string.cpp
         src/system_error.cpp
         src/typeinfo.cpp)

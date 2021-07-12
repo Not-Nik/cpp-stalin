@@ -1,9 +1,13 @@
 // cpp-stalin (c) Nikolas Wipper 2021
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 #ifndef CPP_STALIN_INCLUDE___CONFIG__
 #define CPP_STALIN_INCLUDE___CONFIG__
 
-#define STALIN_CXX_STD_VERSION_11
+//#define STALIN_CXX_STD_VERSION_11
 //#define STALIN_CXX_STD_VERSION_14
 //#define STALIN_CXX_STD_VERSION_17
 //#define STALIN_CXX_STD_VERSION_20
@@ -58,14 +62,18 @@
 
 #ifdef STALIN_CXX_STD_SINCE_23
 #define STALIN_CONSTEXPR_SINCE_23 constexpr
+#define STALIN_NODISCARD_SINCE_23 [[nodiscard]]
 #else
 #define STALIN_CONSTEXPR_SINCE_23
+#define STALIN_NODISCARD_SINCE_23
 #endif
 
 #ifdef STALIN_CXX_STD_SINCE_20
 #define STALIN_CONSTEXPR_SINCE_20 constexpr
+#define STALIN_NODISCARD_SINCE_20 [[nodiscard]]
 #else
 #define STALIN_CONSTEXPR_SINCE_20
+#define STALIN_NODISCARD_SINCE_20
 #endif
 
 #ifdef STALIN_CXX_STD_SINCE_17

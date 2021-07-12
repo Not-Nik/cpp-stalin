@@ -36,7 +36,7 @@ char_traits<char>::char_type *char_traits<char>::move(char_type *dest, const cha
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n-1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }
@@ -75,7 +75,7 @@ char_traits<wchar_t>::char_type *char_traits<wchar_t>::move(char_type *dest, con
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n-1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }
@@ -120,7 +120,7 @@ char_traits<char16_t>::char_type *char_traits<char16_t>::move(char_type *dest, c
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n-1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }
@@ -165,7 +165,7 @@ char_traits<char32_t>::char_type *char_traits<char32_t>::move(char_type *dest, c
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = n-1; i >= 0; i--) dest[i] = src[i];
+        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
     }
     return dest;
 }

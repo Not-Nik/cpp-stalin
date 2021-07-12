@@ -10,6 +10,7 @@
 #include "cstddef"
 #include "cstdint"
 #include "cstring"
+#include "__config"
 #include "__declval"
 
 namespace std {
@@ -301,6 +302,11 @@ template <class T>
 struct remove_reference<T &> { typedef T type; };
 template <class T>
 struct remove_reference<T &&> { typedef T type; };
+
+#ifdef STALIN_CXX_STD_SINCE_14
+template< class T >
+using remove_reference_t = typename remove_reference<T>::type;
+#endif
 
 template <class T>
 struct remove_all_extents { typedef T type; };

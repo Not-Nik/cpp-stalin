@@ -24,6 +24,28 @@ template <class T, size_t N>
 STALIN_CONSTEXPR_SINCE_20 void swap(T (&a)[N], T (&b)[N]) noexcept(noexcept(swap(*a, *b))) {
     for (size_t i = 0; i < N; ++i) swap(a[i], b[i]);
 }
+
+#ifndef STALIN_CXX_STD_SINCE_14
+template <class T>
+T &&forward(typename std::remove_reference<T>::type &t) noexcept {
+    return static_cast<T &&>(t);
+}
+
+template <class T>
+T &&forward(typename std::remove_reference<T>::type &&t) noexcept {
+    return static_cast<T &&>(t);
+}
+#else
+template <class T>
+constexpr T &&forward(std::remove_reference_t<T> &t) noexcept {
+    return static_cast<T &&>(t);
+}
+
+template <class T>
+constexpr T &&forward(std::remove_reference_t<T> &&t) noexcept {
+    return static_cast<T &&>(t);
+}
+#endif
 }
 
 #endif //CPP_STALIN_INCLUDE_UTILITY__
