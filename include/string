@@ -85,7 +85,7 @@ STALIN_CONSTEXPR_SINCE_20 typename char_traits<charT>::char_type *char_traits<ch
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
+        for (size_t i = 1; i <= n; i++) dest[n - i] = src[n - i];
     }
     return dest;
 }
@@ -165,7 +165,7 @@ constexpr char_traits<char>::char_type *char_traits<char>::move(char_type *dest,
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
+        for (size_t i = 1; i <= n; i++) dest[n - i] = src[n - i];
     }
     return dest;
 }
@@ -245,7 +245,7 @@ constexpr char_traits<wchar_t>::char_type *char_traits<wchar_t>::move(char_type 
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
+        for (size_t i = 1; i <= n; i++) dest[n - i] = src[n - i];
     }
     return dest;
 }
@@ -317,7 +317,7 @@ constexpr char_traits<char8_t>::char_type *char_traits<char8_t>::move(char_type 
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
+        for (size_t i = 1; i <= n; i++) dest[n - i] = src[n - i];
     }
     return dest;
 }
@@ -392,7 +392,7 @@ constexpr char_traits<char16_t>::char_type *char_traits<char16_t>::move(char_typ
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
+        for (size_t i = 1; i <= n; i++) dest[n - i] = src[n - i];
     }
     return dest;
 }
@@ -467,7 +467,7 @@ constexpr char_traits<char32_t>::char_type *char_traits<char32_t>::move(char_typ
     if (dest < src) {
         for (size_t i = 0; i < n; i++) dest[i] = src[i];
     } else {
-        for (size_t i = 1; i <= n; i++) dest[n-i] = src[n-i];
+        for (size_t i = 1; i <= n; i++) dest[n - i] = src[n - i];
     }
     return dest;
 }
@@ -484,16 +484,16 @@ struct is_char_traits : false_type {};
 template <class T>
 struct is_char_traits<char_traits<T>> : true_type {};
 
-template <class charT, class traits = char_traits<charT>, class Alloc = allocator<charT> >
+template <class charT, class traits = char_traits<charT>, class Alloc = allocator<charT>>
 class basic_string;
 
 typedef basic_string<char> string;
-
 typedef basic_string<char16_t> u16string;
-
 typedef basic_string<char32_t> u32string;
-
 typedef basic_string<wchar_t> wstring;
+#ifdef STALIN_CXX_STD_SINCE_20
+typedef basic_string<char8_t> u8string;
+#endif
 }
 
 #endif //CPP_STALIN_SRC_STRING__

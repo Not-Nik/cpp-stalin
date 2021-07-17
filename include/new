@@ -50,28 +50,9 @@ std::new_handler set_new_handler(std::new_handler new_p) noexcept;
 template <class T>
 STALIN_NODISCARD_SINCE_20 constexpr T *launder(T *p) noexcept { return p; }
 
-constexpr void *__aligned_alloc(size_t count, size_t al) noexcept {
-    size_t offset = sizeof(void *) + (size_t) al - 1;
-    size_t space = count + offset;
-    if (void *ptr = malloc(space)) {
-        void *orig = ptr;
-        if (!align((size_t) al, 0, ptr, space)) { // this directly overwrites ptr
-            free(orig);
-            return nullptr;
-        }
-        ((void **) ptr)[-1] = orig; // save orig right before ptr
-        return ptr;
-    }
-    return nullptr;
-}
+void *__aligned_alloc(size_t count, size_t al) noexcept;
 
-constexpr void __aligned_free(void *p) {
-#if __STDC_VERSION__ >= 201112L
-    free(p);
-#else
-    free(((void **) p)[-1]); // free previously saved orig
-#endif
-}
+void __aligned_free(void *p);
 
 #ifdef STALIN_CXX_STD_SINCE_17
 void *__new_impl(size_t count, align_val_t al = (align_val_t) __STDCPP_DEFAULT_NEW_ALIGNMENT__) noexcept;

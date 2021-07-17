@@ -50,7 +50,7 @@ public:
 
     STALIN_CONSTEXPR_SINCE_20 allocator(const allocator &alloc) noexcept = default;
     template <class U>
-    STALIN_CONSTEXPR_SINCE_20 allocator(const allocator<U> &alloc) noexcept {}
+    STALIN_CONSTEXPR_SINCE_20 allocator([[maybe_unused]] const allocator<U> &alloc) noexcept {}
 
     STALIN_CONSTEXPR_SINCE_20 ~allocator() noexcept = default;
 
@@ -93,7 +93,7 @@ public:
     }
 #endif
 
-    STALIN_CONSTEXPR_SINCE_20 void deallocate(T *p, std::size_t n) {
+    STALIN_CONSTEXPR_SINCE_20 void deallocate(T *p, [[maybe_unused]] std::size_t n) {
         ::operator delete(p
 #ifdef STALIN_CXX_STD_SINCE_17
             , (align_val_t) alignof(T)
@@ -119,7 +119,8 @@ public:
 };
 
 template <class T1, class T2>
-STALIN_CONSTEXPR_SINCE_20 bool operator==(const allocator<T1> &lhs, const allocator<T2> &rhs) noexcept { return true; }
+STALIN_CONSTEXPR_SINCE_20 bool operator==([[maybe_unused]] const allocator<T1> &lhs,
+                                          [[maybe_unused]] const allocator<T2> &rhs) noexcept { return true; }
 
 #ifndef STALIN_CXX_STD_SINCE_20
 template <class T1, class T2>
@@ -136,12 +137,136 @@ class allocator<void> {
         typedef allocator<Type> other;
     };
     typedef true_type is_always_equal;
-    #ifdef STALIN_CXX_STD_SINCE_14
+#ifdef STALIN_CXX_STD_SINCE_14
     typedef true_type propagate_on_container_move_assignment;
-    #endif
+#endif
 };
 
 #endif
+
+template <class T>
+STALIN_CONSTEXPR_SINCE_17 typename std::enable_if<std::is_object<T>::value, T *>::type addressof(T &arg) noexcept {
+    return reinterpret_cast<T *>(
+        &const_cast<char &>(
+            reinterpret_cast<const volatile char &>(arg)));
+}
+
+template <class T>
+STALIN_CONSTEXPR_SINCE_17 typename std::enable_if<!std::is_object<T>::value, T *>::type addressof(T &arg) noexcept {
+    return &arg;
+}
+
+#ifdef STALIN_CXX_STD_SINCE_20
+template <class T>
+constexpr void destroy_at(T *p) {
+    if constexpr (std::is_array_v<T>)
+        for (auto &elem : *p)
+            destroy_at(std::addressof(elem));
+    else
+        p->~T();
+}
+
+#elif defined(STALIN_CXX_STD_SINCE_17)
+template <class T>
+const T *addressof(const T &&) = delete;
+
+template<class T>
+void destroy_at(T* p) { p->~T(); }
+#endif
+
+template <class ptr>
+struct pointer_traits {
+    typedef ptr pointer;
+    typedef typename ptr::element_type element_type;
+    typedef ptrdiff_t difference_type; // Todo: use typename ptr::difference_type if possible
+
+    template <class U> using rebind = typename ptr::template rebind<U>;
+
+    static pointer pointer_to(element_type &r) { return ptr::pointer_to(r); }
+};
+
+template <class T>
+struct pointer_traits<T *> {
+    typedef T *pointer;
+    typedef T element_type;
+    typedef ptrdiff_t difference_type; // Notodo: this is compliant, dont change
+
+    template <class U> using rebind = U *;
+
+    static STALIN_CONSTEXPR_SINCE_20 pointer pointer_to(element_type &r) noexcept { return addressof(r); }
+};
+
+template <class T>
+struct is_allocator : false_type {};
+
+template <class T>
+struct is_allocator<allocator<T>> : true_type {};
+
+template <class alloc>
+struct allocator_traits {
+    static_assert(is_allocator<alloc>::value);
+
+    typedef alloc allocator_type;
+    typedef typename alloc::value_type value_type;
+#ifndef STALIN_CXX_STD_SINCE_20
+    typedef typename alloc::pointer pointer;
+    typedef typename alloc::const_pointer const_pointer;
+    typedef typename alloc::void_pointer void_pointer;
+    typedef typename alloc::const_void_pointer const_void_pointer;
+#else
+    typedef value_type *pointer;
+    typedef typename std::pointer_traits<pointer>::template rebind<const value_type> const_pointer;
+    typedef typename std::pointer_traits<pointer>::template rebind<void> void_pointer;
+    typedef typename std::pointer_traits<pointer>::template rebind<const void> const_void_pointer;
+#endif
+    typedef typename alloc::difference_type difference_type; // Todo: check if these two are present
+    typedef typename alloc::size_type size_type;
+
+    #ifdef STALIN_CXX_STD_SINCE_14
+    //typedef typename alloc::propagate_on_container_copy_assignment propagate_on_container_copy_assignment;
+    typedef false_type propagate_on_container_copy_assignment; // Todo: check if alloc has this already
+    typedef typename alloc::propagate_on_container_move_assignment propagate_on_container_move_assignment;
+    typedef false_type propagate_on_container_swap; // Todo: check if alloc has this already
+    #else
+    typedef false_type propagate_on_container_copy_assignment;
+    typedef false_type propagate_on_container_move_assignment;
+    typedef false_type propagate_on_container_swap;
+    #endif
+
+    #ifdef STALIN_CXX_STD_SINCE_17
+    typedef false_type is_always_equal; // Todo: check if alloc has this already
+    #endif
+
+    STALIN_NODISCARD_SINCE_20 static STALIN_CONSTEXPR_SINCE_20 pointer allocate(alloc &a, size_type n) { return a.allocate(n); }
+    static pointer allocate(alloc &a, size_type n, const_void_pointer hint) { return a.allocate(n, hint); }
+
+    static STALIN_CONSTEXPR_SINCE_20 void deallocate(alloc &a, pointer p, size_type n) { a.deallocate(p, n); }
+
+    template <class T, class... Args>
+    static STALIN_CONSTEXPR_SINCE_20 void construct(alloc &a, T *p, Args &&... args) {
+        a.construct(p, std::forward<Args>(args)...); // Todo: use alternative if construct is not available
+    }
+
+    template <class T>
+    static STALIN_CONSTEXPR_SINCE_20 void destroy([[maybe_unused]] alloc &a, T *p) {
+        // TODO: check if T has destroy
+        #ifndef STALIN_CXX_STD_SINCE_20
+        p->~T();
+        #else
+        std::destroy_at(p);
+        #endif
+    }
+
+    static STALIN_CXX_STD_SINCE_20 size_type max_size([[maybe_unused]] const alloc &a) noexcept {
+        // TODO: check if T has max_size
+        //return std::numeric_limits<size_type>::max() / sizeof(value_type); // todo numeric_limits
+    }
+
+    static STALIN_CXX_STD_SINCE_20 alloc select_on_container_copy_construction(const alloc &a) {
+        // Todo: check if T has select_on_container_copy_construction
+        return a;
+    }
+};
 }
 
 #endif //CPP_STALIN_SRC_MEMORY__
