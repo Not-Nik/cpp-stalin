@@ -8,6 +8,7 @@
 #define CPP_STALIN_SRC_MEMORY__
 
 #include "new"
+#include "limits"
 #include "cstddef"
 #include "utility"
 #include "__config"
@@ -61,22 +62,22 @@ public:
 
 #ifndef STALIN_CXX_STD_SINCE_17
     pointer allocate(size_type n, const void *hint = 0) {
-        //if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length(); // todo numeric_limits
+        if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length();
         return ::operator new(n * sizeof(T));
     }
 #elif !defined(STALIN_CXX_STD_SINCE_20)
     T *allocate(std::size_t n, const void *hint) {
-        //if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length(); // todo numeric_limits
+        if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length();
         return ::operator new(n * sizeof(T), (align_val_t) alignof(T));
     }
 
     T *allocate(std::size_t n) {
-        //if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length(); // todo numeric_limits
+        if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length();
         return ::operator new(n * sizeof(T), (align_val_t) alignof(T));
     }
 #else
     STALIN_NODISCARD_SINCE_20 STALIN_CONSTEXPR_SINCE_20 T *allocate(std::size_t n) {
-        //if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length(); // todo numeric_limits
+        if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length();
         return ::operator new(n * sizeof(T), (align_val_t) alignof(T));
     }
 #endif
@@ -103,7 +104,7 @@ public:
 
 #ifndef STALIN_CXX_STD_SINCE_20
     size_type max_size() const noexcept {
-        //return std::numeric_limits<size_type>::max() / sizeof(value_type); // todo numeric_limits
+        return std::numeric_limits<size_type>::max() / sizeof(value_type);
     }
 
     template <class U, class... Args>
@@ -257,12 +258,12 @@ struct allocator_traits {
         #endif
     }
 
-    static STALIN_CXX_STD_SINCE_20 size_type max_size([[maybe_unused]] const alloc &a) noexcept {
+    static STALIN_CONSTEXPR_SINCE_20 size_type max_size([[maybe_unused]] const alloc &a) noexcept {
         // TODO: check if T has max_size
-        //return std::numeric_limits<size_type>::max() / sizeof(value_type); // todo numeric_limits
+        return std::numeric_limits<size_type>::max() / sizeof(value_type);
     }
 
-    static STALIN_CXX_STD_SINCE_20 alloc select_on_container_copy_construction(const alloc &a) {
+    static STALIN_CONSTEXPR_SINCE_20 alloc select_on_container_copy_construction(const alloc &a) {
         // Todo: check if T has select_on_container_copy_construction
         return a;
     }

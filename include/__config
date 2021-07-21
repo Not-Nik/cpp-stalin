@@ -70,9 +70,13 @@
 
 #ifdef STALIN_CXX_STD_SINCE_20
 #define STALIN_CONSTEXPR_SINCE_20 constexpr
+#define STALIN_CONSTEVAL_SINCE_20 consteval
+#define STALIN_MOST_CONST consteval
 #define STALIN_NODISCARD_SINCE_20 [[nodiscard]]
 #else
 #define STALIN_CONSTEXPR_SINCE_20
+#define STALIN_CONSTEVAL_SINCE_20
+#define STALIN_MOST_CONST constexpr
 #define STALIN_NODISCARD_SINCE_20
 #endif
 

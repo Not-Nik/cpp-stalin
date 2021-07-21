@@ -1,0 +1,18 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_CONCEPTS__
+#define CPP_STALIN_INCLUDE_CONCEPTS__
+
+#include "type_traits"
+
+namespace std {
+#ifdef STALIN_CXX_STD_SINCE_20
+template <class T> concept floating_point = std::is_floating_point_v<T>;
+#endif
+}
+
+#endif //CPP_STALIN_INCLUDE_CONCEPTS__

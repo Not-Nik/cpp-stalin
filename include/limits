@@ -1,0 +1,283 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_LIMITS__
+#define CPP_STALIN_INCLUDE_LIMITS__
+
+#include "cmath"
+#include "cfloat"
+#include "climits"
+
+namespace std {
+enum float_round_style {
+    round_indeterminate = -1, round_toward_zero = 0, round_to_nearest = 1, round_toward_infinity = 2, round_toward_neg_infinity = 3,
+};
+
+enum float_denorm_style {
+    denorm_indeterminate = -1, denorm_absent = 0, denorm_present = 1
+};
+
+template <class T>
+class numeric_limits {
+public:
+    static constexpr bool is_specialized = false;
+
+    static constexpr int digits = 0;
+    static constexpr int digits10 = 0;
+    static constexpr int max_digits10 = 0;
+
+    static constexpr bool is_signed = false;
+    static constexpr bool is_integer = false;
+    static constexpr bool is_exact = false;
+    static constexpr int radix = 0;
+
+    static constexpr int min_exponent = 0;
+    static constexpr int min_exponent10 = 0;
+    static constexpr int max_exponent = 0;
+    static constexpr int max_exponent10 = 0;
+
+    static constexpr bool has_infinity = false;
+    static constexpr bool has_quiet_NaN = false;
+    static constexpr bool has_signaling_NaN = false;
+    static constexpr float_denorm_style has_denorm = denorm_absent;
+    static constexpr bool has_denorm_loss = false;
+
+    static constexpr bool is_iec559 = false;
+    static constexpr bool is_bounded = false;
+    static constexpr bool is_modulo = false;
+
+    static constexpr bool traps = false;
+    static constexpr bool tinyness_before = false;
+    static constexpr float_round_style round_style = round_toward_zero;
+
+    static constexpr T min() noexcept { return T(); }
+    static constexpr T max() noexcept { return T(); }
+    static constexpr T lowest() noexcept { return T(); }
+
+    static constexpr T epsilon() noexcept { return T(); }
+    static constexpr T round_error() noexcept { return T(); }
+    static constexpr T infinity() noexcept { return T(); }
+    static constexpr T quiet_NaN() noexcept { return T(); }
+    static constexpr T signaling_NaN() noexcept { return T(); }
+    static constexpr T denorm_min() noexcept { return T(); }
+};
+
+template <>
+class numeric_limits<bool> {
+public:
+    static constexpr bool is_specialized = true;
+
+    static constexpr int digits = 1;
+    static constexpr int digits10 = 0;
+    static constexpr int max_digits10 = 0;
+
+    static constexpr bool is_signed = false;
+    static constexpr bool is_integer = true;
+    static constexpr bool is_exact = true;
+    static constexpr int radix = 2;
+
+    static constexpr int min_exponent = 0;
+    static constexpr int min_exponent10 = 0;
+    static constexpr int max_exponent = 0;
+    static constexpr int max_exponent10 = 0;
+
+    static constexpr bool has_infinity = false;
+    static constexpr bool has_quiet_NaN = false;
+    static constexpr bool has_signaling_NaN = false;
+    static constexpr float_denorm_style has_denorm = denorm_absent;
+    static constexpr bool has_denorm_loss = false;
+
+    static constexpr bool is_iec559 = false;
+    static constexpr bool is_bounded = true;
+    static constexpr bool is_modulo = false;
+
+    static constexpr bool traps = false;
+    static constexpr bool tinyness_before = false;
+    static constexpr float_round_style round_style = round_toward_zero;
+
+    static constexpr bool min() noexcept { return false; }
+    static constexpr bool max() noexcept { return true; }
+    static constexpr bool lowest() noexcept { return false; }
+
+    static constexpr bool epsilon() noexcept { return 0; }
+    static constexpr bool round_error() noexcept { return 0; }
+    static constexpr bool infinity() noexcept { return 0; }
+    static constexpr bool quiet_NaN() noexcept { return 0; }
+    static constexpr bool signaling_NaN() noexcept { return 0; }
+    static constexpr bool denorm_min() noexcept { return 0; }
+};
+
+template <class T>
+class __stalin_int_numeric_limits {
+public:
+    static constexpr bool is_specialized = true;
+
+    static constexpr bool is_signed = std::is_signed<T>::value;
+    static constexpr bool is_integer = true;
+    static constexpr bool is_exact = true;
+    static constexpr int radix = 2;
+
+    static constexpr int digits = sizeof(T) * 8 - is_signed;
+    static constexpr int digits10 = digits * __stalin_const_log10(2);
+    static constexpr int max_digits10 = is_integer ? 0 : ceil(digits * std::log10(2) + 1);
+
+    static constexpr int min_exponent = 0;
+    static constexpr int min_exponent10 = 0;
+    static constexpr int max_exponent = 0;
+    static constexpr int max_exponent10 = 0;
+
+    static constexpr bool has_infinity = false;
+    static constexpr bool has_quiet_NaN = false;
+    static constexpr bool has_signaling_NaN = false;
+    static constexpr float_denorm_style has_denorm = denorm_absent;
+    static constexpr bool has_denorm_loss = false;
+
+    static constexpr bool is_iec559 = false; // valid for the instantiations this is used for
+    static constexpr bool is_bounded = true;
+    static constexpr bool is_modulo = true; // valid for the instantiations this is used for
+
+    static constexpr bool traps = true; // valid for the instantiations this is used for
+    static constexpr bool tinyness_before = false;
+    static constexpr float_round_style round_style = round_toward_zero;
+
+    static constexpr T min() noexcept { return max() * -is_signed; }
+    static constexpr T max() noexcept { return __stalin_const_pow(2, digits); }
+    static constexpr T lowest() noexcept { return min(); }
+
+    static constexpr T epsilon() noexcept { return 0; }
+    static constexpr T round_error() noexcept { return 0; }
+    static constexpr T infinity() noexcept { return 0; }
+    static constexpr T quiet_NaN() noexcept { return 0; }
+    static constexpr T signaling_NaN() noexcept { return 0; }
+    static constexpr T denorm_min() noexcept { return 0; }
+};
+
+template <>
+class numeric_limits<char> : public __stalin_int_numeric_limits<char> {};
+
+template <>
+class numeric_limits<signed char> : public __stalin_int_numeric_limits<signed char> {};
+
+template <>
+class numeric_limits<unsigned char> : public __stalin_int_numeric_limits<unsigned char> {};
+
+#ifdef STALIN_CXX_STD_SINCE_20
+
+template <>
+class numeric_limits<char8_t> : public __stalin_int_numeric_limits<char8_t> {};
+
+#endif
+
+template <>
+class numeric_limits<char16_t> : public __stalin_int_numeric_limits<char16_t> {};
+
+template <>
+class numeric_limits<char32_t> : public __stalin_int_numeric_limits<char32_t> {};
+
+template <>
+class numeric_limits<wchar_t> : public __stalin_int_numeric_limits<wchar_t> {};
+
+template <>
+class numeric_limits<short> : public __stalin_int_numeric_limits<short> {};
+
+template <>
+class numeric_limits<int> : public __stalin_int_numeric_limits<int> {};
+
+template <>
+class numeric_limits<long> : public __stalin_int_numeric_limits<long> {};
+
+template <>
+class numeric_limits<long long> : public __stalin_int_numeric_limits<long long> {};
+
+template <>
+class numeric_limits<unsigned short> : public __stalin_int_numeric_limits<unsigned short> {};
+
+template <>
+class numeric_limits<unsigned int> : public __stalin_int_numeric_limits<unsigned int> {};
+
+template <>
+class numeric_limits<unsigned long> : public __stalin_int_numeric_limits<unsigned long> {};
+
+template <>
+class numeric_limits<unsigned long long> : public __stalin_int_numeric_limits<unsigned long long> {};
+
+template <int dig, int mie, int mie10, int mae, int mae10>
+class __stalin_float_numeric_limits {
+    static constexpr bool is_specialized = true;
+
+    static constexpr bool is_signed = true;
+    static constexpr bool is_integer = false;
+    static constexpr bool is_exact = false;
+    static constexpr int radix = FLT_RADIX;
+
+    static constexpr int digits = dig;
+    static constexpr int digits10 = mie10;
+    static constexpr int max_digits10 = ceil(digits * std::log10(2) + 1);
+
+    static constexpr int min_exponent = mie;
+    static constexpr int min_exponent10 = mie10;
+    static constexpr int max_exponent = mae;
+    static constexpr int max_exponent10 = mae10;
+
+    static constexpr bool has_infinity = true;
+    static constexpr bool has_quiet_NaN = true;
+    static constexpr bool has_signaling_NaN = true;
+    static constexpr float_denorm_style has_denorm = denorm_present;
+    static constexpr bool has_denorm_loss = true;
+
+    static constexpr bool is_iec559 = true; // valid for the instantiations this is used for
+    static constexpr bool is_bounded = true;
+    static constexpr bool is_modulo = false; // valid for the instantiations this is used for
+
+    static constexpr bool traps = false; // valid for the instantiations this is used for
+    static constexpr bool tinyness_before = true;
+    static constexpr float_round_style round_style = round_to_nearest;
+};
+
+template <>
+class numeric_limits<float> : public __stalin_float_numeric_limits<FLT_MANT_DIG, FLT_MIN_EXP, FLT_MIN_10_EXP, FLT_MAX_EXP, FLT_MAX_10_EXP> {
+    static constexpr float min() noexcept { return FLT_MIN; }
+    static constexpr float max() noexcept { return FLT_MAX; }
+    static constexpr float lowest() noexcept { return -FLT_MAX; }
+
+    static constexpr float epsilon() noexcept { return FLT_EPSILON; }
+    static constexpr float round_error() noexcept { return 0.5F; }
+    static constexpr float infinity() noexcept { return HUGE_VALF; }
+    static constexpr float quiet_NaN() noexcept { return NAN; }
+    static constexpr float signaling_NaN() noexcept { return NAN; }
+    static constexpr float denorm_min() noexcept { return __stalin_const_pow(2, -149); }
+};
+
+template <>
+class numeric_limits<double> : public __stalin_float_numeric_limits<DBL_MANT_DIG, DBL_MIN_EXP, DBL_MIN_10_EXP, DBL_MAX_EXP, DBL_MAX_10_EXP> {
+    static constexpr double min() noexcept { return DBL_MIN; }
+    static constexpr double max() noexcept { return DBL_MAX; }
+    static constexpr double lowest() noexcept { return -DBL_MAX; }
+
+    static constexpr double epsilon() noexcept { return DBL_EPSILON; }
+    static constexpr double round_error() noexcept { return 0.5; }
+    static constexpr double infinity() noexcept { return HUGE_VAL; }
+    static constexpr double quiet_NaN() noexcept { return NAN; }
+    static constexpr double signaling_NaN() noexcept { return NAN; }
+    static constexpr double denorm_min() noexcept { return __stalin_const_pow(2, -149); }
+};
+
+template <>
+class numeric_limits<long double> : public __stalin_float_numeric_limits<LDBL_MANT_DIG, LDBL_MIN_EXP, LDBL_MIN_10_EXP, LDBL_MAX_EXP, LDBL_MAX_10_EXP> {
+    static constexpr double min() noexcept { return LDBL_MIN; }
+    static constexpr double max() noexcept { return LDBL_MAX; }
+    static constexpr double lowest() noexcept { return -LDBL_MAX; }
+
+    static constexpr double epsilon() noexcept { return LDBL_EPSILON; }
+    static constexpr double round_error() noexcept { return 0.5L; }
+    static constexpr double infinity() noexcept { return HUGE_VALL; }
+    static constexpr double quiet_NaN() noexcept { return NAN; }
+    static constexpr double signaling_NaN() noexcept { return NAN; }
+    static constexpr double denorm_min() noexcept { return __stalin_const_pow(2, -1074); }
+};
+}
+
+#endif //CPP_STALIN_INCLUDE_LIMITS__
