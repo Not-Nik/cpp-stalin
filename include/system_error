@@ -23,87 +23,87 @@ class error_condition;
 template <class T>
 struct is_error_code_enum : public false_type {};
 
-template <class T> [[maybe_unused]] inline constexpr bool is_error_code_enum_v = is_error_code_enum<T>::value;
+template <class T> STALIN_NONSTRICT_MAYBE_UNUSED inline constexpr bool is_error_code_enum_v = is_error_code_enum<T>::value;
 
 enum class errc {
-    address_family_not_supported [[maybe_unused]] = EAFNOSUPPORT,
-    address_in_use [[maybe_unused]] = EADDRINUSE,
-    address_not_available [[maybe_unused]] = EADDRNOTAVAIL,
-    already_connected [[maybe_unused]] = EISCONN,
-    argument_list_too_long [[maybe_unused]] = E2BIG,
-    argument_out_of_domain [[maybe_unused]] = EDOM,
-    bad_address [[maybe_unused]] = EFAULT,
-    bad_file_descriptor [[maybe_unused]] = EBADF,
-    bad_message [[maybe_unused]] = EBADMSG,
-    broken_pipe [[maybe_unused]] = EPIPE,
-    connection_aborted [[maybe_unused]] = ECONNABORTED,
-    connection_already_in_progress [[maybe_unused]] = EALREADY,
-    connection_refused [[maybe_unused]] = ECONNREFUSED,
-    connection_reset [[maybe_unused]] = ECONNRESET,
-    cross_device_link [[maybe_unused]] = EXDEV,
-    destination_address_required [[maybe_unused]] = EDESTADDRREQ,
-    device_or_resource_busy [[maybe_unused]] = EBUSY,
-    directory_not_empty [[maybe_unused]] = ENOTEMPTY,
-    executable_format_error [[maybe_unused]] = ENOEXEC,
-    file_exists [[maybe_unused]] = EEXIST,
-    file_too_large [[maybe_unused]] = EFBIG,
-    filename_too_long [[maybe_unused]] = ENAMETOOLONG,
-    function_not_supported [[maybe_unused]] = ENOSYS,
-    host_unreachable [[maybe_unused]] = EHOSTUNREACH,
-    identifier_removed [[maybe_unused]] = EIDRM,
-    illegal_byte_sequence [[maybe_unused]] = EILSEQ,
-    inappropriate_io_control_operation [[maybe_unused]] = ENOTTY,
-    interrupted [[maybe_unused]] = EINTR,
-    invalid_argument [[maybe_unused]] = EINVAL,
-    invalid_seek [[maybe_unused]] = ESPIPE,
-    io_error [[maybe_unused]] = EIO,
-    is_a_directory [[maybe_unused]] = EISDIR,
-    message_size [[maybe_unused]] = EMSGSIZE,
-    network_down [[maybe_unused]] = ENETDOWN,
-    network_reset [[maybe_unused]] = ENETRESET,
-    network_unreachable [[maybe_unused]] = ENETUNREACH,
-    no_buffer_space [[maybe_unused]] = ENOBUFS,
-    no_child_process [[maybe_unused]] = ECHILD,
-    no_link [[maybe_unused]] = ENOLINK,
-    //no_lock_available [[maybe_unused]] = ENOLOCK, // not available with gcc and clang
-    no_message [[maybe_unused]] = ENOMSG,
-    no_message_available [[maybe_unused]] = ENODATA,
-    no_protocol_option [[maybe_unused]] = ENOPROTOOPT,
-    no_space_on_device [[maybe_unused]] = ENOSPC,
-    no_stream_resources [[maybe_unused]] = ENOSR,
-    no_such_device [[maybe_unused]] = ENODEV,
-    no_such_device_or_address [[maybe_unused]] = ENXIO,
-    no_such_file_or_directory [[maybe_unused]] = ENOENT,
-    no_such_process [[maybe_unused]] = ESRCH,
-    not_a_directory [[maybe_unused]] = ENOTDIR,
-    not_a_socket [[maybe_unused]] = ENOTSOCK,
-    not_a_stream [[maybe_unused]] = ENOSTR,
-    not_connected [[maybe_unused]] = ENOTCONN,
-    not_enough_memory [[maybe_unused]] = ENOMEM,
-    not_supported [[maybe_unused]] = ENOTSUP,
-    operation_canceled [[maybe_unused]] = ECANCELED,
-    operation_in_progress [[maybe_unused]] = EINPROGRESS,
-    operation_not_permitted [[maybe_unused]] = EPERM,
-    operation_not_supported [[maybe_unused]] = EOPNOTSUPP,
-    operation_would_block [[maybe_unused]] = EWOULDBLOCK,
-    owner_dead [[maybe_unused]] = EOWNERDEAD,
-    permission_denied [[maybe_unused]] = EACCES,
-    protocol_error [[maybe_unused]] = EPROTO,
-    protocol_not_supported [[maybe_unused]] = EPROTONOSUPPORT,
-    read_only_file_system [[maybe_unused]] = EROFS,
-    resource_deadlock_would_occur [[maybe_unused]] = EDEADLK,
-    resource_unavailable_try_again [[maybe_unused]] = EAGAIN,
-    result_out_of_range [[maybe_unused]] = ERANGE,
-    state_not_recoverable [[maybe_unused]] = ENOTRECOVERABLE,
-    stream_timeout [[maybe_unused]] = ETIME,
-    text_file_busy [[maybe_unused]] = ETXTBSY,
-    timed_out [[maybe_unused]] = ETIMEDOUT,
-    too_many_files_open [[maybe_unused]] = EMFILE,
-    too_many_files_open_in_system [[maybe_unused]] = ENFILE,
-    too_many_links [[maybe_unused]] = EMLINK,
-    too_many_symbolic_link_levels [[maybe_unused]] = ELOOP,
-    value_too_large [[maybe_unused]] = EOVERFLOW,
-    wrong_protocol_type [[maybe_unused]] = EPROTOTYPE
+    address_family_not_supported STALIN_NONSTRICT_MAYBE_UNUSED = EAFNOSUPPORT,
+    address_in_use STALIN_NONSTRICT_MAYBE_UNUSED = EADDRINUSE,
+    address_not_available STALIN_NONSTRICT_MAYBE_UNUSED = EADDRNOTAVAIL,
+    already_connected STALIN_NONSTRICT_MAYBE_UNUSED = EISCONN,
+    argument_list_too_long STALIN_NONSTRICT_MAYBE_UNUSED = E2BIG,
+    argument_out_of_domain STALIN_NONSTRICT_MAYBE_UNUSED = EDOM,
+    bad_address STALIN_NONSTRICT_MAYBE_UNUSED = EFAULT,
+    bad_file_descriptor STALIN_NONSTRICT_MAYBE_UNUSED = EBADF,
+    bad_message STALIN_NONSTRICT_MAYBE_UNUSED = EBADMSG,
+    broken_pipe STALIN_NONSTRICT_MAYBE_UNUSED = EPIPE,
+    connection_aborted STALIN_NONSTRICT_MAYBE_UNUSED = ECONNABORTED,
+    connection_already_in_progress STALIN_NONSTRICT_MAYBE_UNUSED = EALREADY,
+    connection_refused STALIN_NONSTRICT_MAYBE_UNUSED = ECONNREFUSED,
+    connection_reset STALIN_NONSTRICT_MAYBE_UNUSED = ECONNRESET,
+    cross_device_link STALIN_NONSTRICT_MAYBE_UNUSED = EXDEV,
+    destination_address_required STALIN_NONSTRICT_MAYBE_UNUSED = EDESTADDRREQ,
+    device_or_resource_busy STALIN_NONSTRICT_MAYBE_UNUSED = EBUSY,
+    directory_not_empty STALIN_NONSTRICT_MAYBE_UNUSED = ENOTEMPTY,
+    executable_format_error STALIN_NONSTRICT_MAYBE_UNUSED = ENOEXEC,
+    file_exists STALIN_NONSTRICT_MAYBE_UNUSED = EEXIST,
+    file_too_large STALIN_NONSTRICT_MAYBE_UNUSED = EFBIG,
+    filename_too_long STALIN_NONSTRICT_MAYBE_UNUSED = ENAMETOOLONG,
+    function_not_supported STALIN_NONSTRICT_MAYBE_UNUSED = ENOSYS,
+    host_unreachable STALIN_NONSTRICT_MAYBE_UNUSED = EHOSTUNREACH,
+    identifier_removed STALIN_NONSTRICT_MAYBE_UNUSED = EIDRM,
+    illegal_byte_sequence STALIN_NONSTRICT_MAYBE_UNUSED = EILSEQ,
+    inappropriate_io_control_operation STALIN_NONSTRICT_MAYBE_UNUSED = ENOTTY,
+    interrupted STALIN_NONSTRICT_MAYBE_UNUSED = EINTR,
+    invalid_argument STALIN_NONSTRICT_MAYBE_UNUSED = EINVAL,
+    invalid_seek STALIN_NONSTRICT_MAYBE_UNUSED = ESPIPE,
+    io_error STALIN_NONSTRICT_MAYBE_UNUSED = EIO,
+    is_a_directory STALIN_NONSTRICT_MAYBE_UNUSED = EISDIR,
+    message_size STALIN_NONSTRICT_MAYBE_UNUSED = EMSGSIZE,
+    network_down STALIN_NONSTRICT_MAYBE_UNUSED = ENETDOWN,
+    network_reset STALIN_NONSTRICT_MAYBE_UNUSED = ENETRESET,
+    network_unreachable STALIN_NONSTRICT_MAYBE_UNUSED = ENETUNREACH,
+    no_buffer_space STALIN_NONSTRICT_MAYBE_UNUSED = ENOBUFS,
+    no_child_process STALIN_NONSTRICT_MAYBE_UNUSED = ECHILD,
+    no_link STALIN_NONSTRICT_MAYBE_UNUSED = ENOLINK,
+    //no_lock_available STALIN_NONSTRICT_MAYBE_UNUSED = ENOLOCK, // not available with gcc and clang
+    no_message STALIN_NONSTRICT_MAYBE_UNUSED = ENOMSG,
+    no_message_available STALIN_NONSTRICT_MAYBE_UNUSED = ENODATA,
+    no_protocol_option STALIN_NONSTRICT_MAYBE_UNUSED = ENOPROTOOPT,
+    no_space_on_device STALIN_NONSTRICT_MAYBE_UNUSED = ENOSPC,
+    no_stream_resources STALIN_NONSTRICT_MAYBE_UNUSED = ENOSR,
+    no_such_device STALIN_NONSTRICT_MAYBE_UNUSED = ENODEV,
+    no_such_device_or_address STALIN_NONSTRICT_MAYBE_UNUSED = ENXIO,
+    no_such_file_or_directory STALIN_NONSTRICT_MAYBE_UNUSED = ENOENT,
+    no_such_process STALIN_NONSTRICT_MAYBE_UNUSED = ESRCH,
+    not_a_directory STALIN_NONSTRICT_MAYBE_UNUSED = ENOTDIR,
+    not_a_socket STALIN_NONSTRICT_MAYBE_UNUSED = ENOTSOCK,
+    not_a_stream STALIN_NONSTRICT_MAYBE_UNUSED = ENOSTR,
+    not_connected STALIN_NONSTRICT_MAYBE_UNUSED = ENOTCONN,
+    not_enough_memory STALIN_NONSTRICT_MAYBE_UNUSED = ENOMEM,
+    not_supported STALIN_NONSTRICT_MAYBE_UNUSED = ENOTSUP,
+    operation_canceled STALIN_NONSTRICT_MAYBE_UNUSED = ECANCELED,
+    operation_in_progress STALIN_NONSTRICT_MAYBE_UNUSED = EINPROGRESS,
+    operation_not_permitted STALIN_NONSTRICT_MAYBE_UNUSED = EPERM,
+    operation_not_supported STALIN_NONSTRICT_MAYBE_UNUSED = EOPNOTSUPP,
+    operation_would_block STALIN_NONSTRICT_MAYBE_UNUSED = EWOULDBLOCK,
+    owner_dead STALIN_NONSTRICT_MAYBE_UNUSED = EOWNERDEAD,
+    permission_denied STALIN_NONSTRICT_MAYBE_UNUSED = EACCES,
+    protocol_error STALIN_NONSTRICT_MAYBE_UNUSED = EPROTO,
+    protocol_not_supported STALIN_NONSTRICT_MAYBE_UNUSED = EPROTONOSUPPORT,
+    read_only_file_system STALIN_NONSTRICT_MAYBE_UNUSED = EROFS,
+    resource_deadlock_would_occur STALIN_NONSTRICT_MAYBE_UNUSED = EDEADLK,
+    resource_unavailable_try_again STALIN_NONSTRICT_MAYBE_UNUSED = EAGAIN,
+    result_out_of_range STALIN_NONSTRICT_MAYBE_UNUSED = ERANGE,
+    state_not_recoverable STALIN_NONSTRICT_MAYBE_UNUSED = ENOTRECOVERABLE,
+    stream_timeout STALIN_NONSTRICT_MAYBE_UNUSED = ETIME,
+    text_file_busy STALIN_NONSTRICT_MAYBE_UNUSED = ETXTBSY,
+    timed_out STALIN_NONSTRICT_MAYBE_UNUSED = ETIMEDOUT,
+    too_many_files_open STALIN_NONSTRICT_MAYBE_UNUSED = EMFILE,
+    too_many_files_open_in_system STALIN_NONSTRICT_MAYBE_UNUSED = ENFILE,
+    too_many_links STALIN_NONSTRICT_MAYBE_UNUSED = EMLINK,
+    too_many_symbolic_link_levels STALIN_NONSTRICT_MAYBE_UNUSED = ELOOP,
+    value_too_large STALIN_NONSTRICT_MAYBE_UNUSED = EOVERFLOW,
+    wrong_protocol_type STALIN_NONSTRICT_MAYBE_UNUSED = EPROTOTYPE
 };
 
 template <class T>
@@ -145,10 +145,10 @@ public:
     error_code &operator=(ErrorCodeEnum e) noexcept;
 
     void clear() noexcept;
-    [[nodiscard]] int value() const noexcept { return value_; }
-    [[nodiscard]] const error_category &category() const noexcept { return cat_; }
-    [[nodiscard]] error_condition default_error_condition() const noexcept;
-    //[[nodiscard]] string message() const; // todo strings
+    STALIN_NONSTRICT_NODISCARD int value() const noexcept { return value_; }
+    STALIN_NONSTRICT_NODISCARD const error_category &category() const noexcept { return cat_; }
+    STALIN_NONSTRICT_NODISCARD error_condition default_error_condition() const noexcept;
+    //STALIN_NONSTRICT_NODISCARD string message() const; // todo strings
 
     explicit operator bool() const noexcept { return value_ != 0; }
 };
@@ -205,9 +205,9 @@ public:
     error_condition &operator=(ErrorConditionEnum e) noexcept;
 
     void clear() noexcept;
-    [[nodiscard]] int value() const noexcept { return value_; }
-    [[nodiscard]] const error_category &category() const noexcept { return cat_; }
-    //[[nodiscard]] string message() const; // todo strings
+    STALIN_NONSTRICT_NODISCARD int value() const noexcept { return value_; }
+    STALIN_NONSTRICT_NODISCARD const error_category &category() const noexcept { return cat_; }
+    //STALIN_NONSTRICT_NODISCARD string message() const; // todo strings
 
     explicit operator bool() const noexcept { return value_ != 0; }
 };
@@ -234,12 +234,12 @@ public:
     //std::strong_ordering operator<=>( const error_category& rhs ) const noexcept; // todo <compare>
     #endif
 
-    [[nodiscard]] virtual const char *name() const noexcept = 0;
-    [[nodiscard]] virtual error_condition default_error_condition(int val) const noexcept { return error_condition(val, *this); }
-    [[nodiscard]] virtual bool equivalent(int valcode, const error_condition &cond) const noexcept {
+    STALIN_NONSTRICT_NODISCARD virtual const char *name() const noexcept = 0;
+    STALIN_NONSTRICT_NODISCARD virtual error_condition default_error_condition(int val) const noexcept { return error_condition(val, *this); }
+    STALIN_NONSTRICT_NODISCARD virtual bool equivalent(int valcode, const error_condition &cond) const noexcept {
         return default_error_condition(valcode) == cond;
     }
-    [[nodiscard]] virtual bool equivalent(const error_code &code, int valcond) const noexcept {
+    STALIN_NONSTRICT_NODISCARD virtual bool equivalent(const error_code &code, int valcond) const noexcept {
         return *this == code.category() && code.value() == valcond;
     }
     //virtual string message(int val) const = 0; // todo strings
@@ -266,12 +266,12 @@ public:
     //system_error(error_code ec, const string &what_arg); // todo strings
     system_error(error_code ec, const char *what_arg)
         : runtime_error(what_arg), code_(ec) {}
-    system_error(error_code ec)
+    STALIN_NONSTRICT_MAYBE_UNUSED system_error(error_code ec)
         : runtime_error("system_error"), code_(ec) {}
     //system_error(int val, const error_category &cat, const string &what_arg); // todo strings
-    system_error(int val, const error_category &cat, const char *what_arg)
+    STALIN_NONSTRICT_MAYBE_UNUSED system_error(int val, const error_category &cat, const char *what_arg)
         : runtime_error(what_arg), code_(val, cat) {}
-    system_error(int val, const error_category &cat)
+    STALIN_NONSTRICT_MAYBE_UNUSED system_error(int val, const error_category &cat)
         : runtime_error("system_error"), code_(val, cat) {}
 };
 }

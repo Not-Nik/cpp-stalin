@@ -20,15 +20,15 @@ public:
     runtime_error(const runtime_error &other) noexcept = default;
 };
 
-class range_error : public runtime_error {
+class STALIN_NONSTRICT_MAYBE_UNUSED range_error : public runtime_error {
     using runtime_error::runtime_error;
 };
 
-class overflow_error : public runtime_error {
+class STALIN_NONSTRICT_MAYBE_UNUSED overflow_error : public runtime_error {
     using runtime_error::runtime_error;
 };
 
-class underflow_error : public runtime_error {
+class STALIN_NONSTRICT_MAYBE_UNUSED underflow_error : public runtime_error {
     using runtime_error::runtime_error;
 };
 
@@ -38,19 +38,19 @@ public:
     explicit logic_error(const char *what_arg) : exception() { this->what_ = what_arg; }
 };
 
-class domain_error : public logic_error {
+class STALIN_NONSTRICT_MAYBE_UNUSED domain_error : public logic_error {
     using logic_error::logic_error;
 };
 
-class invalid_argument : public logic_error {
+class STALIN_NONSTRICT_MAYBE_UNUSED invalid_argument : public logic_error {
     using logic_error::logic_error;
 };
 
-class length_error : public logic_error {
+class STALIN_NONSTRICT_MAYBE_UNUSED length_error : public logic_error {
     using logic_error::logic_error;
 };
 
-class out_of_range : public logic_error {
+class STALIN_NONSTRICT_MAYBE_UNUSED out_of_range : public logic_error {
     using logic_error::logic_error;
 };
 }

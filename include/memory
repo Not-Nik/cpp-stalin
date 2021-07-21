@@ -94,7 +94,7 @@ public:
     }
 #endif
 
-    STALIN_CONSTEXPR_SINCE_20 void deallocate(T *p, [[maybe_unused]] std::size_t n) {
+    STALIN_CONSTEXPR_SINCE_20 void deallocate(T *p, STALIN_NONSTRICT_MAYBE_UNUSED std::size_t n) {
         ::operator delete(p
 #ifdef STALIN_CXX_STD_SINCE_17
             , (align_val_t) alignof(T)
@@ -120,8 +120,8 @@ public:
 };
 
 template <class T1, class T2>
-STALIN_CONSTEXPR_SINCE_20 bool operator==([[maybe_unused]] const allocator<T1> &lhs,
-                                          [[maybe_unused]] const allocator<T2> &rhs) noexcept { return true; }
+STALIN_CONSTEXPR_SINCE_20 bool operator==(STALIN_NONSTRICT_MAYBE_UNUSED const allocator<T1> &lhs,
+                                          STALIN_NONSTRICT_MAYBE_UNUSED const allocator<T2> &rhs) noexcept { return true; }
 
 #ifndef STALIN_CXX_STD_SINCE_20
 template <class T1, class T2>
@@ -146,14 +146,14 @@ class allocator<void> {
 #endif
 
 template <class T>
-STALIN_CONSTEXPR_SINCE_17 typename std::enable_if<std::is_object<T>::value, T *>::type addressof(T &arg) noexcept {
+STALIN_NONSTRICT_NODISCARD STALIN_CONSTEXPR_SINCE_17 typename std::enable_if<std::is_object<T>::value, T *>::type addressof(T &arg) noexcept {
     return reinterpret_cast<T *>(
         &const_cast<char &>(
             reinterpret_cast<const volatile char &>(arg)));
 }
 
 template <class T>
-STALIN_CONSTEXPR_SINCE_17 typename std::enable_if<!std::is_object<T>::value, T *>::type addressof(T &arg) noexcept {
+STALIN_NONSTRICT_NODISCARD STALIN_CONSTEXPR_SINCE_17 typename std::enable_if<!std::is_object<T>::value, T *>::type addressof(T &arg) noexcept {
     return &arg;
 }
 
@@ -183,18 +183,18 @@ struct pointer_traits {
 
     template <class U> using rebind = typename ptr::template rebind<U>;
 
-    static pointer pointer_to(element_type &r) { return ptr::pointer_to(r); }
+    STALIN_NONSTRICT_NODISCARD static pointer pointer_to(element_type &r) { return ptr::pointer_to(r); }
 };
 
 template <class T>
 struct pointer_traits<T *> {
     typedef T *pointer;
     typedef T element_type;
-    typedef ptrdiff_t difference_type; // Notodo: this is compliant, dont change
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef ptrdiff_t difference_type; // Notodo: this is compliant, dont change
 
     template <class U> using rebind = U *;
 
-    static STALIN_CONSTEXPR_SINCE_20 pointer pointer_to(element_type &r) noexcept { return addressof(r); }
+    STALIN_NONSTRICT_NODISCARD static STALIN_CONSTEXPR_SINCE_20 pointer pointer_to(element_type &r) noexcept { return addressof(r); }
 };
 
 template <class T>
@@ -207,7 +207,7 @@ template <class alloc>
 struct allocator_traits {
     static_assert(is_allocator<alloc>::value);
 
-    typedef alloc allocator_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef alloc allocator_type;
     typedef typename alloc::value_type value_type;
 #ifndef STALIN_CXX_STD_SINCE_20
     typedef typename alloc::pointer pointer;
@@ -220,7 +220,7 @@ struct allocator_traits {
     typedef typename std::pointer_traits<pointer>::template rebind<void> void_pointer;
     typedef typename std::pointer_traits<pointer>::template rebind<const void> const_void_pointer;
 #endif
-    typedef typename alloc::difference_type difference_type; // Todo: check if these two are present
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef typename alloc::difference_type difference_type; // Todo: check if these two are present
     typedef typename alloc::size_type size_type;
 
     #ifdef STALIN_CXX_STD_SINCE_14
@@ -249,7 +249,7 @@ struct allocator_traits {
     }
 
     template <class T>
-    static STALIN_CONSTEXPR_SINCE_20 void destroy([[maybe_unused]] alloc &a, T *p) {
+    static STALIN_CONSTEXPR_SINCE_20 void destroy(STALIN_NONSTRICT_MAYBE_UNUSED alloc &a, T *p) {
         // TODO: check if T has destroy
         #ifndef STALIN_CXX_STD_SINCE_20
         p->~T();
@@ -258,12 +258,12 @@ struct allocator_traits {
         #endif
     }
 
-    static STALIN_CONSTEXPR_SINCE_20 size_type max_size([[maybe_unused]] const alloc &a) noexcept {
+    STALIN_NONSTRICT_NODISCARD static STALIN_CONSTEXPR_SINCE_20 size_type max_size(STALIN_NONSTRICT_MAYBE_UNUSED const alloc &a) noexcept {
         // TODO: check if T has max_size
         return std::numeric_limits<size_type>::max() / sizeof(value_type);
     }
 
-    static STALIN_CONSTEXPR_SINCE_20 alloc select_on_container_copy_construction(const alloc &a) {
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static STALIN_CONSTEXPR_SINCE_20 alloc select_on_container_copy_construction(const alloc &a) {
         // Todo: check if T has select_on_container_copy_construction
         return a;
     }

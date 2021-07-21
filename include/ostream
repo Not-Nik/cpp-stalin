@@ -56,9 +56,9 @@ public:
     basic_ostream &put(char_type c);
     basic_ostream &write(const char_type *s, streamsize n);
 
-    pos_type tellp();
-    basic_ostream &seekp(pos_type pos);
-    basic_ostream &seekp(off_type off, ios_base::seekdir way);
+    STALIN_NONSTRICT_MAYBE_UNUSED pos_type tellp();
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_ostream &seekp(pos_type pos);
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_ostream &seekp(off_type off, ios_base::seekdir way);
 
     basic_ostream &flush();
 
@@ -101,7 +101,7 @@ basic_ostream<charT, traits> &basic_ostream<charT, traits>::put(char_type c) {
 }
 
 template <class charT, class traits>
-basic_ostream<charT, traits> &basic_ostream<charT, traits>::write(const char_type *s, streamsize n) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_ostream<charT, traits> &basic_ostream<charT, traits>::write(const char_type *s, streamsize n) {
     sentry sen(*this);
     if (sen and this->buf_) {
         int_type r = this->buf_->sputn(s, n);
@@ -112,21 +112,21 @@ basic_ostream<charT, traits> &basic_ostream<charT, traits>::write(const char_typ
 }
 
 template <class charT, class traits>
-typename basic_ostream<charT, traits>::pos_type basic_ostream<charT, traits>::tellp() {
+STALIN_NONSTRICT_MAYBE_UNUSED typename basic_ostream<charT, traits>::pos_type basic_ostream<charT, traits>::tellp() {
     sentry s(*this);
     if (this->fail()) return -1;
     this->rdbuf_->pubseekoff(0, ios_base::cur, ios_base::out);
 }
 
 template <class charT, class traits>
-basic_ostream<charT, traits> &basic_ostream<charT, traits>::seekp(pos_type pos) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_ostream<charT, traits> &basic_ostream<charT, traits>::seekp(pos_type pos) {
     sentry s(*this);
     if (this->fail()) return -1;
     this->rdbuf()->pubseekpos(pos, ios_base::out);
 }
 
 template <class charT, class traits>
-basic_ostream<charT, traits> &basic_ostream<charT, traits>::seekp(off_type off, ios_base::seekdir way) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_ostream<charT, traits> &basic_ostream<charT, traits>::seekp(off_type off, ios_base::seekdir way) {
     sentry s(*this);
     if (this->fail()) return -1;
     this->rdbuf()->pubseekoff(off, way, ios_base::out);

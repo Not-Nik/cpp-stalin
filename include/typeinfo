@@ -27,20 +27,20 @@ public:
     bool operator!=( const type_info& rhs ) const noexcept { return !(*this == rhs); }
     #endif
 
-    bool before(const type_info &rhs) const noexcept;
-    size_t hash_code() const noexcept;
-    const char *name() const noexcept;
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED bool before(const type_info &rhs) const noexcept;
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED size_t hash_code() const noexcept;
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED const char *name() const noexcept;
 };
 
-class bad_typeid : public std::exception {
-    bad_typeid([[maybe_unused]] const char *what_arg)
+class STALIN_NONSTRICT_MAYBE_UNUSED bad_typeid : public std::exception {
+    STALIN_NONSTRICT_MAYBE_UNUSED bad_typeid(STALIN_NONSTRICT_MAYBE_UNUSED const char *what_arg)
         : exception() { this->what_ = "bad typeid"; }
 
     bad_typeid(const bad_typeid &other) noexcept = default;
 };
 
-class bad_cast : public std::exception {
-    bad_cast([[maybe_unused]] const char *what_arg)
+class STALIN_NONSTRICT_MAYBE_UNUSED bad_cast : public std::exception {
+    STALIN_NONSTRICT_MAYBE_UNUSED bad_cast(STALIN_NONSTRICT_MAYBE_UNUSED const char *what_arg)
         : exception() { this->what_ = "bad cast"; }
 
     bad_cast(const bad_cast &other) noexcept = default;

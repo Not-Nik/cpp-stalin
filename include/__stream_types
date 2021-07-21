@@ -12,8 +12,8 @@
 #include "__config"
 
 namespace std {
-[[maybe_unused]] typedef intptr_t streamoff;
-[[maybe_unused]] typedef intptr_t streamsize;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef intptr_t streamoff;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef intptr_t streamsize;
 
 template <class stateT>
 class fpos {
@@ -68,13 +68,13 @@ fpos<stateT> fpos<stateT>::operator-(streamoff off) const {
     return t;
 }
 
-[[maybe_unused]] typedef fpos<mbstate_t> streampos;
-[[maybe_unused]] typedef fpos<mbstate_t> wstreampos;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef fpos<mbstate_t> streampos;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef fpos<mbstate_t> wstreampos;
 #ifdef STALIN_CXX_STD_SINCE_20
-[[maybe_unused]] typedef fpos<mbstate_t> u8streampos;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef fpos<mbstate_t> u8streampos;
 #endif
-[[maybe_unused]] typedef std::fpos<mbstate_t> u16streampos;
-[[maybe_unused]] typedef std::fpos<mbstate_t> u32streampos;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef std::fpos<mbstate_t> u16streampos;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef std::fpos<mbstate_t> u32streampos;
 
 }
 

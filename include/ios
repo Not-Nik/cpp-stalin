@@ -130,14 +130,14 @@ public:
 
 enum class io_errc {
     stream = 1,
-    eof [[maybe_unused]] = ios_base::eofbit,
-    fail [[maybe_unused]] = ios_base::failbit,
-    bad [[maybe_unused]] = ios_base::badbit,
+    eof STALIN_NONSTRICT_MAYBE_UNUSED = ios_base::eofbit,
+    fail STALIN_NONSTRICT_MAYBE_UNUSED = ios_base::failbit,
+    bad STALIN_NONSTRICT_MAYBE_UNUSED = ios_base::badbit,
 
-    eof_fail [[maybe_unused]] = eof | fail,
-    eof_bad [[maybe_unused]] = eof | bad,
-    fail_bad [[maybe_unused]] = fail | bad,
-    eof_fail_bad [[maybe_unused]] = eof | fail | bad
+    eof_fail STALIN_NONSTRICT_MAYBE_UNUSED = eof | fail,
+    eof_bad STALIN_NONSTRICT_MAYBE_UNUSED = eof | bad,
+    fail_bad STALIN_NONSTRICT_MAYBE_UNUSED = fail | bad,
+    eof_fail_bad STALIN_NONSTRICT_MAYBE_UNUSED = eof | fail | bad
 };
 
 template <>
@@ -185,25 +185,25 @@ public:
 
     virtual ~basic_ios() = default;
 
-    bool good() const { return state_ == goodbit; }
-    bool eof() const { return (state_ & eofbit) != 0; }
-    bool fail() const { return (state_ & (failbit | badbit)) != 0; }
-    bool bad() const { return (state_ & badbit) != 0; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED bool good() const { return state_ == goodbit; }
+    STALIN_NONSTRICT_NODISCARD bool eof() const { return (state_ & eofbit) != 0; }
+    STALIN_NONSTRICT_NODISCARD bool fail() const { return (state_ & (failbit | badbit)) != 0; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED bool bad() const { return (state_ & badbit) != 0; }
 
     bool operator!() const { return (state_ & (failbit | badbit)) != 0; }
-    explicit operator bool() const { return !fail(); }
+    STALIN_NONSTRICT_NODISCARD explicit operator bool() const { return !fail(); }
 
-    iostate rdstate() const { return state_; }
+    STALIN_NONSTRICT_NODISCARD iostate rdstate() const { return state_; }
     void setstate(iostate state);
     void clear(iostate state = goodbit) { state_ = state; }
 
-    basic_ios &copyfmt(const basic_ios &rhs);
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_ios &copyfmt(const basic_ios &rhs);
 
-    char_type fill() const { return fill_; }
-    char_type fill(char_type fillch);
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED char_type fill() const { return fill_; }
+    STALIN_NONSTRICT_MAYBE_UNUSED char_type fill(char_type fillch);
 
-    iostate exceptions() const;
-    void exceptions(iostate except);
+    STALIN_NONSTRICT_MAYBE_UNUSED iostate exceptions() const;
+    STALIN_NONSTRICT_MAYBE_UNUSED void exceptions(iostate except);
 
     locale imbue(const locale &loc);
 
@@ -213,8 +213,9 @@ public:
     basic_streambuf<char_type, traits_type> *rdbuf() const { return buf_; }
     basic_streambuf<char_type, traits_type> *rdbuf(basic_streambuf<char_type, traits_type> *sb);
 
-    char narrow(char_type wc, char dfault) const { return dfault; } // Internal workings require Todo: locale implementation
-    char_type widen(char c) const { return c; }
+    STALIN_NONSTRICT_NODISCARD char narrow(STALIN_NONSTRICT_MAYBE_UNUSED char_type wc,
+                                           char dfault) const { return dfault; } // Internal workings require Todo: locale implementation
+    STALIN_NONSTRICT_NODISCARD char_type widen(char c) const { return c; }
 
 protected:
     void init(basic_streambuf<char_type, traits_type> *sb);
@@ -224,7 +225,7 @@ protected:
 
     void swap(basic_ios &x) noexcept;
 
-    void set_rdbuf (basic_streambuf<char_type,traits_type>* sb) { buf_ = sb; }
+    STALIN_NONSTRICT_MAYBE_UNUSED void set_rdbuf(basic_streambuf<char_type, traits_type> *sb) { buf_ = sb; }
 };
 
 typedef basic_ios<char> ios;
@@ -239,7 +240,7 @@ void basic_ios<charT, traits>::setstate(ios_base::iostate state) {
 }
 
 template <class charT, class traits>
-basic_ios<charT, traits> &basic_ios<charT, traits>::copyfmt(const basic_ios &rhs) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_ios<charT, traits> &basic_ios<charT, traits>::copyfmt(const basic_ios &rhs) {
     this->flags_ = rhs.flags_;
     this->width_ = rhs.width_;
     this->precision_ = rhs.precision_;
@@ -253,33 +254,34 @@ basic_ios<charT, traits> &basic_ios<charT, traits>::copyfmt(const basic_ios &rhs
 }
 
 template <class charT, class traits>
-typename basic_ios<charT, traits>::char_type basic_ios<charT, traits>::fill(char_type fillch) {
+STALIN_NONSTRICT_MAYBE_UNUSED typename basic_ios<charT, traits>::char_type basic_ios<charT, traits>::fill(char_type fillch) {
     char_type t = fill_;
     fill_ = fillch;
     return t;
 }
 
 template <class charT, class traits>
-ios_base::iostate basic_ios<charT, traits>::exceptions() const {
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base::iostate basic_ios<charT, traits>::exceptions() const {
     return exception_mask_;
 }
 
 template <class charT, class traits>
-void basic_ios<charT, traits>::exceptions(ios_base::iostate except) {
+STALIN_NONSTRICT_MAYBE_UNUSED void basic_ios<charT, traits>::exceptions(ios_base::iostate except) {
     exception_mask_ = except;
     clear();
 }
 
 template <class charT, class traits>
-locale basic_ios<charT, traits>::imbue(const locale &loc) {
+STALIN_NONSTRICT_MAYBE_UNUSED locale basic_ios<charT, traits>::imbue(const locale &loc) {
     locale t = ios_base::imbue(loc);
     rdbuf()->pubimbue(loc);
     return t;
 }
 
 template <class charT, class traits>
-basic_ostream<typename basic_ios<charT, traits>::char_type, typename basic_ios<charT, traits>::traits_type> *basic_ios<charT, traits>::tie(
-    basic_ostream<char_type, traits_type> *tiestr) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_ostream<typename basic_ios<charT, traits>::char_type, typename basic_ios<charT, traits>::traits_type> *basic_ios<
+    charT,
+    traits>::tie(basic_ostream<char_type, traits_type> *tiestr) {
     basic_ostream<char_type, traits_type> *t = tie_;
     tie_ = tiestr;
     return t;
@@ -354,27 +356,27 @@ void basic_ios<charT, traits>::swap(basic_ios &x) noexcept {
     std::swap(fill_, x.fill_);
 }
 
-ios_base &boolalpha(ios_base &str);
-ios_base &showbase(ios_base &str);
-ios_base &showpoint(ios_base &str);
-ios_base &showpos(ios_base &str);
-ios_base &skipws(ios_base &str);
-ios_base &unitbuf(ios_base &str);
-ios_base &uppercase(ios_base &str);
-ios_base &noboolalpha(ios_base &str);
-ios_base &noshowbase(ios_base &str);
-ios_base &noshowpoint(ios_base &str);
-ios_base &noshowpos(ios_base &str);
-ios_base &noskipws(ios_base &str);
-ios_base &nounitbuf(ios_base &str);
-ios_base &nouppercase(ios_base &str);
-ios_base &dec(ios_base &str);
-ios_base &hex(ios_base &str);
-ios_base &oct(ios_base &str);
-ios_base &fixed(ios_base &str);
-ios_base &scientific(ios_base &str);
-ios_base &hexfloat(ios_base &str);
-ios_base &defaultfloat(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &boolalpha(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &showbase(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &showpoint(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &showpos(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &skipws(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &unitbuf(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &uppercase(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &noboolalpha(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &noshowbase(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &noshowpoint(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &noshowpos(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &noskipws(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &nounitbuf(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &nouppercase(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &dec(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &hex(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &oct(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &fixed(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &scientific(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &hexfloat(ios_base &str);
+STALIN_NONSTRICT_MAYBE_UNUSED ios_base &defaultfloat(ios_base &str);
 }
 
 #endif //CPP_STALIN_INCLUDE_IOS__

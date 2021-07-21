@@ -71,11 +71,11 @@ STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, void *ptr) noexc
 STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, void *ptr) noexcept;
 
 #ifdef STALIN_CXX_STD_SINCE_17
-[[nodiscard]] void *operator new(std::size_t count, std::align_val_t al);
-[[nodiscard]] void *operator new[](std::size_t count, std::align_val_t al);
+STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, std::align_val_t al);
+STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, std::align_val_t al);
 
-[[nodiscard]] void *operator new(std::size_t count, std::align_val_t al, const std::nothrow_t &) noexcept;
-[[nodiscard]] void *operator new[](std::size_t count, std::align_val_t al, const std::nothrow_t &) noexcept;
+STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, std::align_val_t al, const std::nothrow_t &) noexcept;
+STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, std::align_val_t al, const std::nothrow_t &) noexcept;
 #endif
 
 void operator delete(void *ptr) noexcept;

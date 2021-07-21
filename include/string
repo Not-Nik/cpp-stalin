@@ -20,9 +20,9 @@ class char_traits {
 public:
     typedef charT char_type;
     typedef charT int_type;
-    typedef streamoff off_type;
-    typedef streampos pos_type;
-    typedef mbstate_t state_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streamoff off_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streampos pos_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef mbstate_t state_type;
 
     static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
     static constexpr bool lt(char_type c, char_type d) noexcept { return c < d; }
@@ -44,9 +44,9 @@ public:
 
     static constexpr int_type eof() noexcept { return char_type(EOF); }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
-    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr char_type to_char_type(int_type c) noexcept { return c; }
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
-    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
 
 #ifdef STALIN_CXX_STD_SINCE_17
@@ -101,9 +101,9 @@ class char_traits<char> {
 public:
     typedef char char_type;
     typedef int int_type;
-    typedef streamoff off_type;
-    typedef streampos pos_type;
-    typedef mbstate_t state_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streamoff off_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streampos pos_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef mbstate_t state_type;
     #ifdef STALIN_CXX_STD_SINCE_20
     //typedef strong_ordering comparison_category; // todo <compare>
     #endif
@@ -128,9 +128,9 @@ public:
 
     static constexpr int_type eof() noexcept { return EOF; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
-    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr char_type to_char_type(int_type c) noexcept { return c; }
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
-    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
 
 #ifdef STALIN_CXX_STD_SINCE_17
@@ -181,9 +181,9 @@ class char_traits<wchar_t> {
 public:
     typedef wchar_t char_type;
     typedef wint_t int_type;
-    typedef streamoff off_type;
-    typedef streampos pos_type;
-    typedef mbstate_t state_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streamoff off_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streampos pos_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef mbstate_t state_type;
     #ifdef STALIN_CXX_STD_SINCE_20
     //typedef strong_ordering comparison_category; // todo <compare>
     #endif
@@ -208,9 +208,9 @@ public:
 
     static constexpr int_type eof() noexcept { return WEOF; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
-    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr char_type to_char_type(int_type c) noexcept { return c; }
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
-    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
 
 #ifdef STALIN_CXX_STD_SINCE_17
@@ -263,9 +263,9 @@ class char_traits<char8_t> {
 public:
     typedef char8_t char_type;
     typedef unsigned int int_type;
-    typedef streamoff off_type;
-    typedef streampos pos_type;
-    typedef mbstate_t state_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streamoff off_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streampos pos_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef mbstate_t state_type;
     //typedef strong_ordering comparison_category; // todo <compare>
 
     static constexpr bool eq(char_type c, char_type d) noexcept { return c == d; }
@@ -283,9 +283,9 @@ public:
 
     static constexpr int_type eof() noexcept { return 0xEEEE; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
-    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr char_type to_char_type(int_type c) noexcept { return c; }
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
-    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
 
 constexpr size_t char_traits<char8_t>::length(const char_type *s) {
@@ -333,9 +333,9 @@ class char_traits<char16_t> {
 public:
     typedef char16_t char_type;
     typedef uint_least16_t int_type;
-    typedef streamoff off_type;
-    typedef streampos pos_type;
-    typedef mbstate_t state_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streamoff off_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streampos pos_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef mbstate_t state_type;
     #ifdef STALIN_CXX_STD_SINCE_20
     //typedef strong_ordering comparison_category; // todo <compare>
     #endif
@@ -355,9 +355,9 @@ public:
 
     static constexpr int_type eof() noexcept { return 0xEEEE; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
-    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr char_type to_char_type(int_type c) noexcept { return c; }
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
-    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
 
 #ifdef STALIN_CXX_STD_SINCE_17
@@ -408,9 +408,9 @@ class char_traits<char32_t> {
 public:
     typedef char32_t char_type;
     typedef uint_least32_t int_type;
-    typedef streamoff off_type;
-    typedef streampos pos_type;
-    typedef mbstate_t state_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streamoff off_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef streampos pos_type;
+    STALIN_NONSTRICT_MAYBE_UNUSED typedef mbstate_t state_type;
     #ifdef STALIN_CXX_STD_SINCE_20
     //typedef strong_ordering comparison_category; // todo <compare>
     #endif
@@ -430,9 +430,9 @@ public:
 
     static constexpr int_type eof() noexcept { return 0x800; }
     static constexpr int_type not_eof(int_type c) noexcept { return (c == eof()) ? c - 1 : c; }
-    static constexpr char_type to_char_type(int_type c) noexcept { return c; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr char_type to_char_type(int_type c) noexcept { return c; }
     static constexpr int_type to_int_type(char_type c) noexcept { return c; }
-    static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool eq_int_type(int_type x, int_type y) noexcept { return x == y; }
 };
 
 #ifdef STALIN_CXX_STD_SINCE_17
@@ -488,11 +488,11 @@ template <class charT, class traits = char_traits<charT>, class Alloc = allocato
 class basic_string;
 
 typedef basic_string<char> string;
-typedef basic_string<char16_t> u16string;
-typedef basic_string<char32_t> u32string;
-typedef basic_string<wchar_t> wstring;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef basic_string<char16_t> u16string;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef basic_string<char32_t> u32string;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef basic_string<wchar_t> wstring;
 #ifdef STALIN_CXX_STD_SINCE_20
-typedef basic_string<char8_t> u8string;
+STALIN_NONSTRICT_MAYBE_UNUSED typedef basic_string<char8_t> u8string;
 #endif
 }
 

@@ -51,34 +51,34 @@ public:
     basic_istream &operator>>(basic_ios<char_type, traits_type> &(*pf)(basic_ios<char_type, traits_type> &));
     basic_istream &operator>>(ios_base &(*pf)(ios_base &));
 
-    streamsize gcount() const { return gcount_; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED streamsize gcount() const { return gcount_; }
 
     int_type get();
-    basic_istream &get(char_type &c);
-    basic_istream &get(char_type *s, streamsize n) { return this->get(s, n, '\n'); }
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &get(char_type &c);
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &get(char_type *s, streamsize n) { return this->get(s, n, '\n'); }
     basic_istream &get(char_type *s, streamsize n, char_type delim);
-    basic_istream &get(basic_streambuf<char_type, traits_type> &sb) { get(sb, traits_type::eof()); }
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &get(basic_streambuf<char_type, traits_type> &sb) { get(sb, traits_type::eof()); }
     basic_istream &get(basic_streambuf<char_type, traits_type> &sb, char_type delim);
 
     basic_istream &getline(char_type *s, streamsize n) { return getline(s, n, '\n'); }
     basic_istream &getline(char_type *s, streamsize n, char_type delim);
 
-    basic_istream &ignore(streamsize n = 1, int_type delim = traits_type::eof());
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &ignore(streamsize n = 1, int_type delim = traits_type::eof());
 
-    int_type peek();
+    STALIN_NONSTRICT_MAYBE_UNUSED int_type peek();
 
-    basic_istream &read(char_type *s, streamsize n);
-    streamsize readsome(char_type *s, streamsize n);
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &read(char_type *s, streamsize n);
+    STALIN_NONSTRICT_MAYBE_UNUSED streamsize readsome(char_type *s, streamsize n);
 
-    basic_istream &putback(char_type c);
-    basic_istream &unget();
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &putback(char_type c);
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &unget();
 
-    pos_type tellg();
+    STALIN_NONSTRICT_MAYBE_UNUSED pos_type tellg();
 
-    basic_istream &seekg(pos_type pos);
-    basic_istream &seekg(off_type off, ios_base::seekdir way);
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &seekg(pos_type pos);
+    STALIN_NONSTRICT_MAYBE_UNUSED basic_istream &seekg(off_type off, ios_base::seekdir way);
 
-    int sync();
+    STALIN_NONSTRICT_MAYBE_UNUSED int sync();
 
     basic_istream &operator=(const basic_istream &) = delete;
     basic_istream &operator=(basic_istream &&rhs) { swap(rhs); }
@@ -123,13 +123,13 @@ typename basic_istream<charT, traits>::int_type basic_istream<charT, traits>::ge
 }
 
 template <class charT, class traits>
-basic_istream<charT, traits> &basic_istream<charT, traits>::get(char_type &c) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits> &basic_istream<charT, traits>::get(char_type &c) {
     c = get();
     return *this;
 }
 
 template <class charT, class traits>
-basic_istream<charT, traits> &basic_istream<charT, traits>::get(char_type *s, streamsize n, char_type delim) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits> &basic_istream<charT, traits>::get(char_type *s, streamsize n, char_type delim) {
     sentry sen(*this, true);
     if (!sen) {
         gcount_ = 0;
@@ -189,7 +189,7 @@ basic_istream<charT, traits> &basic_istream<charT, traits>::getline(char_type *s
 }
 
 template <class charT, class traits>
-basic_istream<charT, traits> &basic_istream<charT, traits>::ignore(streamsize n, int_type delim) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits> &basic_istream<charT, traits>::ignore(streamsize n, int_type delim) {
     sentry sen(*this, true);
     if (!sen) {
         gcount_ = 0;
@@ -208,7 +208,7 @@ basic_istream<charT, traits> &basic_istream<charT, traits>::ignore(streamsize n,
 }
 
 template <class charT, class traits>
-typename basic_istream<charT, traits>::int_type basic_istream<charT, traits>::peek() {
+STALIN_NONSTRICT_MAYBE_UNUSED typename basic_istream<charT, traits>::int_type basic_istream<charT, traits>::peek() {
     sentry sen(*this, true);
     if (!sen) {
         gcount_ = 0;
@@ -218,7 +218,7 @@ typename basic_istream<charT, traits>::int_type basic_istream<charT, traits>::pe
 }
 
 template <class charT, class traits>
-basic_istream<charT, traits> &basic_istream<charT, traits>::read(char_type *s, streamsize n) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits> &basic_istream<charT, traits>::read(char_type *s, streamsize n) {
     get(s, n, traits_type::eof());
     if (this->flags_ & ios_base::eofbit) this->setstate(ios_base::failbit);
 
@@ -226,7 +226,7 @@ basic_istream<charT, traits> &basic_istream<charT, traits>::read(char_type *s, s
 }
 
 template <class charT, class traits>
-streamsize basic_istream<charT, traits>::readsome(char_type *s, streamsize n) {
+STALIN_NONSTRICT_MAYBE_UNUSED streamsize basic_istream<charT, traits>::readsome(char_type *s, streamsize n) {
     // Technically the spec requires us to use buf_->in_avail(), but no
 
     sentry sen(*this, true);
@@ -244,7 +244,7 @@ streamsize basic_istream<charT, traits>::readsome(char_type *s, streamsize n) {
 }
 
 template <class charT, class traits>
-basic_istream<charT, traits> &basic_istream<charT, traits>::putback(char_type c) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits> &basic_istream<charT, traits>::putback(char_type c) {
     this->clear(this->rdstate() & ~ios_base::eofbit); // Clear eofbit
     gcount_ = 0;
 
@@ -259,7 +259,7 @@ basic_istream<charT, traits> &basic_istream<charT, traits>::putback(char_type c)
 }
 
 template <class charT, class traits>
-basic_istream<charT, traits> &basic_istream<charT, traits>::unget() {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits> &basic_istream<charT, traits>::unget() {
     this->clear(this->rdstate() & ~ios_base::eofbit); // Clear eofbit
     gcount_ = 0;
 
@@ -274,14 +274,14 @@ basic_istream<charT, traits> &basic_istream<charT, traits>::unget() {
 }
 
 template <class charT, class traits>
-typename basic_istream<charT, traits>::pos_type basic_istream<charT, traits>::tellg() {
+STALIN_NONSTRICT_MAYBE_UNUSED typename basic_istream<charT, traits>::pos_type basic_istream<charT, traits>::tellg() {
     sentry sen(*this, true);
     if (this->fail()) return -1;
     return this->buf_->pubseekoff(0, ios_base::cur, ios_base::in);
 }
 
 template <class charT, class traits>
-basic_istream<charT, traits> &basic_istream<charT, traits>::seekg(pos_type pos) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits> &basic_istream<charT, traits>::seekg(pos_type pos) {
     sentry sen(*this, true);
     if (!sen) {
         gcount_ = 0;
@@ -293,7 +293,7 @@ basic_istream<charT, traits> &basic_istream<charT, traits>::seekg(pos_type pos) 
 }
 
 template <class charT, class traits>
-basic_istream<charT, traits> &basic_istream<charT, traits>::seekg(off_type off, ios_base::seekdir way) {
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits> &basic_istream<charT, traits>::seekg(off_type off, ios_base::seekdir way) {
     sentry sen(*this, true);
     if (!sen) {
         gcount_ = 0;
@@ -305,7 +305,7 @@ basic_istream<charT, traits> &basic_istream<charT, traits>::seekg(off_type off, 
 }
 
 template <class charT, class traits>
-int basic_istream<charT, traits>::sync() {
+STALIN_NONSTRICT_MAYBE_UNUSED int basic_istream<charT, traits>::sync() {
     sentry sen(*this, true);
     if (!sen) {
         gcount_ = 0;
@@ -326,7 +326,7 @@ class basic_istream<charT, traits>::sentry {
     bool state_ = false;
     basic_istream &stream_;
 public:
-    explicit sentry(basic_istream &is, bool noskipws = false);
+    STALIN_NONSTRICT_MAYBE_UNUSED explicit sentry(basic_istream &is, bool noskipws = false);
     ~sentry() = default;
 
     explicit operator bool() const { return state_; }
@@ -336,7 +336,7 @@ public:
 };
 
 template <class charT, class traits>
-basic_istream<charT, traits>::sentry::sentry(basic_istream<charT, traits> &is, bool noskipws)
+STALIN_NONSTRICT_MAYBE_UNUSED basic_istream<charT, traits>::sentry::sentry(basic_istream<charT, traits> &is, bool noskipws)
     : stream_(is) {
     if (stream_.fail() or stream_.eof()) {
         stream_.setstate(ios_base::failbit);
@@ -366,7 +366,7 @@ public:
     typedef typename traits::pos_type pos_type;
     typedef typename traits::off_type off_type;
 
-    explicit basic_iostream(basic_streambuf<char_type, traits_type> *sb);
+    STALIN_NONSTRICT_MAYBE_UNUSED explicit basic_iostream(basic_streambuf<char_type, traits_type> *sb);
     basic_iostream(const basic_iostream &) = delete;
 protected:
     basic_iostream(basic_iostream &&x)
@@ -381,7 +381,7 @@ public:
 };
 
 template <class charT, class traits>
-basic_iostream<charT, traits>::basic_iostream(basic_streambuf<char_type, traits_type> *sb)
+STALIN_NONSTRICT_MAYBE_UNUSED basic_iostream<charT, traits>::basic_iostream(basic_streambuf<char_type, traits_type> *sb)
     : basic_istream<charT, traits>(sb), basic_ostream<charT, traits>(sb) {}
 }
 

@@ -1,0 +1,51 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_SOURCE_LOCATION__
+#define CPP_STALIN_INCLUDE_SOURCE_LOCATION__
+
+#include "cstdint"
+#include "__config"
+
+namespace std {
+#ifdef STALIN_CXX_STD_SINCE_20
+
+class source_location {
+    const char *file_, *function_;
+    uint32_t line_, column_;
+
+    constexpr explicit source_location(const char *file, const char *function, uint32_t line, uint32_t column)
+        : file_(file), function_(function), line_(line), column_(column) {}
+public:
+    constexpr source_location() noexcept = default;
+    source_location(const source_location &other) = default;
+    source_location(source_location &&other) noexcept = default;
+
+    static consteval source_location current(const char *file = __FILE_NAME__, const char *function = "", uint32_t line = __LINE__, uint32_t column = 0) noexcept {
+        return source_location(file, function, line, column);
+    }
+
+    STALIN_NONSTRICT_NODISCARD constexpr std::uint_least32_t line() const noexcept {
+        return line_;
+    }
+
+    STALIN_NONSTRICT_NODISCARD constexpr std::uint_least32_t column() const noexcept {
+        return column_;
+    }
+
+    STALIN_NONSTRICT_NODISCARD constexpr const char* file_name() const noexcept {
+        return file_;
+    }
+
+    STALIN_NONSTRICT_NODISCARD constexpr const char* function_name() const noexcept {
+        return function_;
+    }
+};
+
+#endif
+}
+
+#endif //CPP_STALIN_INCLUDE_SOURCE_LOCATION__

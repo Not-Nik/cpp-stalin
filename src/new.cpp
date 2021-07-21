@@ -82,19 +82,19 @@ STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count) {
     throw std::bad_alloc();
 }
 
-STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, [[maybe_unused]] const std::nothrow_t &tag) noexcept {
+STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept {
     return std::__new_impl(count);
 }
 
-STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, [[maybe_unused]] const std::nothrow_t &tag) noexcept {
+STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept {
     return std::__new_impl(count);
 }
 
-STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, [[maybe_unused]] void *ptr) noexcept {
+STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, STALIN_NONSTRICT_MAYBE_UNUSED void *ptr) noexcept {
     return std::__new_impl(count);
 }
 
-STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, [[maybe_unused]] void *ptr) noexcept {
+STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, STALIN_NONSTRICT_MAYBE_UNUSED void *ptr) noexcept {
     return std::__new_impl(count);
 }
 
@@ -123,29 +123,29 @@ STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, [[maybe_unused
 void operator delete(void *ptr) noexcept { std::free(ptr); }
 void operator delete[](void *ptr) noexcept { std::free(ptr); }
 
-void operator delete(void *ptr, [[maybe_unused]] const std::nothrow_t &tag) noexcept { std::free(ptr); }
-void operator delete[](void *ptr, [[maybe_unused]] const std::nothrow_t &tag) noexcept { std::free(ptr); }
+void operator delete(void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept { std::free(ptr); }
+void operator delete[](void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept { std::free(ptr); }
 
 // This doing nothing is intended
-void operator delete([[maybe_unused]] void *ptr, [[maybe_unused]] void *place) noexcept {}
-void operator delete[]([[maybe_unused]] void *ptr, [[maybe_unused]] void *place) noexcept {}
+void operator delete(STALIN_NONSTRICT_MAYBE_UNUSED void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED void *place) noexcept {}
+void operator delete[](STALIN_NONSTRICT_MAYBE_UNUSED void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED void *place) noexcept {}
 
 #ifdef STALIN_CXX_STD_SINCE_14
-void operator delete(void *ptr, [[maybe_unused]] std::size_t sz) noexcept { std::free(ptr); }
-void operator delete[](void *ptr, [[maybe_unused]] std::size_t sz) noexcept { std::free(ptr); }
+void operator delete(void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::size_t sz) noexcept { std::free(ptr); }
+void operator delete[](void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::size_t sz) noexcept { std::free(ptr); }
 #endif
 
 #ifdef STALIN_CXX_STD_SINCE_17
-void operator delete(void *ptr, [[maybe_unused]] std::align_val_t al) noexcept { std::__aligned_free(ptr); }
-void operator delete[](void *ptr, [[maybe_unused]] std::align_val_t al) noexcept { std::__aligned_free(ptr); }
+void operator delete(void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { std::__aligned_free(ptr); }
+void operator delete[](void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { std::__aligned_free(ptr); }
 
-void operator delete(void *ptr, [[maybe_unused]] std::size_t sz, [[maybe_unused]] std::align_val_t al) noexcept { std::free(ptr); }
-void operator delete[](void *ptr, [[maybe_unused]] std::size_t sz, [[maybe_unused]] std::align_val_t al) noexcept { std::free(ptr); }
+void operator delete(void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::size_t sz, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { std::free(ptr); }
+void operator delete[](void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::size_t sz, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { std::free(ptr); }
 
 void operator delete(void *ptr,
-                     [[maybe_unused]] std::align_val_t al,
-                     [[maybe_unused]] const std::nothrow_t &tag) noexcept { std::__aligned_free(ptr); }
+                     STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al,
+                     STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept { std::__aligned_free(ptr); }
 void operator delete[](void *ptr,
-                       [[maybe_unused]] std::align_val_t al,
-                       [[maybe_unused]] const std::nothrow_t &tag) noexcept { std::__aligned_free(ptr); }
+                       STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al,
+                       STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept { std::__aligned_free(ptr); }
 #endif

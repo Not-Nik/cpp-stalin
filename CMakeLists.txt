@@ -67,5 +67,5 @@ add_library(stalin
 target_include_directories(stalin PUBLIC include)
 
 add_executable(iotest
-        test/io.cpp)
+        test/io.cpp include/source_location)
 target_link_libraries(iotest stalin)

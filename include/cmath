@@ -271,9 +271,9 @@ STALIN_MOST_CONST long double __stalin_const_log10(T x) {
 }
 
 #ifdef STALIN_CXX_STD_SINCE_20
-constexpr float lerp(float a, float b, float t) noexcept { return a + t * (b - a); }
-constexpr double lerp(double a, double b, double t) noexcept { return a + t * (b - a); }
-constexpr long double lerp(long double a, long double b, long double t) noexcept { return a + t * (b - a); }
+STALIN_NONSTRICT_MAYBE_UNUSED constexpr float lerp(float a, float b, float t) noexcept { return a + t * (b - a); }
+STALIN_NONSTRICT_MAYBE_UNUSED constexpr double lerp(double a, double b, double t) noexcept { return a + t * (b - a); }
+STALIN_NONSTRICT_MAYBE_UNUSED constexpr long double lerp(long double a, long double b, long double t) noexcept { return a + t * (b - a); }
 
 template <class Promoted, class Arithmetic1, class Arithmetic2, class Arithmetic3>
 constexpr Promoted lerp(Arithmetic1 a, Arithmetic2 b, Arithmetic3 t) noexcept {
@@ -281,7 +281,7 @@ constexpr Promoted lerp(Arithmetic1 a, Arithmetic2 b, Arithmetic3 t) noexcept {
 }
 
 template <class Promoted, class Arithmetic1, class Arithmetic2, class Arithmetic3>
-constexpr typename std::enable_if<
+STALIN_NONSTRICT_MAYBE_UNUSED constexpr typename std::enable_if<
     (std::is_integral<Arithmetic1>::value || std::is_integral<Arithmetic2>::value || std::is_integral<Arithmetic3>::value)
         && (std::is_same<Arithmetic1, long double>::value || std::is_same<Arithmetic2, long double>::value
             || std::is_same<Arithmetic3, long double>::value), long double> lerp(Arithmetic1 a, Arithmetic2 b, Arithmetic3 t) noexcept {
@@ -308,7 +308,7 @@ constexpr typename std::enable_if<
 }
 
 template <class Promoted, class Arithmetic1, class Arithmetic2, class Arithmetic3>
-constexpr typename std::enable_if<
+STALIN_NONSTRICT_MAYBE_UNUSED constexpr typename std::enable_if<
     (std::is_integral<Arithmetic1>::value || std::is_integral<Arithmetic2>::value || std::is_integral<Arithmetic3>::value)
         && !(std::is_same<Arithmetic1, long double>::value || std::is_same<Arithmetic2, long double>::value
             || std::is_same<Arithmetic3, long double>::value), double> lerp(Arithmetic1 a, Arithmetic2 b, Arithmetic3 t) noexcept {

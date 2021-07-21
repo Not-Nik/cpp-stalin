@@ -19,8 +19,7 @@ extern ostream cout;
 extern ostream cerr;
 extern ostream clog;
 
-extern basic_istream<wchar_t> wcin;
-
+extern wistream wcin;
 extern wostream wcout;
 extern wostream wcerr;
 extern wostream wclog;
