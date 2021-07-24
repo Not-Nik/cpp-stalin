@@ -140,8 +140,7 @@ enum class io_errc {
     eof_fail_bad STALIN_NONSTRICT_MAYBE_UNUSED = eof | fail | bad
 };
 
-template <>
-struct is_error_code_enum<io_errc> : public true_type {};
+template <> struct is_error_code_enum<io_errc> : public true_type {};
 
 class ios_base::failure : public system_error {
 public:

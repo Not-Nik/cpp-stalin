@@ -20,6 +20,7 @@ include/locale          text diff=cpp
 include/memory          text diff=cpp
 include/new             text diff=cpp
 include/ostream         text diff=cpp
+include/source_location text diff=cpp
 include/stdexcept       text diff=cpp
 include/streambuf       text diff=cpp
 include/string          text diff=cpp

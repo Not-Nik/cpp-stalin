@@ -96,6 +96,8 @@ STALIN_CONSTEXPR_SINCE_20 typename char_traits<charT>::char_type *char_traits<ch
     return dest;
 }
 
+// Todo: put specialised stuff into a single class
+
 template <>
 class char_traits<char> {
 public:
@@ -478,14 +480,11 @@ constexpr char_traits<char32_t>::char_type *char_traits<char32_t>::copy(char_typ
 }
 #endif
 
-template <class T>
-struct is_char_traits : false_type {};
+template <class T> struct is_char_traits : false_type {};
 
-template <class T>
-struct is_char_traits<char_traits<T>> : true_type {};
+template <class T> struct is_char_traits<char_traits<T>> : true_type {};
 
-template <class charT, class traits = char_traits<charT>, class Alloc = allocator<charT>>
-class basic_string;
+template <class charT, class traits = char_traits<charT>, class Alloc = allocator<charT>> class basic_string;
 
 typedef basic_string<char> string;
 STALIN_NONSTRICT_MAYBE_UNUSED typedef basic_string<char16_t> u16string;

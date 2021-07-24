@@ -20,8 +20,7 @@ class error_category;
 
 class error_condition;
 
-template <class T>
-struct is_error_code_enum : public false_type {};
+template <class T> struct is_error_code_enum : public false_type {};
 
 template <class T> STALIN_NONSTRICT_MAYBE_UNUSED inline constexpr bool is_error_code_enum_v = is_error_code_enum<T>::value;
 
@@ -106,10 +105,8 @@ enum class errc {
     wrong_protocol_type STALIN_NONSTRICT_MAYBE_UNUSED = EPROTOTYPE
 };
 
-template <class T>
-struct is_error_condition_enum : public false_type {};
-template <>
-struct is_error_condition_enum<errc> : true_type {};
+template <class T> struct is_error_condition_enum : public false_type {};
+template <> struct is_error_condition_enum<errc> : true_type {};
 
 const error_category &generic_category() noexcept;
 const error_category &system_category() noexcept;

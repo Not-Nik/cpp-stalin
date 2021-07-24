@@ -24,7 +24,10 @@ public:
     source_location(const source_location &other) = default;
     source_location(source_location &&other) noexcept = default;
 
-    static consteval source_location current(const char *file = __FILE_NAME__, const char *function = "", uint32_t line = __LINE__, uint32_t column = 0) noexcept {
+    static consteval source_location current(const char *file = __FILE_NAME__,
+                                             const char *function = "",
+                                             uint32_t line = __LINE__,
+                                             uint32_t column = 0) noexcept {
         return source_location(file, function, line, column);
     }
 
@@ -36,11 +39,11 @@ public:
         return column_;
     }
 
-    STALIN_NONSTRICT_NODISCARD constexpr const char* file_name() const noexcept {
+    STALIN_NONSTRICT_NODISCARD constexpr const char *file_name() const noexcept {
         return file_;
     }
 
-    STALIN_NONSTRICT_NODISCARD constexpr const char* function_name() const noexcept {
+    STALIN_NONSTRICT_NODISCARD constexpr const char *function_name() const noexcept {
         return function_;
     }
 };

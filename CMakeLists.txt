@@ -20,6 +20,7 @@ add_definitions(${STALIN_COMPILE_OPTIONS})
 add_link_options(${STALIN_LINK_OPTIONS})
 
 add_library(stalin
+        include/__llvm/type_traits.h
         include/__config
         include/__declval
         include/__memory
@@ -48,6 +49,7 @@ add_library(stalin
         include/new
         include/numbers
         include/ostream
+        include/source_location
         include/stdexcept
         include/streambuf
         include/string
@@ -67,5 +69,10 @@ add_library(stalin
 target_include_directories(stalin PUBLIC include)
 
 add_executable(iotest
-        test/io.cpp include/source_location)
+        test/io.cpp)
 target_link_libraries(iotest stalin)
+
+add_executable(traits_test
+        test/type_traits.cpp)
+#target_link_libraries(traits_test stalin)
+target_include_directories(traits_test PUBLIC include)

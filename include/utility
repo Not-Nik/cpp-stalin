@@ -13,6 +13,11 @@
 
 namespace std {
 
+template< class T >
+STALIN_CONSTEXPR_SINCE_14 typename std::remove_reference<T>::type&& move( T&& t ) noexcept {
+    return static_cast<typename std::remove_reference<T>::type&&>(t);
+}
+
 template <class T>
 STALIN_CONSTEXPR_SINCE_20 void swap(T &a, T &b) noexcept(is_nothrow_move_constructible<T>::value && is_nothrow_move_assignable<T>::value) {
     T c(std::move(a));

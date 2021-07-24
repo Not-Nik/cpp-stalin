@@ -35,7 +35,8 @@ class STALIN_NONSTRICT_MAYBE_UNUSED underflow_error : public runtime_error {
 class logic_error : public exception {
 public:
     //explicit logic_error(const string &what_arg); // todo string
-    explicit logic_error(const char *what_arg) : exception() { this->what_ = what_arg; }
+    explicit logic_error(const char *what_arg)
+        : exception() { this->what_ = what_arg; }
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED domain_error : public logic_error {

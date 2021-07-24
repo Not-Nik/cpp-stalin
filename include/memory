@@ -197,11 +197,9 @@ struct pointer_traits<T *> {
     STALIN_NONSTRICT_NODISCARD static STALIN_CONSTEXPR_SINCE_20 pointer pointer_to(element_type &r) noexcept { return addressof(r); }
 };
 
-template <class T>
-struct is_allocator : false_type {};
+template <class T> struct is_allocator : false_type {};
 
-template <class T>
-struct is_allocator<allocator<T>> : true_type {};
+template <class T> struct is_allocator<allocator<T>> : true_type {};
 
 template <class alloc>
 struct allocator_traits {

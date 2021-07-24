@@ -1,0 +1,5 @@
+The cpp-stalin project uses part of the LLVM-projects "libcxx" to maximise its compatibility with
+C++ compilers and its efficiency in any given situation. The Apache License under which LLVM is
+licensed requires Derivative Works to give recipients a copy of itself; to cause any modified files
+to carry prominent notices stating that it has been changed; and to retain all copyright, patent,
+trademark, and attribution notices from the Source form of the Work.

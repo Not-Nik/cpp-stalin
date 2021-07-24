@@ -75,7 +75,6 @@ STALIN_NONSTRICT_MAYBE_UNUSED typedef fpos<mbstate_t> u8streampos;
 #endif
 STALIN_NONSTRICT_MAYBE_UNUSED typedef std::fpos<mbstate_t> u16streampos;
 STALIN_NONSTRICT_MAYBE_UNUSED typedef std::fpos<mbstate_t> u32streampos;
-
 }
 
 #endif //CPP_STALIN_INCLUDE___STREAM_TYPES__

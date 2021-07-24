@@ -61,7 +61,6 @@ using ::div_t;
 using ::ldiv_t;
 using ::lldiv_t;
 using ::size_t;
-
 }
 
 #endif //CPP_STALIN_INCLUDE_CSTDLIB__

@@ -7,12 +7,16 @@
 #ifndef CPP_STALIN_INCLUDE___DECLVAL__
 #define CPP_STALIN_INCLUDE___DECLVAL__
 
+#include "__config"
+
+namespace std {
 template <class T>
-T&& __declval(int);
+T &&__declval(int);
 template <class T>
 T __declval(long);
 
 template <class T>
-decltype(__declval<T>(0)) declval() noexcept;
+STALIN_NONSTRICT_MAYBE_UNUSED decltype(__declval<T>(0)) declval() noexcept;
+}
 
 #endif //CPP_STALIN_INCLUDE___DECLVAL__
