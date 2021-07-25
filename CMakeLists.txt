@@ -23,6 +23,7 @@ add_library(stalin
         include/__llvm/type_traits.h
         include/__config
         include/__declval
+        include/__math
         include/__memory
         include/__stream_types
         include/cassert

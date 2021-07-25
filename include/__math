@@ -1,0 +1,43 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE___MATH__
+#define CPP_STALIN_INCLUDE___MATH__
+
+namespace std {
+template <class T, class U>
+// fixme: A bug in clang prevents this function from being usable with consteval
+//  Specifically, the bug is related to sizeof which clang thinks is invalid in
+//  a consteval block. GCC doesn't and the standard doesn't mention it apart from
+//  sizeof being a constant expression
+/*STALIN_MOST_CONST*/
+constexpr long long int __stalin_const_pow(T base, U exp) {
+    if (base == 0 || base == 1) return base;
+    long long int res = base;
+    for (U i = 1; i < exp; i++) res *= base;
+    return res;
+}
+
+template <class T>
+STALIN_MOST_CONST long double __stalin_const_taylor_step(T x, size_t it) {
+    return (long double) __stalin_const_pow(x - 1, it) / (long double) it;
+}
+
+template <class T>
+STALIN_MOST_CONST long double __stalin_const_ln(T x) {
+    long double res = x - 1;
+    constexpr size_t iterations = 10;
+    for (size_t i = 2; i < iterations; i++) res -= __stalin_const_taylor_step(x, i);
+    return res;
+}
+
+template <class T>
+STALIN_MOST_CONST long double __stalin_const_log10(T x) {
+    return __stalin_const_ln(x) / M_LN10;
+}
+}
+
+#endif //CPP_STALIN_INCLUDE___MATH__

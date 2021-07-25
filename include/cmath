@@ -11,6 +11,7 @@
 #ifndef STALIN_CXX_STD_FREESTANDING
 
 #include <math.h>
+#include "__math"
 #include "numbers"
 #include "type_traits"
 
@@ -241,37 +242,6 @@ using ::nexttowardl;
 using ::copysign;
 using ::copysignf;
 using ::copysignl;
-
-template <class T, class U>
-// fixme: A bug in clang prevents this function from being usable with consteval
-//  Specifically, the bug is related to sizeof which clang thinks is invalid in
-//  a consteval block. GCC doesn't and the standard doesn't mention it apart from
-//  sizeof being a constant expression
-/*STALIN_MOST_CONST*/
-constexpr long long int __stalin_const_pow(T base, U exp) {
-    if (base == 0 || base == 1) return base;
-    long long int res = base;
-    for (U i = 1; i < exp; i++) res *= base;
-    return res;
-}
-
-template <class T>
-STALIN_MOST_CONST long double __stalin_const_taylor_step(T x, size_t it) {
-    return (long double) __stalin_const_pow(x - 1, it) / (long double) it;
-}
-
-template <class T>
-STALIN_MOST_CONST long double __stalin_const_ln(T x) {
-    long double res = x - 1;
-    constexpr size_t iterations = 10;
-    for (size_t i = 2; i < iterations; i++) res -= __stalin_const_taylor_step(x, i);
-    return res;
-}
-
-template <class T>
-STALIN_MOST_CONST long double __stalin_const_log10(T x) {
-    return __stalin_const_ln(x) / M_LN10;
-}
 
 #ifdef STALIN_CXX_STD_SINCE_20
 STALIN_NONSTRICT_MAYBE_UNUSED constexpr float lerp(float a, float b, float t) noexcept { return a + t * (b - a); }

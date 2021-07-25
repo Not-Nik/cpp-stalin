@@ -144,7 +144,7 @@ public:
     STALIN_NONSTRICT_MAYBE_UNUSED static constexpr float_round_style round_style = round_toward_zero;
 
     STALIN_NONSTRICT_NODISCARD static constexpr T min() noexcept { return max() * -is_signed; }
-    STALIN_NONSTRICT_NODISCARD static constexpr T max() noexcept { return __stalin_const_pow(2, digits); }
+    STALIN_NONSTRICT_NODISCARD static constexpr T max() noexcept { return __stalin_const_pow(2, digits) - 1; }
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr T lowest() noexcept { return min(); }
 
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr T epsilon() noexcept { return 0; }

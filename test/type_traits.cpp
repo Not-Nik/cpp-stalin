@@ -9,9 +9,7 @@
 namespace is_function {
 template <typename> struct PM_traits {};
 
-template <class T, class U> struct PM_traits<U T::*> {
-    using member_type = U;
-};
+template <class T, class U> struct PM_traits<U T::*> { using member_type = U; };
 }
 
 int main() {
