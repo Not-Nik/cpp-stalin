@@ -7,7 +7,6 @@
 #ifndef CPP_STALIN_INCLUDE_NEW__
 #define CPP_STALIN_INCLUDE_NEW__
 
-#include "cstdlib"
 #include "cstddef"
 #include "__config"
 #include "__memory"
@@ -49,16 +48,6 @@ std::new_handler set_new_handler(std::new_handler new_p) noexcept;
 
 template <class T>
 STALIN_NODISCARD_SINCE_20 constexpr T *launder(T *p) noexcept { return p; }
-
-void *__aligned_alloc(size_t count, size_t al) noexcept;
-
-void __aligned_free(void *p);
-
-#ifdef STALIN_CXX_STD_SINCE_17
-void *__new_impl(size_t count, align_val_t al = (align_val_t) __STDCPP_DEFAULT_NEW_ALIGNMENT__) noexcept;
-#else
-void *__new_impl(size_t count) noexcept;
-#endif
 }
 
 STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count);

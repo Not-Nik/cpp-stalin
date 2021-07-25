@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_STREAMBUF__
 #define CPP_STALIN_INCLUDE_STREAMBUF__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "ios"
 #include "locale"
 #include "stdexcept"
@@ -243,5 +246,7 @@ typename basic_streambuf<charT, traits>::int_type basic_streambuf<charT, traits>
     return traits_type::eof();
 }
 }
+
+#endif // STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_STREAMBUF__

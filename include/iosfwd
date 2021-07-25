@@ -7,8 +7,10 @@
 #ifndef CPP_STALIN_INCLUDE_IOSFWD__
 #define CPP_STALIN_INCLUDE_IOSFWD__
 
-#include "cwchar"
 #include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
+#include "cwchar"
 
 namespace std {
 template <class charT>
@@ -113,5 +115,7 @@ typedef basic_fstream<wchar_t> wfstream;
 typedef fpos<mbstate_t> streampos;
 typedef fpos<mbstate_t> wstreampos;
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_IOSFWD__

@@ -4,6 +4,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <system_error>
 
 class generic_category : public std::error_category {
@@ -98,3 +101,4 @@ void std::error_condition::clear() noexcept {
     cat_ = system_category();
 }
 
+#endif // ifndef STALIN_CXX_STD_FREESTANDING

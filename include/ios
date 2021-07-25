@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_IOS__
 #define CPP_STALIN_INCLUDE_IOS__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "iosfwd"
 #include "locale"
 #include "cstdint"
@@ -377,5 +380,7 @@ STALIN_NONSTRICT_MAYBE_UNUSED ios_base &scientific(ios_base &str);
 STALIN_NONSTRICT_MAYBE_UNUSED ios_base &hexfloat(ios_base &str);
 STALIN_NONSTRICT_MAYBE_UNUSED ios_base &defaultfloat(ios_base &str);
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_IOS__

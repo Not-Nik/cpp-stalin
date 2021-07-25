@@ -7,9 +7,11 @@
 #ifndef CPP_STALIN_SRC_STRING__
 #define CPP_STALIN_SRC_STRING__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "memory"
 #include "cstring"
-#include "__config"
 #include "type_traits"
 #include "__stream_types"
 
@@ -494,5 +496,7 @@ STALIN_NONSTRICT_MAYBE_UNUSED typedef basic_string<wchar_t> wstring;
 STALIN_NONSTRICT_MAYBE_UNUSED typedef basic_string<char8_t> u8string;
 #endif
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_SRC_STRING__

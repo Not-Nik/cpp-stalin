@@ -9,7 +9,6 @@
 
 #include "cstddef"
 #include "cstdint"
-#include "cstring"
 #include "typeinfo"
 #include "__config"
 #include "__declval"
@@ -317,7 +316,7 @@ struct is_nothrow_move_assignable : std::is_nothrow_assignable<typename std::add
 };
 
 struct __stalin_has_destructor {
-    template <class T, class = decltype(~T())>
+    template <class T, class = decltype(std::declval<T>().~T())>
     STALIN_NONSTRICT_NORETURN static true_type test(int) {}
     template <class, class...>
     STALIN_NONSTRICT_NORETURN static false_type test(...) {}
@@ -325,11 +324,11 @@ struct __stalin_has_destructor {
     template <class T, class... Args> using type = decltype(test<T, Args...>(0));
 };
 
-template <class T, class... Args> struct is_destructible : __stalin_has_destructor::type<T, Args...> {};
+template <class T> struct is_destructible : __stalin_has_destructor::type<T> {};
 
 struct __stalin_has_nothrow_destructor {
-    template <class T, class = decltype(~T())>
-    STALIN_NONSTRICT_NORETURN static __stalin__bool_constant<noexcept(~T())> test(int) {}
+    template <class T, class = decltype(std::declval<T>().~T())>
+    STALIN_NONSTRICT_NORETURN static __stalin__bool_constant<noexcept(std::declval<T>().~T())> test(int) {}
     template <class, class...>
     STALIN_NONSTRICT_NORETURN static false_type test(...) {}
 

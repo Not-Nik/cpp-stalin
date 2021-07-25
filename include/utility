@@ -8,6 +8,8 @@
 #define CPP_STALIN_INCLUDE_UTILITY__
 
 #include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "__declval"
 #include "type_traits"
 
@@ -52,5 +54,7 @@ constexpr T &&forward(std::remove_reference_t<T> &&t) noexcept {
 }
 #endif
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_UTILITY__

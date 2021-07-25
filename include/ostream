@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_OSTREAM__
 #define CPP_STALIN_INCLUDE_OSTREAM__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "streambuf"
 
 namespace std {
@@ -227,5 +230,7 @@ std::basic_ostream<charT, traits> &flush_emit(std::basic_ostream<charT, traits> 
 }
 #endif
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_OSTREAM__

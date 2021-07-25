@@ -7,6 +7,11 @@
 #ifndef CPP_STALIN_INCLUDE_CASSERT__
 #define CPP_STALIN_INCLUDE_CASSERT__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <assert.h>
+
+#endif
 
 #endif //CPP_STALIN_INCLUDE_CASSERT__

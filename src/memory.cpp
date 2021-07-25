@@ -4,6 +4,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <memory>
 
 void *align(std::size_t alignment, std::size_t size, void *&ptr, std::size_t &space) {
@@ -19,3 +22,5 @@ void *align(std::size_t alignment, std::size_t size, void *&ptr, std::size_t &sp
     ptr = (void *) c;
     return ptr;
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING

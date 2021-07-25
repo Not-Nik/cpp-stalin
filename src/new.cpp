@@ -5,6 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include <new>
+#include <cstdlib>
+#include <type_traits>
 
 const std::nothrow_t std::nothrow;
 std::new_handler handler = nullptr; // todo memory safety
@@ -16,12 +18,12 @@ std::new_handler std::set_new_handler(std::new_handler new_p) noexcept {
     return t;
 }
 
-void *std::__aligned_alloc(size_t count, size_t al) noexcept {
+void *__aligned_alloc(size_t count, size_t al) noexcept {
     size_t offset = sizeof(void *) + (size_t) al - 1;
     size_t space = count + offset;
     if (void *ptr = malloc(space)) {
         void *orig = ptr;
-        if (!align((size_t) al, 0, ptr, space)) { // this directly overwrites ptr
+        if (!std::align((size_t) al, 0, ptr, space)) { // this directly overwrites ptr
             free(orig);
             return nullptr;
         }
@@ -31,7 +33,7 @@ void *std::__aligned_alloc(size_t count, size_t al) noexcept {
     return nullptr;
 }
 
-void std::__aligned_free(void *p) {
+void __aligned_free(void *p) {
 #if __STDC_VERSION__ >= 201112L
     free(p);
 #else
@@ -40,7 +42,7 @@ void std::__aligned_free(void *p) {
 }
 
 #ifdef STALIN_CXX_STD_SINCE_17
-void *std::__new_impl(size_t count, align_val_t al) noexcept {
+void *__new_impl(size_t count, std::align_val_t al = (std::align_val_t) __STDCPP_DEFAULT_NEW_ALIGNMENT__) noexcept {
 #else
     void *__new_impl(size_t count) noexcept {
 #endif
@@ -71,52 +73,52 @@ void *std::__new_impl(size_t count, align_val_t al) noexcept {
 }
 
 STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count) {
-    if (void *r = std::__new_impl(count))
+    if (void *r = __new_impl(count))
         return r;
     throw std::bad_alloc();
 }
 
 STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count) {
-    if (void *r = std::__new_impl(count))
+    if (void *r = __new_impl(count))
         return r;
     throw std::bad_alloc();
 }
 
 STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept {
-    return std::__new_impl(count);
+    return __new_impl(count);
 }
 
 STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept {
-    return std::__new_impl(count);
+    return __new_impl(count);
 }
 
 STALIN_NODISCARD_SINCE_20 void *operator new(std::size_t count, STALIN_NONSTRICT_MAYBE_UNUSED void *ptr) noexcept {
-    return std::__new_impl(count);
+    return __new_impl(count);
 }
 
 STALIN_NODISCARD_SINCE_20 void *operator new[](std::size_t count, STALIN_NONSTRICT_MAYBE_UNUSED void *ptr) noexcept {
-    return std::__new_impl(count);
+    return __new_impl(count);
 }
 
 #ifdef STALIN_CXX_STD_SINCE_17
 [[nodiscard]] void *operator new(std::size_t count, std::align_val_t al) {
-    if (void *r = std::__new_impl(count, al))
+    if (void *r = __new_impl(count, al))
         return r;
     throw std::bad_alloc();
 }
 
 [[nodiscard]] void *operator new[](std::size_t count, std::align_val_t al) {
-    if (void *r = std::__new_impl(count, al))
+    if (void *r = __new_impl(count, al))
         return r;
     throw std::bad_alloc();
 }
 
 [[nodiscard]] void *operator new(std::size_t count, std::align_val_t al, const std::nothrow_t &) noexcept {
-    return std::__new_impl(count, al);
+    return __new_impl(count, al);
 }
 
 [[nodiscard]] void *operator new[](std::size_t count, std::align_val_t al, const std::nothrow_t &) noexcept {
-    return std::__new_impl(count, al);
+    return __new_impl(count, al);
 }
 #endif
 
@@ -136,16 +138,16 @@ void operator delete[](void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::size_t sz) 
 #endif
 
 #ifdef STALIN_CXX_STD_SINCE_17
-void operator delete(void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { std::__aligned_free(ptr); }
-void operator delete[](void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { std::__aligned_free(ptr); }
+void operator delete(void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { __aligned_free(ptr); }
+void operator delete[](void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { __aligned_free(ptr); }
 
 void operator delete(void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::size_t sz, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { std::free(ptr); }
 void operator delete[](void *ptr, STALIN_NONSTRICT_MAYBE_UNUSED std::size_t sz, STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al) noexcept { std::free(ptr); }
 
 void operator delete(void *ptr,
                      STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al,
-                     STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept { std::__aligned_free(ptr); }
+                     STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept { __aligned_free(ptr); }
 void operator delete[](void *ptr,
                        STALIN_NONSTRICT_MAYBE_UNUSED std::align_val_t al,
-                       STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept { std::__aligned_free(ptr); }
+                       STALIN_NONSTRICT_MAYBE_UNUSED const std::nothrow_t &tag) noexcept { __aligned_free(ptr); }
 #endif

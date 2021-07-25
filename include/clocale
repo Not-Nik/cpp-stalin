@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_CLOCALE_
 #define CPP_STALIN_INCLUDE_CLOCALE_
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <locale.h>
 
 namespace std {
@@ -14,5 +17,7 @@ using ::lconv;
 using ::setlocale;
 using ::localeconv;
 }
+
+#endif
 
 #endif //CPP_STALIN_INCLUDE_CLOCALE_

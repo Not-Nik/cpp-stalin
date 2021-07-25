@@ -8,6 +8,8 @@
 #define CPP_STALIN_INCLUDE_NUMBERS__
 
 #include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "concepts"
 
 namespace std {
@@ -55,5 +57,7 @@ inline constexpr double egamma     = egamma_v<double>;
 inline constexpr double phi        = phi_v<double>;
 #endif
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_NUMBERS__

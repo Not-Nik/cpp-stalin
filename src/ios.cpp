@@ -4,11 +4,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <ios>
 
 #include <fstream>
 #include <iostream>
 
+#ifndef STALIN_CXX_STD_NO_IO
 std::filebuf fcin = std::filebuf();
 std::filebuf fcout = std::filebuf();
 std::filebuf fcerr = std::filebuf();
@@ -19,15 +23,16 @@ std::wfilebuf fwcout = std::wfilebuf();
 std::wfilebuf fwcerr = std::wfilebuf();
 std::wfilebuf fwclog = std::wfilebuf();
 
-std::istream std::cin = istream (&fcin);
+std::istream std::cin = istream(&fcin);
 std::ostream std::cout = ostream(&fcout);
 std::ostream std::cerr = ostream(&fcerr);
 std::ostream std::clog = ostream(&fclog);
 
-std::wistream std::wcin = wistream (&fwcin);
+std::wistream std::wcin = wistream(&fwcin);
 std::wostream std::wcout = wostream(&fwcout);
 std::wostream std::wcerr = wostream(&fwcerr);
 std::wostream std::wclog = wostream(&fwclog);
+#endif
 
 // This is after the streams to ensure they get initialised first
 std::ios_base::Init std::ios_base::init_;
@@ -110,7 +115,7 @@ void *&std::ios_base::pword(int idx) {
 
 void std::ios_base::register_callback(ios_base::event_callback fn, int index) {
     callbacks_ = (callback *) realloc(callbacks_, ++callback_count_ * sizeof(callback));
-    callbacks_[callback_count_-1] = callback {
+    callbacks_[callback_count_ - 1] = callback{
         .ec = fn, .arg = index
     };
 }
@@ -122,6 +127,7 @@ bool std::ios_base::sync_with_stdio([[maybe_unused]] bool sync) { // Todo
 
 std::ios_base::Init::Init() {
     if (init_cnt == 0) {
+#ifndef STALIN_CXX_STD_NO_IO
         // c's default streams are all buffered
         // but cout/-err/-log should be synced with the default streams
         setbuf(stdin, nullptr);
@@ -137,6 +143,7 @@ std::ios_base::Init::Init() {
         fwcout.__open(stdout, ios_base::out);
         fwcerr.__open(stderr, ios_base::out);
         fwclog.__open(stdout, ios_base::out); // log uses out
+#endif
     }
     init_cnt++;
 }
@@ -144,6 +151,7 @@ std::ios_base::Init::Init() {
 std::ios_base::Init::~Init() {
     init_cnt--;
     if (init_cnt == 0) {
+#ifndef STALIN_CXX_STD_NO_IO
         cout.flush();
         cerr.flush();
         clog.flush();
@@ -151,6 +159,7 @@ std::ios_base::Init::~Init() {
         wcout.flush();
         wcerr.flush();
         wclog.flush();
+#endif
     }
 }
 
@@ -258,3 +267,5 @@ std::ios_base &std::defaultfloat(ios_base &str) {
     str.unsetf(ios_base::floatfield);
     return str;
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING

@@ -4,6 +4,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <string>
 
 using namespace std;
@@ -175,3 +178,5 @@ char_traits<char32_t>::char_type *char_traits<char32_t>::copy(char_type *dest, c
     return dest;
 }
 #endif
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING

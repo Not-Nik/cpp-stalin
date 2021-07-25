@@ -7,6 +7,8 @@
 #ifndef CPP_STALIN_INCLUDE___MEMORY__
 #define CPP_STALIN_INCLUDE___MEMORY__
 
+#include "cstddef"
+
 namespace std {
 void *align(std::size_t alignment, std::size_t size, void *&ptr, std::size_t &space);
 }

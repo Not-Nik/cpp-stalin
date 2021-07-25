@@ -7,11 +7,13 @@
 #ifndef CPP_STALIN_SRC_MEMORY__
 #define CPP_STALIN_SRC_MEMORY__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "new"
 #include "limits"
 #include "cstddef"
 #include "utility"
-#include "__config"
 #include "__memory"
 #include "type_traits"
 
@@ -157,6 +159,11 @@ STALIN_NONSTRICT_NODISCARD STALIN_CONSTEXPR_SINCE_17 typename std::enable_if<!st
     return &arg;
 }
 
+#ifdef STALIN_CXX_STD_SINCE_17
+template <class T>
+const T *addressof(const T &&) = delete;
+#endif
+
 #ifdef STALIN_CXX_STD_SINCE_20
 template <class T>
 constexpr void destroy_at(T *p) {
@@ -267,5 +274,7 @@ struct allocator_traits {
     }
 };
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_SRC_MEMORY__

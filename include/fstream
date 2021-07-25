@@ -7,12 +7,14 @@
 #ifndef CPP_STALIN_INCLUDE_FSTREAM__
 #define CPP_STALIN_INCLUDE_FSTREAM__
 
-#include "cstdlib"
 #include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
+#include "cstdlib"
 #include "streambuf"
 
 namespace std {
-
+#ifndef STALIN_CXX_STD_NO_IO
 template <class charT, class traits>
 class basic_filebuf : public std::basic_streambuf<charT, traits> {
     FILE *file_;
@@ -258,6 +260,9 @@ typename basic_filebuf<charT, traits>::int_type basic_filebuf<charT, traits>::__
     // Write everything buffered previously
     return fwrite(this->pbase_, sizeof(charT), size, file_) == size ? 0 : -1;
 }
+#endif // ifndef STALIN_CXX_STD_NO_IO
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_FSTREAM__

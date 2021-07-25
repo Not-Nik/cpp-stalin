@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_STDEXCEPT__
 #define CPP_STALIN_INCLUDE_STDEXCEPT__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "exception"
 
 namespace std {
@@ -55,5 +58,7 @@ class STALIN_NONSTRICT_MAYBE_UNUSED out_of_range : public logic_error {
     using logic_error::logic_error;
 };
 }
+
+#endif
 
 #endif //CPP_STALIN_INCLUDE_STDEXCEPT__

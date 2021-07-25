@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_CSTRING__
 #define CPP_STALIN_INCLUDE_CSTRING__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <string.h>
 
 namespace std {
@@ -40,5 +43,7 @@ using ::strlen;
 
 using ::size_t;
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_CSTRING__

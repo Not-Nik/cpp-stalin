@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_SYSTEM_ERROR__
 #define CPP_STALIN_INCLUDE_SYSTEM_ERROR__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "cerrno"
 #include "iosfwd"
 #include "stdexcept"
@@ -272,5 +275,7 @@ public:
         : runtime_error("system_error"), code_(val, cat) {}
 };
 }
+
+#endif
 
 #endif //CPP_STALIN_INCLUDE_SYSTEM_ERROR__

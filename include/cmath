@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_CMATH__
 #define CPP_STALIN_INCLUDE_CMATH__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <math.h>
 #include "numbers"
 #include "type_traits"
@@ -16,7 +19,7 @@ namespace std {
 typedef float float_t;
 typedef double double_t;
 
-using ::abs;
+//using ::abs;
 using ::fabs;
 using ::fabsf;
 using ::fabsl;
@@ -335,5 +338,7 @@ STALIN_NONSTRICT_MAYBE_UNUSED constexpr typename std::enable_if<
 }
 #endif
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_CMATH__

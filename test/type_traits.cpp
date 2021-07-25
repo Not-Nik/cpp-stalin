@@ -302,4 +302,24 @@ int main() {
         static_assert(std::is_const_v<std::remove_reference_t<const int &>>);
         #endif
     }
+
+    // std::is_destructible, std::is_trivially_destructible, std::is_nothrow_destructible
+    {
+        struct Foo {
+            std::aligned_storage<8> str;
+            ~Foo() noexcept {};
+        };
+        struct Bar {
+            ~Bar() = default;
+        };
+        struct Indestructible {
+            ~Indestructible() = delete;
+        };
+
+        static_assert(std::is_destructible<std::aligned_storage<8>>::value);
+        static_assert(!std::is_trivially_destructible<Foo>::value);
+        static_assert(std::is_nothrow_destructible<Foo>::value);
+        static_assert(std::is_trivially_destructible<Bar>::value);
+        static_assert(!std::is_destructible<Indestructible>::value);
+    }
 }

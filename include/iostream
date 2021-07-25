@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_IOSTREAM__
 #define CPP_STALIN_INCLUDE_IOSTREAM__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "ios"
 #include "iosfwd"
 #include "ostream"
@@ -14,6 +17,7 @@
 #include "streambuf"
 
 namespace std {
+#ifndef STALIN_CXX_STD_NO_IO
 extern istream cin;
 extern ostream cout;
 extern ostream cerr;
@@ -23,6 +27,9 @@ extern wistream wcin;
 extern wostream wcout;
 extern wostream wcerr;
 extern wostream wclog;
+#endif
 }
+
+#endif
 
 #endif //CPP_STALIN_INCLUDE_IOSTREAM__

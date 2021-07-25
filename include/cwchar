@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_CWCHAR__
 #define CPP_STALIN_INCLUDE_CWCHAR__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include <wchar.h>
 
 namespace std {
@@ -74,5 +77,7 @@ using ::size_t;
 using ::tm;
 using ::wint_t;
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_CWCHAR__

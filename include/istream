@@ -7,6 +7,9 @@
 #ifndef CPP_STALIN_INCLUDE_ISTREAM__
 #define CPP_STALIN_INCLUDE_ISTREAM__
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "ios"
 
 namespace std {
@@ -384,5 +387,7 @@ template <class charT, class traits>
 STALIN_NONSTRICT_MAYBE_UNUSED basic_iostream<charT, traits>::basic_iostream(basic_streambuf<char_type, traits_type> *sb)
     : basic_istream<charT, traits>(sb), basic_ostream<charT, traits>(sb) {}
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_INCLUDE_ISTREAM__

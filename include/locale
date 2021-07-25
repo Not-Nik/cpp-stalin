@@ -9,6 +9,9 @@
 
 // These are stub classes, implementation coming soon™
 
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
 #include "string"
 #include "cstddef"
 
@@ -78,5 +81,7 @@ bool isspace(charT c, const locale &loc) {
     return ::isspace(c);
 }
 }
+
+#endif // ifndef STALIN_CXX_STD_FREESTANDING
 
 #endif //CPP_STALIN_LOCALE_
