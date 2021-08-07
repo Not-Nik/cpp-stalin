@@ -20,7 +20,9 @@ namespace std {
 typedef float float_t;
 typedef double double_t;
 
-//using ::abs;
+STALIN_NONSTRICT_HEADER_IMPL float abs(float arg) { return fabsf(arg); }
+STALIN_NONSTRICT_HEADER_IMPL double abs(double arg) { return fabs(arg); }
+STALIN_NONSTRICT_HEADER_IMPL long double abs(long double arg) { return fabsl(arg); }
 using ::fabs;
 using ::fabsf;
 using ::fabsl;
