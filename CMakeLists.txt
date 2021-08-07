@@ -40,6 +40,7 @@ add_library(stalin
         include/cwchar
         include/exception
         include/fstream
+        include/initializer_list
         include/ios
         include/iosfwd
         include/iostream
@@ -75,5 +76,12 @@ target_link_libraries(iotest stalin)
 
 add_executable(traits_test
         test/type_traits.cpp)
-#target_link_libraries(traits_test stalin)
-target_include_directories(traits_test PUBLIC include)
+target_link_libraries(traits_test stalin)
+
+add_executable(init_list_test
+        test/initializer_list.cpp)
+target_link_libraries(init_list_test stalin)
+
+add_executable(num_limit_test
+        test/limits.cpp)
+target_link_libraries(num_limit_test stalin)

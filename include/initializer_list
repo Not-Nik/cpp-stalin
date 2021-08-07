@@ -1,0 +1,47 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+#ifndef CPP_STALIN_INCLUDE_INITIALIZER_LIST__
+#define CPP_STALIN_INCLUDE_INITIALIZER_LIST__
+
+#include "cstddef"
+#include "__config"
+
+namespace std {
+template <class T>
+class initializer_list {
+public:
+    using value_type = T;
+    using reference = const T &;
+    using const_reference = const T &;
+    using size_type = size_t;
+
+    using iterator = const T *;
+    using const_iterator = const T *;
+
+private:
+    iterator begin_ = nullptr;
+    size_type size_ = 0;
+
+    STALIN_CONSTEXPR_SINCE_14 initializer_list(const T list[], size_type size) noexcept;
+public:
+
+    STALIN_CONSTEXPR_SINCE_14 initializer_list() noexcept = default;
+
+    STALIN_CONSTEXPR_SINCE_14 size_t size() const noexcept { return size_; }
+    STALIN_CONSTEXPR_SINCE_14 const T *begin() const noexcept { return begin_; }
+    STALIN_CONSTEXPR_SINCE_14 const T *end() const noexcept { return begin_ + size_; }
+};
+
+template <class T>
+constexpr initializer_list<T>::initializer_list(const T *list, size_t size) noexcept
+    : begin_(list), size_(size) {
+}
+
+// initializer list range access
+template <class T>
+STALIN_CONSTEXPR_SINCE_14 const T *begin(initializer_list<T> il) noexcept { return il.begin(); }
+template <class T>
+STALIN_CONSTEXPR_SINCE_14 const T *end(initializer_list<T> il) noexcept { return il.end(); }
+}
+
+#endif //CPP_STALIN_INCLUDE_INITIALIZER_LIST__

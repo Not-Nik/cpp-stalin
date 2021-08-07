@@ -110,7 +110,7 @@ public:
     static constexpr bool denorm_min() noexcept { return 0; }
 };
 
-template <class T>
+template <class T, T mi, T ma>
 class __stalin_int_numeric_limits {
 public:
     STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool is_specialized = true;
@@ -143,8 +143,8 @@ public:
     STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool tinyness_before = false;
     STALIN_NONSTRICT_MAYBE_UNUSED static constexpr float_round_style round_style = round_toward_zero;
 
-    STALIN_NONSTRICT_NODISCARD static constexpr T min() noexcept { return max() * -is_signed; }
-    STALIN_NONSTRICT_NODISCARD static constexpr T max() noexcept { return __stalin_const_pow(2, digits) - 1; }
+    STALIN_NONSTRICT_NODISCARD static constexpr T min() noexcept { return mi; }
+    STALIN_NONSTRICT_NODISCARD static constexpr T max() noexcept { return ma; }
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr T lowest() noexcept { return min(); }
 
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr T epsilon() noexcept { return 0; }
@@ -155,39 +155,39 @@ public:
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr T denorm_min() noexcept { return 0; }
 };
 
-template <> class numeric_limits<char> : public __stalin_int_numeric_limits<char> {};
+template <> class numeric_limits<char> : public __stalin_int_numeric_limits<char, CHAR_MIN, CHAR_MAX> {};
 
-template <> class numeric_limits<signed char> : public __stalin_int_numeric_limits<signed char> {};
+template <> class numeric_limits<signed char> : public __stalin_int_numeric_limits<signed char, SCHAR_MIN, SCHAR_MAX> {};
 
-template <> class numeric_limits<unsigned char> : public __stalin_int_numeric_limits<unsigned char> {};
+template <> class numeric_limits<unsigned char> : public __stalin_int_numeric_limits<unsigned char, 0, UCHAR_MAX> {};
 
 #ifdef STALIN_CXX_STD_SINCE_20
 
-template <> class numeric_limits<char8_t> : public __stalin_int_numeric_limits<char8_t> {};
+template <> class numeric_limits<char8_t> : public __stalin_int_numeric_limits<char8_t, 0, UCHAR_MAX> {};
 
 #endif
 
-template <> class numeric_limits<char16_t> : public __stalin_int_numeric_limits<char16_t> {};
+template <> class numeric_limits<char16_t> : public __stalin_int_numeric_limits<char16_t, 0, UINT_LEAST16_MAX> {};
 
-template <> class numeric_limits<char32_t> : public __stalin_int_numeric_limits<char32_t> {};
+    template <> class numeric_limits<char32_t> : public __stalin_int_numeric_limits<char32_t, 0, UINT_LEAST32_MAX> {};
 
-template <> class numeric_limits<wchar_t> : public __stalin_int_numeric_limits<wchar_t> {};
+template <> class numeric_limits<wchar_t> : public __stalin_int_numeric_limits<wchar_t, WCHAR_MIN, WCHAR_MAX> {};
 
-template <> class numeric_limits<short> : public __stalin_int_numeric_limits<short> {};
+template <> class numeric_limits<short> : public __stalin_int_numeric_limits<short, SHRT_MIN, SHRT_MAX> {};
 
-template <> class numeric_limits<int> : public __stalin_int_numeric_limits<int> {};
+template <> class numeric_limits<int> : public __stalin_int_numeric_limits<int, INT_MIN, INT_MAX> {};
 
-template <> class numeric_limits<long> : public __stalin_int_numeric_limits<long> {};
+template <> class numeric_limits<long> : public __stalin_int_numeric_limits<long, LONG_MIN, LONG_MAX> {};
 
-template <> class numeric_limits<long long> : public __stalin_int_numeric_limits<long long> {};
+template <> class numeric_limits<long long> : public __stalin_int_numeric_limits<long long, LONG_LONG_MIN, LONG_LONG_MAX> {};
 
-template <> class numeric_limits<unsigned short> : public __stalin_int_numeric_limits<unsigned short> {};
+template <> class numeric_limits<unsigned short> : public __stalin_int_numeric_limits<unsigned short, 0, USHRT_MAX> {};
 
-template <> class numeric_limits<unsigned int> : public __stalin_int_numeric_limits<unsigned int> {};
+template <> class numeric_limits<unsigned int> : public __stalin_int_numeric_limits<unsigned int, 0, UINT_MAX> {};
 
-template <> class numeric_limits<unsigned long> : public __stalin_int_numeric_limits<unsigned long> {};
+template <> class numeric_limits<unsigned long> : public __stalin_int_numeric_limits<unsigned long, 0, ULONG_MAX> {};
 
-template <> class numeric_limits<unsigned long long> : public __stalin_int_numeric_limits<unsigned long long> {};
+template <> class numeric_limits<unsigned long long> : public __stalin_int_numeric_limits<unsigned long long, 0, ULONG_LONG_MAX> {};
 
 template <int dig, int mie, int mie10, int mae, int mae10> class __stalin_float_numeric_limits {
     STALIN_NONSTRICT_MAYBE_UNUSED static constexpr bool is_specialized = true;
@@ -223,6 +223,7 @@ template <int dig, int mie, int mie10, int mae, int mae10> class __stalin_float_
 
 template <>
 class numeric_limits<float> : public __stalin_float_numeric_limits<FLT_MANT_DIG, FLT_MIN_EXP, FLT_MIN_10_EXP, FLT_MAX_EXP, FLT_MAX_10_EXP> {
+public:
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr float min() noexcept { return FLT_MIN; }
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr float max() noexcept { return FLT_MAX; }
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr float lowest() noexcept { return -FLT_MAX; }
@@ -237,6 +238,7 @@ class numeric_limits<float> : public __stalin_float_numeric_limits<FLT_MANT_DIG,
 
 template <>
 class numeric_limits<double> : public __stalin_float_numeric_limits<DBL_MANT_DIG, DBL_MIN_EXP, DBL_MIN_10_EXP, DBL_MAX_EXP, DBL_MAX_10_EXP> {
+public:
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double min() noexcept { return DBL_MIN; }
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double max() noexcept { return DBL_MAX; }
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double lowest() noexcept { return -DBL_MAX; }
@@ -255,16 +257,17 @@ class numeric_limits<long double> : public __stalin_float_numeric_limits<LDBL_MA
                                                                          LDBL_MIN_10_EXP,
                                                                          LDBL_MAX_EXP,
                                                                          LDBL_MAX_10_EXP> {
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double min() noexcept { return LDBL_MIN; }
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double max() noexcept { return LDBL_MAX; }
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double lowest() noexcept { return -LDBL_MAX; }
+public:
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double min() noexcept { return LDBL_MIN; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double max() noexcept { return LDBL_MAX; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double lowest() noexcept { return -LDBL_MAX; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double epsilon() noexcept { return LDBL_EPSILON; }
 
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double epsilon() noexcept { return LDBL_EPSILON; }
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double round_error() noexcept { return 0.5L; }
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double infinity() noexcept { return HUGE_VALL; }
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double quiet_NaN() noexcept { return NAN; }
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double signaling_NaN() noexcept { return NAN; }
-    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr double denorm_min() noexcept { return __stalin_const_pow(2, -1074); }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double round_error() noexcept { return 0.5L; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double infinity() noexcept { return HUGE_VALL; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double quiet_NaN() noexcept { return NAN; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double signaling_NaN() noexcept { return NAN; }
+    STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static constexpr long double denorm_min() noexcept { return __stalin_const_pow(2, -1074); }
 };
 }
 

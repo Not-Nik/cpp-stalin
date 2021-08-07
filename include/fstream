@@ -235,7 +235,7 @@ int basic_filebuf<charT, traits>::sync() {
 
 template <class charT, class traits>
 void basic_filebuf<charT, traits>::imbue(const locale &loc) {
-    this->imbue(loc);
+    basic_streambuf<charT, traits>::imbue(loc);
 }
 
 template <class charT, class traits>
