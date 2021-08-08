@@ -112,7 +112,7 @@
 #elif defined(_MSC_VER)
 #define STALIN_USING_IF_EXISTS(x) __if_exists(x) using x
 #else
-#define STALIN_USING_IF_EXISTS(x)
+#define STALIN_USING_IF_EXISTS(x) using x
 #endif
 
 #endif //CPP_STALIN_INCLUDE___CONFIG__

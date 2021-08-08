@@ -73,8 +73,6 @@ public:
 
     class Init;
 
-    static Init init_;
-
     class failure;
 
 protected:
@@ -89,6 +87,8 @@ protected:
         long l;
         void *vp;
     };
+
+    static Init init_;
 
     static iea_el *iea_; // internal extensible array
 

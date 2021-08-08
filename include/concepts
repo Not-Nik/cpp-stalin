@@ -7,6 +7,7 @@
 #ifndef CPP_STALIN_INCLUDE_CONCEPTS__
 #define CPP_STALIN_INCLUDE_CONCEPTS__
 
+#include "utility"
 #include "type_traits"
 
 namespace std {
@@ -16,11 +17,95 @@ template <class T, class U> concept SameHelper = std::is_same_v<T, U>;
 }
 
 template <class T, class U> concept same_as = detail::SameHelper<T, U> && detail::SameHelper<U, T>;
+template <class Derived, class Base> concept derived_from =
+std::is_base_of_v<Base, Derived> && std::is_convertible_v<const volatile Derived *, const volatile Base *>;
+template <class From, class To> concept convertible_to =
+std::is_convertible_v<From, To> && requires(std::add_rvalue_reference_t<From> (&f)()) {
+    static_cast<To>(f());
+};
+template <class T, class U> concept common_reference_with =
+std::same_as<std::common_reference_t<T, U>, std::common_reference_t<U, T>> && std::convertible_to<T, std::common_reference_t<T, U>>
+    && std::convertible_to<U, std::common_reference_t<T, U>>;
+
+template <class T, class U> concept common_with =
+std::same_as<std::common_type_t<T, U>, std::common_type_t<U, T>> && requires {
+    static_cast<std::common_type_t<T, U>>(std::declval<T>());
+    static_cast<std::common_type_t<T, U>>(std::declval<U>());
+} && std::common_reference_with<std::add_lvalue_reference_t<const T>, std::add_lvalue_reference_t<const U>>
+    && std::common_reference_with<std::add_lvalue_reference_t<std::common_type_t<T, U>>,
+                                  std::common_reference_t<std::add_lvalue_reference_t<const T>, std::add_lvalue_reference_t<const U>>>;
 
 template <class T> concept integral = std::is_integral_v<T>;
 template <class T> concept signed_integral = std::integral<T> && std::is_signed_v<T>;
 template <class T> concept unsigned_integral = std::integral<T> && !std::signed_integral<T>;
 template <class T> concept floating_point = std::is_floating_point_v<T>;
+
+template <class LHS, class RHS> concept assignable_from =
+std::is_lvalue_reference_v<LHS> && std::common_reference_with<const std::remove_reference_t<LHS> &, const std::remove_reference_t<RHS> &>
+    && requires(LHS lhs, RHS &&rhs) {
+        { lhs = std::forward<RHS>(rhs) } -> std::same_as<LHS>;
+    };
+
+//template <class T> concept swappable = requires(T &a, T &b) { ranges::swap(a, b); };
+//
+//template <class T, class U> concept swappable_with =
+//std::common_reference_with<T, U> && requires(T &&t, U &&u) {
+//    ranges::swap(std::forward<T>(t), std::forward<T>(t));
+//    ranges::swap(std::forward<U>(u), std::forward<U>(u));
+//    ranges::swap(std::forward<T>(t), std::forward<U>(u));
+//    ranges::swap(std::forward<U>(u), std::forward<T>(t));
+//};
+
+template <class T> concept destructible = std::is_nothrow_destructible_v<T>;
+template <class T, class... Args> concept constructible_from = std::destructible<T> && std::is_constructible_v<T, Args...>;
+template <class T> concept default_initializable = std::constructible_from<T> && requires { T{}; }; // TODO: Check if T is well-formed
+template <class T> concept move_constructible = std::constructible_from<T, T> && std::convertible_to<T, T>;
+template <class T> concept copy_constructible = std::move_constructible<T> && std::constructible_from<T, T &> && std::convertible_to<T &, T>
+    && std::constructible_from<T, const T &> && std::convertible_to<const T &, T> && std::constructible_from<T, const T>
+    && std::convertible_to<const T, T>;
+
+template <class B> concept __boolean_testable_impl = std::convertible_to<B, bool>;
+template <class B> concept boolean_testable = __boolean_testable_impl<B> && requires(B &&b) {{ !std::forward<B>(b) } -> __boolean_testable_impl; };
+
+template <class T, class U> concept __WeaklyEqualityComparableWith = requires(const std::remove_reference_t<T> &t,
+                                                                              const std::remove_reference_t<U> &u) {
+    { t == u } -> boolean_testable;
+    { t != u } -> boolean_testable;
+    { u == t } -> boolean_testable;
+    { u != t } -> boolean_testable;
+};
+
+template <class T> concept equality_comparable = __WeaklyEqualityComparableWith<T, T>;
+template <class T, class U> concept equality_comparable_with = std::equality_comparable<T> && std::equality_comparable<U>
+    && std::common_reference_with<const std::remove_reference_t<T> &, const std::remove_reference_t<U> &>
+    && std::equality_comparable<std::common_reference_t<const std::remove_reference_t<T> &, const std::remove_reference_t<U> &>>
+    && __WeaklyEqualityComparableWith<T, U>;
+
+//template <class T> concept totally_ordered = std::equality_comparable<T> && __PartiallyOrderedWith<T, T>;
+//template <class T, class U> concept totally_ordered_with = std::totally_ordered<T> && std::totally_ordered<U> && std::equality_comparable_with<T, U>
+//    && std::totally_ordered<std::common_reference_t<const std::remove_reference_t<T> &, const std::remove_reference_t<U> &>>
+//    && __PartiallyOrderedWith<T, U>;
+
+//template <class T> concept movable = std::is_object_v<T> && std::move_constructible<T> && std::assignable_from<T &, T> && std::swappable<T>;
+//template <class T> concept copyable = std::copy_constructible<T> && std::movable<T> && std::assignable_from<T &, T &>
+//    && std::assignable_from<T &, const T &> && std::assignable_from<T &, const T>;
+//template <class T> concept semiregular = std::copyable<T> && std::default_initializable<T>;
+//template <class T> concept regular = std::semiregular<T> && std::equality_comparable<T>;
+
+//template <class F, class... Args> concept invocable =requires(F &&f, Args &&... args) {
+//    std::invoke(std::forward<F>(f),
+//                std::forward<Args>(args)...);
+//};
+
+//template <class F, class... Args> concept regular_invocable = std::invocable<F, Args...>;
+
+//template <class R, class T, class U> concept relation = std::predicate<R, T, T> && std::predicate<R, U, U> && std::predicate<R, T, U>
+//    && std::predicate<R, U, T>;
+
+//template <class R, class T, class U> concept equivalence_relation = std::relation<R, T, U>;
+
+//template <class R, class T, class U> concept strict_weak_order = std::relation<R, T, U>;
+
 #endif
 }
 
