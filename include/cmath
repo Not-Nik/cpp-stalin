@@ -20,230 +20,233 @@ namespace std {
 typedef float float_t;
 typedef double double_t;
 
-STALIN_NONSTRICT_HEADER_IMPL float abs(float arg) { return fabsf(arg); }
-STALIN_NONSTRICT_HEADER_IMPL double abs(double arg) { return fabs(arg); }
-STALIN_NONSTRICT_HEADER_IMPL long double abs(long double arg) { return fabsl(arg); }
-using ::fabs;
-using ::fabsf;
-using ::fabsl;
+// Fixme: These inline functions throw errors if fabs* doesn't exist.
+//  Microsoft has a way to work around that (__if_exists), but other
+//  compilers don't
+inline float abs(float arg) { return fabsf(arg); }
+inline double abs(double arg) { return fabs(arg); }
+inline long double abs(long double arg) { return fabsl(arg); }
+STALIN_USING_IF_EXISTS(::fabs);
+STALIN_USING_IF_EXISTS(::fabsf);
+STALIN_USING_IF_EXISTS(::fabsl);
 
-using ::fmod;
-using ::fmodf;
-using ::fmodl;
+STALIN_USING_IF_EXISTS(::fmod);
+STALIN_USING_IF_EXISTS(::fmodf);
+STALIN_USING_IF_EXISTS(::fmodl);
 
-using ::remainder;
-using ::remainderf;
-using ::remainderl;
+STALIN_USING_IF_EXISTS(::remainder);
+STALIN_USING_IF_EXISTS(::remainderf);
+STALIN_USING_IF_EXISTS(::remainderl);
 
-using ::remquo;
-using ::remquof;
-using ::remquol;
+STALIN_USING_IF_EXISTS(::remquo);
+STALIN_USING_IF_EXISTS(::remquof);
+STALIN_USING_IF_EXISTS(::remquol);
 
-using ::fma;
-using ::fmaf;
-using ::fmal;
+STALIN_USING_IF_EXISTS(::fma);
+STALIN_USING_IF_EXISTS(::fmaf);
+STALIN_USING_IF_EXISTS(::fmal);
 
-using ::fmax;
-using ::fmaxf;
-using ::fmaxl;
+STALIN_USING_IF_EXISTS(::fmax);
+STALIN_USING_IF_EXISTS(::fmaxf);
+STALIN_USING_IF_EXISTS(::fmaxl);
 
-using ::fmin;
-using ::fminf;
-using ::fminl;
+STALIN_USING_IF_EXISTS(::fmin);
+STALIN_USING_IF_EXISTS(::fminf);
+STALIN_USING_IF_EXISTS(::fminl);
 
-using ::fdim;
-using ::fdimf;
-using ::fdiml;
+STALIN_USING_IF_EXISTS(::fdim);
+STALIN_USING_IF_EXISTS(::fdimf);
+STALIN_USING_IF_EXISTS(::fdiml);
 
-using ::nan;
-using ::nanf;
-using ::nanl;
+STALIN_USING_IF_EXISTS(::nan);
+STALIN_USING_IF_EXISTS(::nanf);
+STALIN_USING_IF_EXISTS(::nanl);
 
-using ::exp;
-using ::expf;
-using ::expl;
+STALIN_USING_IF_EXISTS(::exp);
+STALIN_USING_IF_EXISTS(::expf);
+STALIN_USING_IF_EXISTS(::expl);
 
-using ::exp2;
-using ::exp2f;
-using ::exp2l;
+STALIN_USING_IF_EXISTS(::exp2);
+STALIN_USING_IF_EXISTS(::exp2f);
+STALIN_USING_IF_EXISTS(::exp2l);
 
-using ::expm1;
-using ::expm1f;
-using ::expm1l;
+STALIN_USING_IF_EXISTS(::expm1);
+STALIN_USING_IF_EXISTS(::expm1f);
+STALIN_USING_IF_EXISTS(::expm1l);
 
-using ::expm1;
-using ::expm1f;
-using ::expm1l;
+STALIN_USING_IF_EXISTS(::expm1);
+STALIN_USING_IF_EXISTS(::expm1f);
+STALIN_USING_IF_EXISTS(::expm1l);
 
-using ::log10;
-using ::log10f;
-using ::log10l;
+STALIN_USING_IF_EXISTS(::log10);
+STALIN_USING_IF_EXISTS(::log10f);
+STALIN_USING_IF_EXISTS(::log10l);
 
-using ::log2;
-using ::log2f;
-using ::log2l;
+STALIN_USING_IF_EXISTS(::log2);
+STALIN_USING_IF_EXISTS(::log2f);
+STALIN_USING_IF_EXISTS(::log2l);
 
-using ::log1p;
-using ::log1pf;
-using ::log1pl;
+STALIN_USING_IF_EXISTS(::log1p);
+STALIN_USING_IF_EXISTS(::log1pf);
+STALIN_USING_IF_EXISTS(::log1pl);
 
-using ::pow;
-using ::powf;
-using ::powl;
+STALIN_USING_IF_EXISTS(::pow);
+STALIN_USING_IF_EXISTS(::powf);
+STALIN_USING_IF_EXISTS(::powl);
 
-using ::sqrt;
-using ::sqrtf;
-using ::sqrtl;
+STALIN_USING_IF_EXISTS(::sqrt);
+STALIN_USING_IF_EXISTS(::sqrtf);
+STALIN_USING_IF_EXISTS(::sqrtl);
 
-using ::cbrt;
-using ::cbrtf;
-using ::cbrtl;
+STALIN_USING_IF_EXISTS(::cbrt);
+STALIN_USING_IF_EXISTS(::cbrtf);
+STALIN_USING_IF_EXISTS(::cbrtl);
 
-using ::hypot;
-using ::hypotf;
-using ::hypotl;
+STALIN_USING_IF_EXISTS(::hypot);
+STALIN_USING_IF_EXISTS(::hypotf);
+STALIN_USING_IF_EXISTS(::hypotl);
 
-using ::sin;
-using ::sinf;
-using ::sinl;
+STALIN_USING_IF_EXISTS(::sin);
+STALIN_USING_IF_EXISTS(::sinf);
+STALIN_USING_IF_EXISTS(::sinl);
 
-using ::cos;
-using ::cosf;
-using ::cosl;
+STALIN_USING_IF_EXISTS(::cos);
+STALIN_USING_IF_EXISTS(::cosf);
+STALIN_USING_IF_EXISTS(::cosl);
 
-using ::tan;
-using ::tanf;
-using ::tanl;
+STALIN_USING_IF_EXISTS(::tan);
+STALIN_USING_IF_EXISTS(::tanf);
+STALIN_USING_IF_EXISTS(::tanl);
 
-using ::asin;
-using ::asinf;
-using ::asinl;
+STALIN_USING_IF_EXISTS(::asin);
+STALIN_USING_IF_EXISTS(::asinf);
+STALIN_USING_IF_EXISTS(::asinl);
 
-using ::acos;
-using ::acosf;
-using ::acosl;
+STALIN_USING_IF_EXISTS(::acos);
+STALIN_USING_IF_EXISTS(::acosf);
+STALIN_USING_IF_EXISTS(::acosl);
 
-using ::atan;
-using ::atanf;
-using ::atanl;
+STALIN_USING_IF_EXISTS(::atan);
+STALIN_USING_IF_EXISTS(::atanf);
+STALIN_USING_IF_EXISTS(::atanl);
 
-using ::atan2;
-using ::atan2f;
-using ::atan2l;
+STALIN_USING_IF_EXISTS(::atan2);
+STALIN_USING_IF_EXISTS(::atan2f);
+STALIN_USING_IF_EXISTS(::atan2l);
 
-using ::sinh;
-using ::sinhf;
-using ::sinhl;
+STALIN_USING_IF_EXISTS(::sinh);
+STALIN_USING_IF_EXISTS(::sinhf);
+STALIN_USING_IF_EXISTS(::sinhl);
 
-using ::cosh;
-using ::coshf;
-using ::coshl;
+STALIN_USING_IF_EXISTS(::cosh);
+STALIN_USING_IF_EXISTS(::coshf);
+STALIN_USING_IF_EXISTS(::coshl);
 
-using ::tanh;
-using ::tanhf;
-using ::tanhl;
+STALIN_USING_IF_EXISTS(::tanh);
+STALIN_USING_IF_EXISTS(::tanhf);
+STALIN_USING_IF_EXISTS(::tanhl);
 
-using ::asinh;
-using ::asinhf;
-using ::asinhl;
+STALIN_USING_IF_EXISTS(::asinh);
+STALIN_USING_IF_EXISTS(::asinhf);
+STALIN_USING_IF_EXISTS(::asinhl);
 
-using ::acosh;
-using ::acoshf;
-using ::acoshl;
+STALIN_USING_IF_EXISTS(::acosh);
+STALIN_USING_IF_EXISTS(::acoshf);
+STALIN_USING_IF_EXISTS(::acoshl);
 
-using ::atanh;
-using ::atanhf;
-using ::atanhl;
+STALIN_USING_IF_EXISTS(::atanh);
+STALIN_USING_IF_EXISTS(::atanhf);
+STALIN_USING_IF_EXISTS(::atanhl);
 
-using ::erf;
-using ::erff;
-using ::erfl;
+STALIN_USING_IF_EXISTS(::erf);
+STALIN_USING_IF_EXISTS(::erff);
+STALIN_USING_IF_EXISTS(::erfl);
 
-using ::erfc;
-using ::erfcf;
-using ::erfcl;
+STALIN_USING_IF_EXISTS(::erfc);
+STALIN_USING_IF_EXISTS(::erfcf);
+STALIN_USING_IF_EXISTS(::erfcl);
 
-using ::tgamma;
-using ::tgammaf;
-using ::tgammal;
+STALIN_USING_IF_EXISTS(::tgamma);
+STALIN_USING_IF_EXISTS(::tgammaf);
+STALIN_USING_IF_EXISTS(::tgammal);
 
-using ::lgamma;
-using ::lgammaf;
-using ::lgammal;
+STALIN_USING_IF_EXISTS(::lgamma);
+STALIN_USING_IF_EXISTS(::lgammaf);
+STALIN_USING_IF_EXISTS(::lgammal);
 
-using ::ceil;
-using ::ceilf;
-using ::ceill;
+STALIN_USING_IF_EXISTS(::ceil);
+STALIN_USING_IF_EXISTS(::ceilf);
+STALIN_USING_IF_EXISTS(::ceill);
 
-using ::floor;
-using ::floorf;
-using ::floorl;
+STALIN_USING_IF_EXISTS(::floor);
+STALIN_USING_IF_EXISTS(::floorf);
+STALIN_USING_IF_EXISTS(::floorl);
 
-using ::trunc;
-using ::truncf;
-using ::truncl;
+STALIN_USING_IF_EXISTS(::trunc);
+STALIN_USING_IF_EXISTS(::truncf);
+STALIN_USING_IF_EXISTS(::truncl);
 
-using ::round;
-using ::roundf;
-using ::roundl;
-using ::lround;
-using ::lroundf;
-using ::lroundl;
-using ::llround;
-using ::llroundf;
-using ::llroundl;
+STALIN_USING_IF_EXISTS(::round);
+STALIN_USING_IF_EXISTS(::roundf);
+STALIN_USING_IF_EXISTS(::roundl);
+STALIN_USING_IF_EXISTS(::lround);
+STALIN_USING_IF_EXISTS(::lroundf);
+STALIN_USING_IF_EXISTS(::lroundl);
+STALIN_USING_IF_EXISTS(::llround);
+STALIN_USING_IF_EXISTS(::llroundf);
+STALIN_USING_IF_EXISTS(::llroundl);
 
-using ::nearbyint;
-using ::nearbyintf;
-using ::nearbyintl;
+STALIN_USING_IF_EXISTS(::nearbyint);
+STALIN_USING_IF_EXISTS(::nearbyintf);
+STALIN_USING_IF_EXISTS(::nearbyintl);
 
-using ::rint;
-using ::rintf;
-using ::rintl;
-using ::lrint;
-using ::lrintf;
-using ::lrintl;
-using ::llrint;
-using ::llrintf;
-using ::llrintl;
+STALIN_USING_IF_EXISTS(::rint);
+STALIN_USING_IF_EXISTS(::rintf);
+STALIN_USING_IF_EXISTS(::rintl);
+STALIN_USING_IF_EXISTS(::lrint);
+STALIN_USING_IF_EXISTS(::lrintf);
+STALIN_USING_IF_EXISTS(::lrintl);
+STALIN_USING_IF_EXISTS(::llrint);
+STALIN_USING_IF_EXISTS(::llrintf);
+STALIN_USING_IF_EXISTS(::llrintl);
 
-using ::frexp;
-using ::frexpf;
-using ::frexpl;
+STALIN_USING_IF_EXISTS(::frexp);
+STALIN_USING_IF_EXISTS(::frexpf);
+STALIN_USING_IF_EXISTS(::frexpl);
 
-using ::ldexp;
-using ::ldexpf;
-using ::ldexpl;
+STALIN_USING_IF_EXISTS(::ldexp);
+STALIN_USING_IF_EXISTS(::ldexpf);
+STALIN_USING_IF_EXISTS(::ldexpl);
 
-using ::modf;
-using ::modff;
-using ::modfl;
+STALIN_USING_IF_EXISTS(::modf);
+STALIN_USING_IF_EXISTS(::modff);
+STALIN_USING_IF_EXISTS(::modfl);
 
-using ::scalbn;
-using ::scalbnf;
-using ::scalbnl;
-using ::scalbln;
-using ::scalblnf;
-using ::scalblnl;
+STALIN_USING_IF_EXISTS(::scalbn);
+STALIN_USING_IF_EXISTS(::scalbnf);
+STALIN_USING_IF_EXISTS(::scalbnl);
+STALIN_USING_IF_EXISTS(::scalbln);
+STALIN_USING_IF_EXISTS(::scalblnf);
+STALIN_USING_IF_EXISTS(::scalblnl);
 
-using ::ilogb;
-using ::ilogbf;
-using ::ilogbl;
+STALIN_USING_IF_EXISTS(::ilogb);
+STALIN_USING_IF_EXISTS(::ilogbf);
+STALIN_USING_IF_EXISTS(::ilogbl);
 
-using ::logb;
-using ::logbf;
-using ::logbl;
+STALIN_USING_IF_EXISTS(::logb);
+STALIN_USING_IF_EXISTS(::logbf);
+STALIN_USING_IF_EXISTS(::logbl);
 
-using ::nextafter;
-using ::nextafterf;
-using ::nextafterl;
-using ::nexttoward;
-using ::nexttowardf;
-using ::nexttowardl;
+STALIN_USING_IF_EXISTS(::nextafter);
+STALIN_USING_IF_EXISTS(::nextafterf);
+STALIN_USING_IF_EXISTS(::nextafterl);
+STALIN_USING_IF_EXISTS(::nexttoward);
+STALIN_USING_IF_EXISTS(::nexttowardf);
+STALIN_USING_IF_EXISTS(::nexttowardl);
 
-using ::copysign;
-using ::copysignf;
-using ::copysignl;
+STALIN_USING_IF_EXISTS(::copysign);
+STALIN_USING_IF_EXISTS(::copysignf);
+STALIN_USING_IF_EXISTS(::copysignl);
 
 #ifdef STALIN_CXX_STD_SINCE_20
 STALIN_NONSTRICT_MAYBE_UNUSED constexpr float lerp(float a, float b, float t) noexcept { return a + t * (b - a); }

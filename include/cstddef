@@ -7,12 +7,13 @@
 #ifndef CPP_STALIN_INCLUDE_CSTDDEF__
 #define CPP_STALIN_INCLUDE_CSTDDEF__
 
+#include "__config"
 #include <stddef.h>
 
 namespace std {
-using ::ptrdiff_t;
-using ::size_t;
-using ::max_align_t;
+STALIN_USING_IF_EXISTS(::ptrdiff_t);
+STALIN_USING_IF_EXISTS(::size_t);
+STALIN_USING_IF_EXISTS(::max_align_t);
 typedef decltype(nullptr) nullptr_t;
 }
 

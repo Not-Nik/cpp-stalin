@@ -10,32 +10,41 @@
 #include <stdint.h>
 
 namespace std {
-using ::intmax_t;
-using ::uintmax_t;
-using ::int16_t;
-using ::uint16_t;
-using ::int32_t;
-using ::uint32_t;
-using ::int64_t;
-using ::uint64_t;
-using ::int_least8_t;
-using ::uint_least8_t;
-using ::int_least16_t;
-using ::uint_least16_t;
-using ::int_least32_t;
-using ::uint_least32_t;
-using ::int_least64_t;
-using ::uint_least64_t;
-using ::int_fast8_t;
-using ::uint_fast8_t;
-using ::int_fast16_t;
-using ::uint_fast16_t;
-using ::int_fast32_t;
-using ::uint_fast32_t;
-using ::int_fast64_t;
-using ::uint_fast64_t;
-using ::intptr_t;
-using ::uintptr_t;
+STALIN_USING_IF_EXISTS(::int8_t);
+STALIN_USING_IF_EXISTS(::int16_t);
+STALIN_USING_IF_EXISTS(::int32_t);
+STALIN_USING_IF_EXISTS(::int64_t);
+
+STALIN_USING_IF_EXISTS(::int_fast8_t);
+STALIN_USING_IF_EXISTS(::int_fast16_t);
+STALIN_USING_IF_EXISTS(::int_fast32_t);
+STALIN_USING_IF_EXISTS(::int_fast64_t);
+
+STALIN_USING_IF_EXISTS(::int_least8_t);
+STALIN_USING_IF_EXISTS(::int_least16_t);
+STALIN_USING_IF_EXISTS(::int_least32_t);
+STALIN_USING_IF_EXISTS(::int_least64_t);
+
+STALIN_USING_IF_EXISTS(::intmax_t);
+STALIN_USING_IF_EXISTS(::intptr_t);
+
+STALIN_USING_IF_EXISTS(::uint8_t);
+STALIN_USING_IF_EXISTS(::uint16_t);
+STALIN_USING_IF_EXISTS(::uint32_t);
+STALIN_USING_IF_EXISTS(::uint64_t);
+
+STALIN_USING_IF_EXISTS(::uint_fast8_t);
+STALIN_USING_IF_EXISTS(::uint_fast16_t);
+STALIN_USING_IF_EXISTS(::uint_fast32_t);
+STALIN_USING_IF_EXISTS(::uint_fast64_t);
+
+STALIN_USING_IF_EXISTS(::uint_least8_t);
+STALIN_USING_IF_EXISTS(::uint_least16_t);
+STALIN_USING_IF_EXISTS(::uint_least32_t);
+STALIN_USING_IF_EXISTS(::uint_least64_t);
+
+STALIN_USING_IF_EXISTS(::uintmax_t);
+STALIN_USING_IF_EXISTS(::uintptr_t);
 }
 
 #endif //CPP_STALIN_SRC_CSTDINT__

@@ -8,59 +8,60 @@
 #define CPP_STALIN_INCLUDE_CSTDLIB__
 
 #include <stdlib.h>
+#include "__config"
 
 namespace std {
-using ::atof;
-using ::atoi;
-using ::atol;
-using ::atoll;
-using ::strtod;
-using ::strtof;
-using ::strtol;
-using ::strtold;
-using ::strtoll;
-using ::strtoul;
-using ::strtoull;
+STALIN_USING_IF_EXISTS(::atof);
+STALIN_USING_IF_EXISTS(::atoi);
+STALIN_USING_IF_EXISTS(::atol);
+STALIN_USING_IF_EXISTS(::atoll);
+STALIN_USING_IF_EXISTS(::strtod);
+STALIN_USING_IF_EXISTS(::strtof);
+STALIN_USING_IF_EXISTS(::strtol);
+STALIN_USING_IF_EXISTS(::strtold);
+STALIN_USING_IF_EXISTS(::strtoll);
+STALIN_USING_IF_EXISTS(::strtoul);
+STALIN_USING_IF_EXISTS(::strtoull);
 
-using ::rand;
-using ::srand;
+STALIN_USING_IF_EXISTS(::rand);
+STALIN_USING_IF_EXISTS(::srand);
 
-using ::calloc;
-using ::free;
-using ::malloc;
-using ::aligned_alloc;
-using ::realloc;
+STALIN_USING_IF_EXISTS(::calloc);
+STALIN_USING_IF_EXISTS(::free);
+STALIN_USING_IF_EXISTS(::malloc);
+STALIN_USING_IF_EXISTS(::aligned_alloc);
+STALIN_USING_IF_EXISTS(::realloc);
 
-using ::abort;
-using ::atexit;
-//using ::at_quick_exit;
-using ::exit;
-using ::getenv;
-//sing ::quick_exit;
-using ::system;
-using ::_Exit;
+STALIN_USING_IF_EXISTS(::abort);
+STALIN_USING_IF_EXISTS(::atexit);
+STALIN_USING_IF_EXISTS(::at_quick_exit);
+STALIN_USING_IF_EXISTS(::exit);
+STALIN_USING_IF_EXISTS(::getenv);
+STALIN_USING_IF_EXISTS(::quick_exit);
+STALIN_USING_IF_EXISTS(::system);
+STALIN_USING_IF_EXISTS(::_Exit);
 
-using ::bsearch;
-using ::qsort;
+STALIN_USING_IF_EXISTS(::bsearch);
+STALIN_USING_IF_EXISTS(::qsort);
 
-using ::abs;
-using ::div;
-using ::labs;
-using ::ldiv;
-using ::llabs;
-using ::lldiv;
+STALIN_USING_IF_EXISTS(::abs);
+STALIN_USING_IF_EXISTS(::div);
+STALIN_USING_IF_EXISTS(::labs);
+STALIN_USING_IF_EXISTS(::ldiv);
+STALIN_USING_IF_EXISTS(::llabs);
+STALIN_USING_IF_EXISTS(::lldiv);
 
-using ::mblen;
-using ::mbtowc;
-using ::wctomb;
+STALIN_USING_IF_EXISTS(::mblen);
+STALIN_USING_IF_EXISTS(::mbtowc);
+STALIN_USING_IF_EXISTS(::wctomb);
 
-using ::mbstowcs;
-using ::wcstombs;
+STALIN_USING_IF_EXISTS(::mbstowcs);
+STALIN_USING_IF_EXISTS(::wcstombs);
 
-using ::div_t;
-using ::ldiv_t;
-using ::lldiv_t;
-using ::size_t;
+STALIN_USING_IF_EXISTS(::div_t);
+STALIN_USING_IF_EXISTS(::ldiv_t);
+STALIN_USING_IF_EXISTS(::lldiv_t);
+STALIN_USING_IF_EXISTS(::size_t);
 }
 
 #endif //CPP_STALIN_INCLUDE_CSTDLIB__

@@ -7,9 +7,15 @@
 #include <type_traits>
 
 namespace is_function {
-template <typename> struct PM_traits {};
+template <typename>
+struct PM_traits {};
 
-template <class T, class U> struct PM_traits<U T::*> { using member_type = U; };
+template <class T, class U>
+struct PM_traits<U T::*> { using member_type = U; };
+}
+
+namespace is_empty {
+struct C { static int m; };
 }
 
 int main() {
@@ -299,6 +305,225 @@ int main() {
         #ifdef STALIN_CXX_STD_SINCE_14
         static_assert(std::is_const_v<std::remove_reference_t<const int &>>);
         #endif
+    }
+
+    // std::is_volatile
+    {
+        static_assert(!std::is_volatile<int>::value);
+        static_assert(std::is_volatile<volatile int>::value);
+    }
+
+    // std::is_trivial
+    {
+        struct A { int m; };
+
+        struct B { B() {}};
+
+        static_assert(std::is_trivial<A>::value);
+        static_assert(!std::is_trivial<B>::value);
+    }
+
+    // std::is_trivally_copyable
+    {
+        struct A {
+            int m;
+        };
+
+        struct B {
+            B(B const &) {}
+        };
+
+        struct C {
+            virtual void foo();
+        };
+
+        struct D {
+            int m;
+
+            D(D const &) = default; // -> trivially copyable
+            D(int x)
+                : m(x + 1) {}
+        };
+
+        static_assert(std::is_trivially_copyable<A>::value);
+        static_assert(!std::is_trivially_copyable<B>::value);
+        static_assert(!std::is_trivially_copyable<C>::value);
+        static_assert(std::is_trivially_copyable<D>::value);
+    }
+
+    // std::is_standard_layout
+    {
+        struct A { int m; };
+
+        struct B {
+            int m1;
+        private:
+            int m2;
+        };
+
+        struct C { virtual void foo(); };
+
+        static_assert(std::is_standard_layout<A>::value);
+        static_assert(!std::is_standard_layout<B>::value);
+        static_assert(!std::is_standard_layout<C>::value);
+    }
+
+    #ifndef STALIN_CXX_STD_SINCE_20
+    // std::is_pod
+    {
+        struct A { int m; };
+
+        struct B {
+            int m1;
+        private:
+            int m2;
+        };
+
+        struct C { virtual void foo(); };
+
+
+        static_assert(std::is_pod<A>::value);
+        static_assert(!std::is_pod<B>::value);
+        static_assert(!std::is_pod<C>::value);
+    }
+
+    // std::is_literal_type
+    {
+        struct A { int m; };
+
+        struct B { virtual ~B(); };
+
+        static_assert(std::is_literal_type<A>::value);
+        static_assert(!std::is_literal_type<B>::value);
+    }
+    #endif
+
+    #ifdef STALIN_CXX_STD_SINCE_17
+    // std::has_unique_object_representations
+    {
+        struct foo {
+            char c;
+            float f;
+            short st;
+            int i;
+        };
+
+        struct bar {
+            int a;
+            int b;
+        };
+
+        //static_assert(!std::has_unique_object_representations_v<foo>);
+        //static_assert(std::has_unique_object_representations_v<bar>);
+    }
+    #endif
+
+    // std::is_empty
+    {
+        struct A {};
+
+        struct B { int m; };
+
+        struct D { virtual ~D(); };
+
+        union E {};
+
+        struct F { [[no_unique_address]] E e; };
+
+        struct G {
+            int: 0;
+            // C++ standard allow "as a special case, an unnamed bit-field with a width of zero
+            // specifies alignment of the next bit-field at an allocation unit boundary.
+            // Only when declaring an unnamed bit-field may the width be zero."
+        };
+
+        static_assert(std::is_empty<A>::value);
+        static_assert(!std::is_empty<B>::value);
+        static_assert(std::is_empty<is_empty::C>::value);
+        static_assert(!std::is_empty<D>::value);
+        static_assert(!std::is_empty<E>::value);
+        static_assert(std::is_empty<G>::value);
+    }
+
+    // std::is_polymorphic
+    {
+        struct A { int m; };
+
+        struct B { virtual void foo(); };
+
+        struct C : B {};
+
+        struct D { virtual ~D() = default; };
+
+        static_assert(!std::is_polymorphic<A>::value);
+        static_assert(std::is_polymorphic<B>::value);
+        static_assert(std::is_polymorphic<C>::value);
+        static_assert(std::is_polymorphic<D>::value);
+    }
+
+    // std::is_abstract
+    {
+        struct A { int m; };
+
+        struct B { virtual void foo(); };
+
+        struct C { virtual void foo() = 0; };
+
+        struct D : C {};
+
+        //static_assert(std::is_abstract<A>::value);
+        //static_assert(std::is_abstract<B>::value);
+        //static_assert(std::is_abstract<C>::value);
+        //static_assert(std::is_abstract<D>::value);
+    }
+
+    // std::is_final
+    {
+        class A {};
+        class B final {};
+
+        //static_assert(std::is_final<A>::value);
+        //static_assert(std::is_final<B>::value);
+    }
+
+    // std::is_aggregate
+    {
+        struct A { int x, y; };
+        struct B { B(int, const char*) { } };
+
+        //static_assert(!std::is_aggregate_v<A>);
+        //static_assert(std::is_aggregate_v<B>);
+    }
+
+    // std::is_signed
+    {
+        class A {};
+        enum B : int {};
+        enum class C : int {};
+
+        static_assert(!std::is_signed<A>::value);
+        static_assert(std::is_signed<float>::value);
+        static_assert(std::is_signed<signed int>::value);
+        static_assert(!std::is_signed<unsigned int>::value);
+        static_assert(!std::is_signed<B>::value);
+        static_assert(!std::is_signed<C>::value);
+        static_assert(!std::is_signed_v<bool>);
+        static_assert(std::is_signed<signed int>());
+        static_assert(!std::is_signed<unsigned int>{});
+    }
+
+    // std::is_unsigned
+    {
+        class A {};
+        enum B : unsigned {};
+        enum class C : unsigned {};
+
+        static_assert(!std::is_unsigned<A>::value);
+        static_assert(!std::is_unsigned<float>::value);
+        static_assert(!std::is_unsigned<signed int>::value);
+        static_assert(std::is_unsigned<unsigned int>::value);
+        static_assert(!std::is_unsigned<B>::value);
+        static_assert(!std::is_unsigned<C>::value);
     }
 
     // std::is_destructible, std::is_trivially_destructible, std::is_nothrow_destructible

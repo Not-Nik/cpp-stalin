@@ -26,13 +26,13 @@ struct integral_constant {
     #endif
 };
 
-template <bool B> using __stalin__bool_constant = integral_constant<bool, B>;
+template <bool B> using __stalin_bool_constant = integral_constant<bool, B>;
 #ifdef STALIN_CXX_STD_SINCE_17
 template <bool B> using bool_constant = integral_constant<bool, B>;
 #endif
 
-using true_type = __stalin__bool_constant<true>;
-using false_type = __stalin__bool_constant<false>;
+using true_type = __stalin_bool_constant<true>;
+using false_type = __stalin_bool_constant<false>;
 
 template <class T, class U> struct is_same : std::false_type {};
 
@@ -64,6 +64,11 @@ template <> struct __stalin_is_integral_helper<short> : true_type {};
 template <> struct __stalin_is_integral_helper<int> : true_type {};
 template <> struct __stalin_is_integral_helper<long> : true_type {};
 template <> struct __stalin_is_integral_helper<long long> : true_type {};
+template <> struct __stalin_is_integral_helper<unsigned char> : true_type {};
+template <> struct __stalin_is_integral_helper<unsigned short> : true_type {};
+template <> struct __stalin_is_integral_helper<unsigned int> : true_type {};
+template <> struct __stalin_is_integral_helper<unsigned long> : true_type {};
+template <> struct __stalin_is_integral_helper<unsigned long long> : true_type {};
 
 template <class T> struct is_integral : __stalin_is_integral_helper<typename remove_cv<T>::type> {};
 
@@ -176,7 +181,7 @@ template <class T, class... Args> struct is_constructible : __stalin_has_constru
 
 struct __stalin_has_nothrow_constructor {
     template <class T, class ...Args, class = decltype(T(declval<Args>()...))>
-    STALIN_NONSTRICT_NORETURN static __stalin__bool_constant<noexcept(T(declval<Args>()...))> test(int) {}
+    STALIN_NONSTRICT_NORETURN static __stalin_bool_constant<noexcept(T(declval<Args>()...))> test(int) {}
     template <class, class...>
     STALIN_NONSTRICT_NORETURN static false_type test(...) {}
 
@@ -280,7 +285,7 @@ template <class T, class U> struct is_assignable : __stalin_can_assign::type<T, 
 
 struct __stalin_can_nothrow_assign {
     template <class T, class U, class = decltype(&T::operator=(declval<U>()))>
-    STALIN_NONSTRICT_NORETURN static __stalin__bool_constant<noexcept(&T::operator=(declval<U>()))> test(int) {}
+    STALIN_NONSTRICT_NORETURN static __stalin_bool_constant<noexcept(&T::operator=(declval<U>()))> test(int) {}
     template <class, class...>
     STALIN_NONSTRICT_NORETURN static false_type test(...) {}
 
@@ -328,7 +333,7 @@ template <class T> struct is_destructible : __stalin_has_destructor::type<T> {};
 
 struct __stalin_has_nothrow_destructor {
     template <class T, class = decltype(std::declval<T>().~T())>
-    STALIN_NONSTRICT_NORETURN static __stalin__bool_constant<noexcept(std::declval<T>().~T())> test(int) {}
+    STALIN_NONSTRICT_NORETURN static __stalin_bool_constant<noexcept(std::declval<T>().~T())> test(int) {}
     template <class, class...>
     STALIN_NONSTRICT_NORETURN static false_type test(...) {}
 
@@ -598,6 +603,7 @@ template <class T> inline constexpr bool is_compound_v = is_compound<T>::value;
 template <class T> inline constexpr bool is_volatile_v = is_volatile<T>::value;
 template <class T> inline constexpr bool is_trivially_copyable_v = is_trivially_copyable<T>::value;
 template <class T, class... Args> inline constexpr bool is_constructible_v = is_constructible<T, Args...>::value;
+template <class T, class... Args> inline constexpr bool is_trivially_constructible_v = is_trivially_constructible<T, Args...>::value;
 template <class T, class... Args> inline constexpr bool is_nothrow_constructible_v = is_nothrow_constructible<T, Args...>::value;
 template <class T> inline constexpr bool is_default_constructible_v = is_default_constructible<T>::value;
 template <class T> inline constexpr bool is_trivially_default_constructible_v = is_trivially_default_constructible<T>::value;

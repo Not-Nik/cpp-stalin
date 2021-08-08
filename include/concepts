@@ -11,6 +11,15 @@
 
 namespace std {
 #ifdef STALIN_CXX_STD_SINCE_20
+namespace detail {
+template <class T, class U> concept SameHelper = std::is_same_v<T, U>;
+}
+
+template <class T, class U> concept same_as = detail::SameHelper<T, U> && detail::SameHelper<U, T>;
+
+template <class T> concept integral = std::is_integral_v<T>;
+template <class T> concept signed_integral = std::integral<T> && std::is_signed_v<T>;
+template <class T> concept unsigned_integral = std::integral<T> && !std::signed_integral<T>;
 template <class T> concept floating_point = std::is_floating_point_v<T>;
 #endif
 }

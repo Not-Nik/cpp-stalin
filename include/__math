@@ -10,30 +10,40 @@
 #include "type_traits"
 
 namespace std {
-template <class T, class U>
-constexpr typename std::conditional<std::is_signed_v<T>, long long, unsigned long long>::type __stalin_const_pow(T base, U exp) {
+constexpr long double __stalin_const_pow(long double base, size_t exp) {
     if (base == 0 || base == 1) return base;
-    T res = base;
-    for (U i = 1; i < exp; i++) res *= base;
+    long double res = base;
+    for (size_t i = 1; i < exp; i++) res *= base;
     return res;
 }
 
-template <class T>
-constexpr long double __stalin_const_taylor_step(T x, size_t it) {
-    return (long double) __stalin_const_pow(x - 1, it) / (long double) it;
+constexpr long double __stalin_const_ln(long double x) {
+    if (x <= 0) return 0;
+    long double res = 0;
+    size_t exp = 1;
+    for (int i = 0; i < 10; i++) {
+        res += (1.0 / (double) exp) * __stalin_const_pow((x - 1) / (x + 1), exp);
+        exp += 2;
+    }
+    return 2 * res;
 }
 
-template <class T>
-constexpr long double __stalin_const_ln(T x) {
-    long double res = x - 1;
-    constexpr size_t iterations = 10;
-    for (size_t i = 2; i < iterations; i++) res -= __stalin_const_taylor_step(x, i);
-    return res;
-}
+#ifndef M_LN10
+#define M_LN10 2.3025850929940456840179914546843642076011014886287729760333279009
+#endif
+
+#ifndef M_LN2
+#define M_LN2 0.6931471805599453094172321214581765680755001343602552541206800094
+#endif
 
 template <class T>
 constexpr long double __stalin_const_log10(T x) {
     return __stalin_const_ln(x) / M_LN10;
+}
+
+template <class T>
+constexpr long double __stalin_const_log2(T x) {
+    return __stalin_const_ln(x) / M_LN2;
 }
 }
 

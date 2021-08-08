@@ -13,9 +13,9 @@
 #include <locale.h>
 
 namespace std {
-using ::lconv;
-using ::setlocale;
-using ::localeconv;
+STALIN_USING_IF_EXISTS(::lconv);
+STALIN_USING_IF_EXISTS(::setlocale);
+STALIN_USING_IF_EXISTS(::localeconv);
 }
 
 #endif

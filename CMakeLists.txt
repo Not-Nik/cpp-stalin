@@ -12,9 +12,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(STALIN_COMPILE_OPTIONS "-nostdinc++ -nodefaultlibs -pedantic -Wall -Wextra -Wpedantic")
 set(STALIN_LINK_OPTIONS "-lc")
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(STALIN_COMPILE_OPTIONS "${STALIN_COMPILE_OPTIONS} -lgcc")
-endif()
+endif ()
 
 add_definitions(${STALIN_COMPILE_OPTIONS})
 add_link_options(${STALIN_LINK_OPTIONS})
@@ -26,6 +26,7 @@ add_library(stalin
         include/__math
         include/__memory
         include/__stream_types
+        include/bit
         include/cassert
         include/cerrno
         include/cfloat
@@ -70,18 +71,17 @@ add_library(stalin
 
 target_include_directories(stalin PUBLIC include)
 
-add_executable(iotest
-        test/io.cpp)
+add_executable(iotest test/io.cpp)
 target_link_libraries(iotest stalin)
 
-add_executable(traits_test
-        test/type_traits.cpp)
+add_executable(traits_test test/type_traits.cpp)
 target_link_libraries(traits_test stalin)
 
-add_executable(init_list_test
-        test/initializer_list.cpp)
+add_executable(init_list_test test/initializer_list.cpp)
 target_link_libraries(init_list_test stalin)
 
-add_executable(num_limit_test
-        test/limits.cpp)
+add_executable(num_limit_test test/limits.cpp)
 target_link_libraries(num_limit_test stalin)
+
+add_executable(bits_test test/bit.cpp)
+target_link_libraries(bits_test stalin)

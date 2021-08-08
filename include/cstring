@@ -14,34 +14,34 @@
 
 namespace std {
 
-using ::memcpy;
-using ::memmove;
-using ::strcpy;
-using ::strncpy;
+STALIN_USING_IF_EXISTS(::memcpy);
+STALIN_USING_IF_EXISTS(::memmove);
+STALIN_USING_IF_EXISTS(::strcpy);
+STALIN_USING_IF_EXISTS(::strncpy);
 
-using ::strcat;
-using ::strncat;
+STALIN_USING_IF_EXISTS(::strcat);
+STALIN_USING_IF_EXISTS(::strncat);
 
-using ::memcmp;
-using ::strcmp;
-using ::strcoll;
-using ::strncmp;
-using ::strxfrm;
+STALIN_USING_IF_EXISTS(::memcmp);
+STALIN_USING_IF_EXISTS(::strcmp);
+STALIN_USING_IF_EXISTS(::strcoll);
+STALIN_USING_IF_EXISTS(::strncmp);
+STALIN_USING_IF_EXISTS(::strxfrm);
 
-using ::memchr;
-using ::strchr;
-using ::strcspn;
-using ::strpbrk;
-using ::strrchr;
-using ::strspn;
-using ::strstr;
-using ::strtok;
+STALIN_USING_IF_EXISTS(::memchr);
+STALIN_USING_IF_EXISTS(::strchr);
+STALIN_USING_IF_EXISTS(::strcspn);
+STALIN_USING_IF_EXISTS(::strpbrk);
+STALIN_USING_IF_EXISTS(::strrchr);
+STALIN_USING_IF_EXISTS(::strspn);
+STALIN_USING_IF_EXISTS(::strstr);
+STALIN_USING_IF_EXISTS(::strtok);
 
-using ::memset;
-using ::strerror;
-using ::strlen;
+STALIN_USING_IF_EXISTS(::memset);
+STALIN_USING_IF_EXISTS(::strerror);
+STALIN_USING_IF_EXISTS(::strlen);
 
-using ::size_t;
+STALIN_USING_IF_EXISTS(::size_t);
 }
 
 #endif // ifndef STALIN_CXX_STD_FREESTANDING
