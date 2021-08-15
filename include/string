@@ -486,7 +486,8 @@ template <class T> struct is_char_traits : false_type {};
 
 template <class T> struct is_char_traits<char_traits<T>> : true_type {};
 
-template <class charT, class traits = char_traits<charT>, class Alloc = allocator<charT>> class basic_string;
+template <class charT, class traits = char_traits<charT>, class Alloc = allocator<charT>>
+class basic_string;
 
 typedef basic_string<char> string;
 STALIN_NONSTRICT_MAYBE_UNUSED typedef basic_string<char16_t> u16string;

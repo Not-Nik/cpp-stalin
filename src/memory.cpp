@@ -4,12 +4,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "__config"
-#ifndef STALIN_CXX_STD_FREESTANDING
-
 #include <memory>
 
-void *align(std::size_t alignment, std::size_t size, void *&ptr, std::size_t &space) {
+// align is required by new's implementation so its still here in freestanding mode
+void *std::align(std::size_t alignment, std::size_t size, void *&ptr, std::size_t &space) {
     if (alignment == 1) return ptr;
 
     auto c = (uintptr_t) ptr;
@@ -22,5 +20,3 @@ void *align(std::size_t alignment, std::size_t size, void *&ptr, std::size_t &sp
     ptr = (void *) c;
     return ptr;
 }
-
-#endif // ifndef STALIN_CXX_STD_FREESTANDING

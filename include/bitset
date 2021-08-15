@@ -1,0 +1,375 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_BITSET__
+#define CPP_STALIN_INCLUDE_BITSET__
+
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+#include "string"
+#include "iosfwd"
+#include "cstring"
+#include "stdexcept"
+
+namespace std {
+template <std::size_t N>
+class bitset {
+    static constexpr auto bytes_ = N / 8 + (N % 8 != 0 ? 1 : 0);
+    uint8_t bits_[bytes_] = {0};
+
+    void sub_eight_lshift(std::size_t shift);
+    void sub_eight_rshift(std::size_t shift);
+
+public:
+    class reference {
+        friend class bitset;
+
+        bitset *set_;
+        size_t byte_pos_, bit_pos_;
+
+        reference(bitset *set, size_t byte_pos, size_t bit_pos)
+            : set_(set), byte_pos_(byte_pos), bit_pos_(bit_pos) {}
+
+    public:
+        ~reference() = default;
+
+        reference &operator=(bool x) noexcept {
+            set_->bits_[byte_pos_] |= (x & 0b1) << bit_pos_;
+            return *this;
+        }
+
+        reference &operator=(const reference &x) noexcept {
+            if (&x != this)
+                set_->bits_[byte_pos_] |= ((x.set_->bits_[x.byte_pos] >> x.set_->bit_pos) & 0b1) << bit_pos_;
+            return *this;
+        }
+
+        operator bool() const noexcept {
+            return ((set_->bits_[byte_pos_] >> bit_pos_) & 0b1) == 1;
+        }
+
+        bool operator~() const noexcept {
+            return ((set_->bits_[byte_pos_] >> bit_pos_) & 0b1) == 0;
+        }
+
+        reference &flip() noexcept {
+            set_->bits_[byte_pos_] ^= 0b1 << bit_pos_;
+            return *this;
+        }
+    };
+
+    constexpr bitset() noexcept = default;
+    constexpr bitset(unsigned long long val) noexcept;
+
+    // Todo: implement basic_string
+    //template <class CharT, class Traits, class Alloc>
+    //explicit bitset(const std::basic_string<CharT, Traits, Alloc> &str,
+    //                typename std::basic_string<CharT, Traits, Alloc>::size_type pos = 0,
+    //                typename std::basic_string<CharT, Traits, Alloc>::size_type n = std::basic_string<CharT, Traits, Alloc>::npos,
+    //                CharT zero = CharT('0'),
+    //                CharT one = CharT('1'));
+
+    //template <class CharT>
+    //explicit bitset(const CharT *str,
+    //                typename std::basic_string<CharT>::size_type n = std::basic_string<CharT>::npos,
+    //                CharT zero = CharT('0'),
+    //                CharT one = CharT('1'));
+
+    bool operator==(const bitset &rhs) const noexcept;
+#ifndef STALIN_CXX_STD_SINCE_20
+    bool operator!=( const bitset& rhs ) const noexcept;
+#endif
+    constexpr bool operator[](std::size_t pos) const;
+    reference operator[](std::size_t pos);
+    bool test(std::size_t pos) const;
+    bool all() const noexcept;
+    bool any() const noexcept;
+    bool none() const noexcept;
+    std::size_t count() const noexcept;
+    constexpr std::size_t size() const noexcept;
+
+    bitset &operator&=(const bitset &other) noexcept;
+    bitset &operator|=(const bitset &other) noexcept;
+    bitset &operator^=(const bitset &other) noexcept;
+    bitset operator~() const noexcept;
+
+    bitset operator<<(std::size_t pos) const noexcept;
+    bitset &operator<<=(std::size_t pos) noexcept;
+    bitset operator>>(std::size_t pos) const noexcept;
+    bitset &operator>>=(std::size_t pos) noexcept;
+
+    bitset &set() noexcept;
+    bitset &set(std::size_t pos, bool value = true);
+
+    bitset &reset() noexcept;
+    bitset &reset(std::size_t pos);
+
+    bitset &flip() noexcept;
+    bitset &flip(std::size_t pos);
+
+    unsigned long to_ulong() const;
+    unsigned long long to_ullong() const;
+};
+
+template <std::size_t N>
+constexpr bitset<N>::bitset(unsigned long long int val) noexcept {
+    int len = bytes_ > sizeof(val) ? sizeof(val) : bytes_;
+    for (int i = 0; i < len; i++) {
+        bits_[i] = uint8_t(val >> (i * 8));
+    }
+}
+template <std::size_t N>
+bool bitset<N>::operator==(const bitset &rhs) const noexcept {
+    return memcmp(bits_, rhs.bits_, bytes_ > rhs.bytes_ ? bytes_ : rhs.bytes_) == 0;
+}
+
+#ifndef STALIN_CXX_STD_SINCE_20
+template <std::size_t N>
+bool bitset<N>::operator!=(const bitset &rhs) const noexcept {
+    return memcmp(bits_, rhs.bits_, bytes_ > rhs.bytes_ ? bytes_ : rhs.bytes_) != 0;
+}
+#endif
+
+template <std::size_t N>
+constexpr bool bitset<N>::operator[](std::size_t pos) const {
+    if (pos >= N) return false;
+    size_t byte_pos = pos / 8, bit_pos = pos % 8;
+
+    return (bits_[byte_pos] >> bit_pos) & 0b1;
+}
+
+template <std::size_t N>
+typename bitset<N>::reference bitset<N>::operator[](std::size_t pos) {
+    if (pos < N) return reference(this, pos / 8, pos % 8);
+}
+
+template <std::size_t N>
+bool bitset<N>::test(std::size_t pos) const {
+    if (pos >= N) throw std::out_of_range("index out of range");
+    size_t byte_pos = pos / 8, bit_pos = pos % 8;
+
+    return (bits_[byte_pos] >> bit_pos) & 0b1;
+}
+
+template <std::size_t N>
+bool bitset<N>::all() const noexcept {
+    constexpr bool is_div_by_eight = N % 8 == 0;
+    for (size_t i = 0; i < bytes_ - !is_div_by_eight; i++) {
+        if (bits_[i] != 0xFF) return false;
+    }
+    if STALIN_CONSTEXPR_SINCE_17 (!is_div_by_eight) {
+        for (size_t i = 0; i < N % 8; i++) {
+            if (!(bits_[bytes_ - 1] >> i) & 0b1) return false;
+        }
+    }
+    return true;
+}
+
+template <std::size_t N>
+bool bitset<N>::any() const noexcept {
+    for (size_t i = 0; i < bytes_; i++) {
+        if (bits_[i] != 0x00) return true;
+    }
+    return false;
+}
+
+template <std::size_t N>
+bool bitset<N>::none() const noexcept {
+    for (size_t i = 0; i < bytes_; i++) {
+        if (bits_[i] != 0x00) return false;
+    }
+    return true;
+}
+
+template <std::size_t N>
+std::size_t bitset<N>::count() const noexcept {
+    size_t count = 0;
+    for (size_t i = 0; i < bytes_; i++) {
+        if (bits_[i] == 0x00) continue;
+        for (size_t j = 0; j < 8; j++) {
+            if ((bits_[i] >> j) & 0b1) count++;
+        }
+    }
+    return count;
+}
+
+template <std::size_t N>
+constexpr std::size_t bitset<N>::size() const noexcept {
+    return N;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::operator&=(const bitset &other) noexcept {
+    for (int i = 0; i < bytes_; i++) {
+        bits_[i] &= other.bits_[i];
+    }
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::operator|=(const bitset &other) noexcept {
+    for (int i = 0; i < bytes_; i++) {
+        bits_[i] |= other.bits_[i];
+    }
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::operator^=(const bitset &other) noexcept {
+    for (int i = 0; i < bytes_; i++) {
+        bits_[i] ^= other.bits_[i];
+    }
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> bitset<N>::operator~() const noexcept {
+    for (int i = 0; i < bytes_; i++) {
+        bits_[i] = ~bits_[i];
+    }
+    return *this;
+}
+
+template <std::size_t N>
+void bitset<N>::sub_eight_lshift(std::size_t shift) {
+    uint8_t copy_mask = ~(0xFF >> shift);
+    uint8_t temp = 0;
+    for (int i = 0; i < bytes_; i++) {
+        uint8_t old_temp = temp;
+        temp = bits_[i] & copy_mask;
+        bits_[i] <<= shift;
+        old_temp >>= 8 - shift;
+        bits_[i] |= old_temp;
+    }
+}
+
+template <std::size_t N>
+void bitset<N>::sub_eight_rshift(std::size_t shift) {
+    uint8_t copy_mask = ~(0xFF << shift);
+    uint8_t temp = 0;
+    for (int i = bytes_-1; i >= 0; i--) {
+        uint8_t old_temp = temp;
+        temp = bits_[i] & copy_mask;
+        bits_[i] >>= shift;
+        old_temp <<= 8 - shift;
+        bits_[i] |= old_temp;
+    }
+}
+
+template <std::size_t N>
+bitset<N> bitset<N>::operator<<(std::size_t pos) const noexcept {
+    return bitset(*this) <<= pos;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::operator<<=(std::size_t pos) noexcept {
+    for (int i = 0; i < pos / 8; i++) sub_eight_lshift(8);
+    sub_eight_lshift(pos % 8);
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> bitset<N>::operator>>(std::size_t pos) const noexcept {
+    return bitset(*this) >>= pos;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::operator>>=(std::size_t pos) noexcept {
+    for (int i = 0; i < pos / 8; i++) sub_eight_rshift(8);
+    sub_eight_rshift(pos % 8);
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::set() noexcept {
+    constexpr bool is_div_by_eight = N % 8 == 0;
+    for (size_t i = 0; i < bytes_ - !is_div_by_eight; i++) {
+        bits_[i] = 0xFF;
+    }
+    if STALIN_CONSTEXPR_SINCE_17 (!is_div_by_eight) {
+        for (size_t i = 0; i < N % 8; i++) {
+            bits_[bytes_ - 1] |= 0b1 << i;
+        }
+    }
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::set(std::size_t pos, bool value) {
+    if (pos >= N) throw std::out_of_range("index out of range");
+
+    size_t byte_pos = pos / 8, bit_pos = pos % 8;
+    bits_[byte_pos] &= ~(0b1 << (bit_pos));
+    bits_[byte_pos] |= (value & 0b1) << (bit_pos);
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::reset() noexcept {
+    for (size_t i = 0; i < bytes_; i++) {
+        bits_[i] = 0;
+    }
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::reset(std::size_t pos) {
+    bits_[pos / 8] &= ~(0b1 << (pos % 8));
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::flip() noexcept {
+    constexpr bool is_div_by_eight = N % 8 == 0;
+    for (size_t i = 0; i < bytes_ - !is_div_by_eight; i++) {
+        bits_[i] = ~bits_[i];
+    }
+    if STALIN_CONSTEXPR_SINCE_17 (!is_div_by_eight) {
+        for (size_t i = 0; i < N % 8; i++) {
+            bits_[bytes_ - 1] ^= 0b1 << i;
+        }
+    }
+    return *this;
+}
+
+template <std::size_t N>
+bitset<N> &bitset<N>::flip(std::size_t pos) {
+    bits_[pos / 8] ^= 0b1 << (pos % 8);
+    return *this;
+}
+
+template <std::size_t N>
+unsigned long bitset<N>::to_ulong() const {
+    return (unsigned long) to_ullong();
+}
+
+template <std::size_t N>
+unsigned long long bitset<N>::to_ullong() const {
+    unsigned long long res = 0;
+    for (int i = 0; i < (bytes_ > sizeof(unsigned long long) ? sizeof(unsigned long long) : bytes_); i++) {
+        res |= bits_[i] << (i * 8);
+    }
+    return res;
+}
+
+template <std::size_t N>
+std::bitset<N> operator&(const std::bitset<N> &lhs, const std::bitset<N> &rhs) noexcept {
+    return std::bitset<N>(lhs) &= rhs;
+}
+
+template <std::size_t N>
+std::bitset<N> operator|(const std::bitset<N> &lhs, const std::bitset<N> &rhs) noexcept {
+    return std::bitset<N>(lhs) |= rhs;
+}
+
+template <std::size_t N>
+std::bitset<N> operator^(const std::bitset<N> &lhs, const std::bitset<N> &rhs) noexcept {
+    return std::bitset<N>(lhs) ^= rhs;
+}
+}
+#endif
+
+#endif //CPP_STALIN_INCLUDE_BITSET__

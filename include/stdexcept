@@ -24,14 +24,17 @@ public:
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED range_error : public runtime_error {
+public:
     using runtime_error::runtime_error;
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED overflow_error : public runtime_error {
+public:
     using runtime_error::runtime_error;
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED underflow_error : public runtime_error {
+public:
     using runtime_error::runtime_error;
 };
 
@@ -43,18 +46,22 @@ public:
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED domain_error : public logic_error {
+public:
     using logic_error::logic_error;
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED invalid_argument : public logic_error {
+public:
     using logic_error::logic_error;
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED length_error : public logic_error {
+public:
     using logic_error::logic_error;
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED out_of_range : public logic_error {
+public:
     using logic_error::logic_error;
 };
 }

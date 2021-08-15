@@ -33,6 +33,7 @@ public:
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED bad_typeid : public std::exception {
+public:
     STALIN_NONSTRICT_MAYBE_UNUSED bad_typeid(STALIN_NONSTRICT_MAYBE_UNUSED const char *what_arg)
         : exception() { this->what_ = "bad typeid"; }
 
@@ -40,6 +41,7 @@ class STALIN_NONSTRICT_MAYBE_UNUSED bad_typeid : public std::exception {
 };
 
 class STALIN_NONSTRICT_MAYBE_UNUSED bad_cast : public std::exception {
+public:
     STALIN_NONSTRICT_MAYBE_UNUSED bad_cast(STALIN_NONSTRICT_MAYBE_UNUSED const char *what_arg)
         : exception() { this->what_ = "bad cast"; }
 

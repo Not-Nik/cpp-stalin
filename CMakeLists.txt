@@ -27,6 +27,7 @@ add_library(stalin
         include/__memory
         include/__stream_types
         include/bit
+        include/bitset
         include/cassert
         include/cerrno
         include/cfloat
@@ -83,5 +84,8 @@ target_link_libraries(init_list_test stalin)
 add_executable(num_limit_test test/limits.cpp)
 target_link_libraries(num_limit_test stalin)
 
-add_executable(bits_test test/bit.cpp)
-target_link_libraries(bits_test stalin)
+add_executable(bit_test test/bit.cpp)
+target_link_libraries(bit_test stalin)
+
+add_executable(bitset_test test/bitset.cpp)
+target_link_libraries(bitset_test stalin)
