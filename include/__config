@@ -97,8 +97,10 @@
 
 #ifdef STALIN_CXX_STD_SINCE_17
 #define STALIN_CONSTEXPR_SINCE_17 constexpr
+#define STALIN_DEPRECATED_SINCE_17 [[deprecated("Deprecated since C++17")]]
 #else
 #define STALIN_CONSTEXPR_SINCE_17
+#define STALIN_DEPRECATED_SINCE_17
 #endif
 
 #ifdef STALIN_CXX_STD_SINCE_14

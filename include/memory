@@ -58,8 +58,8 @@ public:
     STALIN_CONSTEXPR_SINCE_20 ~allocator() noexcept = default;
 
 #ifndef STALIN_CXX_STD_SINCE_20
-    pointer address(reference x) const noexcept { return &x; }
-    const_pointer address(const_reference x) const noexcept { return &x; }
+    STALIN_DEPRECATED_SINCE_17 pointer address(reference x) const noexcept { return &x; }
+    STALIN_DEPRECATED_SINCE_17 const_pointer address(const_reference x) const noexcept { return &x; }
 #endif
 
 #ifndef STALIN_CXX_STD_SINCE_17
@@ -68,7 +68,7 @@ public:
         return ::operator new(n * sizeof(T));
     }
 #elif !defined(STALIN_CXX_STD_SINCE_20)
-    T *allocate(std::size_t n, const void *hint) {
+    STALIN_DEPRECATED_SINCE_17 T *allocate(std::size_t n, const void *hint) {
         if (std::numeric_limits<std::size_t>::max() / sizeof(T) < n) throw std::bad_array_new_length();
         return ::operator new(n * sizeof(T), (align_val_t) alignof(T));
     }
@@ -105,17 +105,17 @@ public:
     }
 
 #ifndef STALIN_CXX_STD_SINCE_20
-    size_type max_size() const noexcept {
+    STALIN_DEPRECATED_SINCE_17 size_type max_size() const noexcept {
         return std::numeric_limits<size_type>::max() / sizeof(value_type);
     }
 
     template <class U, class... Args>
-    void construct(U *p, Args &&... args) {
+    STALIN_DEPRECATED_SINCE_17 void construct(U *p, Args &&... args) {
         ::new((void *) p) U(std::forward<Args>(args)...);
     }
 
     template <class U>
-    void destroy(U *p) {
+    STALIN_DEPRECATED_SINCE_17 void destroy(U *p) {
         p->~U();
     }
 #endif
