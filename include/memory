@@ -165,10 +165,15 @@ const T *addressof(const T &&) = delete;
 #endif
 
 #ifdef STALIN_CXX_STD_SINCE_20
+template <class T, class... Args>
+constexpr T *construct_at(T *p, Args &&... args) {
+    return ::new(const_cast<void *>(static_cast<const volatile void *>(p))) T(std::forward<Args>(args)...);
+}
+
 template <class T>
 constexpr void destroy_at(T *p) {
     if constexpr (std::is_array_v<T>)
-        for (auto &elem : *p)
+        for (auto &elem: *p)
             destroy_at(std::addressof(elem));
     else
         p->~T();
@@ -204,9 +209,11 @@ struct pointer_traits<T *> {
     STALIN_NONSTRICT_NODISCARD static STALIN_CONSTEXPR_SINCE_20 pointer pointer_to(element_type &r) noexcept { return addressof(r); }
 };
 
-template <class T> struct is_allocator : false_type {};
+template <class T>
+struct is_allocator : false_type {};
 
-template <class T> struct is_allocator<allocator<T>> : true_type {};
+template <class T>
+struct is_allocator<allocator<T>> : true_type {};
 
 template <class alloc>
 struct allocator_traits {
@@ -248,29 +255,83 @@ struct allocator_traits {
 
     static STALIN_CONSTEXPR_SINCE_20 void deallocate(alloc &a, pointer p, size_type n) { a.deallocate(p, n); }
 
+    struct __stalin_has_construct {
+        template <class T, class = decltype(&T::construct)>
+        STALIN_NONSTRICT_NORETURN static true_type test(int) {}
+        template <class, class...>
+        STALIN_NONSTRICT_NORETURN static false_type test(...) {}
+
+        template <class T> using type = decltype(test<T>(0));
+    };
+
     template <class T, class... Args>
     static STALIN_CONSTEXPR_SINCE_20 void construct(alloc &a, T *p, Args &&... args) {
-        a.construct(p, std::forward<Args>(args)...); // Todo: use alternative if construct is not available
+        if (__stalin_has_construct::template type<alloc>::value) {
+            a.construct(p, std::forward<Args>(args)...);
+        } else {
+#ifdef STALIN_CXX_STD_SINCE_20
+            std::construct_at(p, std::forward<Args>(args)...);
+#else
+            ::new (static_cast<void*>(p)) T(std::forward<Args>(args)...);
+#endif
+        }
     }
+
+    struct __stalin_has_destroy {
+        template <class T, class = decltype(&T::destroy)>
+        STALIN_NONSTRICT_NORETURN static true_type test(int) {}
+        template <class, class...>
+        STALIN_NONSTRICT_NORETURN static false_type test(...) {}
+
+        template <class T> using type = decltype(test<T>(0));
+    };
 
     template <class T>
     static STALIN_CONSTEXPR_SINCE_20 void destroy(STALIN_NONSTRICT_MAYBE_UNUSED alloc &a, T *p) {
-        // TODO: check if T has destroy
-        #ifndef STALIN_CXX_STD_SINCE_20
-        p->~T();
-        #else
-        std::destroy_at(p);
-        #endif
+        if (__stalin_has_destroy::template type<alloc>::value) {
+            a.destroy(p);
+        } else {
+            #ifndef STALIN_CXX_STD_SINCE_20
+            }
+            p->~T();
+            #else
+            std::destroy_at(p);
+            #endif
+        }
     }
+
+    struct __stalin_has_max_size {
+        template <class T, class = decltype(&T::max_size)>
+        STALIN_NONSTRICT_NORETURN static true_type test(int) {}
+        template <class, class...>
+        STALIN_NONSTRICT_NORETURN static false_type test(...) {}
+
+        template <class T> using type = decltype(test<T>(0));
+    };
 
     STALIN_NONSTRICT_NODISCARD static STALIN_CONSTEXPR_SINCE_20 size_type max_size(STALIN_NONSTRICT_MAYBE_UNUSED const alloc &a) noexcept {
-        // TODO: check if T has max_size
-        return std::numeric_limits<size_type>::max() / sizeof(value_type);
+        if (__stalin_has_max_size::template type<alloc>::value) {
+            return a.max_size();
+        } else {
+            return std::numeric_limits<size_type>::max() / sizeof(value_type);
+        }
     }
 
+    struct __stalin_has_select_on_container_copy_construction {
+        template <class T, class = decltype(&T::select_on_container_copy_construction)>
+        STALIN_NONSTRICT_NORETURN static true_type test(int) {}
+        template <class, class...>
+        STALIN_NONSTRICT_NORETURN static false_type test(...) {}
+
+        template <class T> using type = decltype(test<T>(0));
+    };
+
     STALIN_NONSTRICT_NODISCARD STALIN_NONSTRICT_MAYBE_UNUSED static STALIN_CONSTEXPR_SINCE_20 alloc select_on_container_copy_construction(const alloc &a) {
-        // Todo: check if T has select_on_container_copy_construction
-        return a;
+        if (__stalin_has_select_on_container_copy_construction::template type<alloc>::value) {
+            return a.select_on_container_copy_construction();
+        } else {
+            return a;
+        }
     }
 };
 }
