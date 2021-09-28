@@ -109,9 +109,25 @@
 #define STALIN_CONSTEXPR_SINCE_14
 #endif
 
-#if defined(__has_attribute) && __has_attribute(using_if_exists)
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
+#ifndef __has_include
+#define __has_include(x) 0
+#endif
+#ifndef __has_feature
+#define __has_feature(x) 0
+#endif
+#ifndef __has_attribute
+#define __has_attribute(x) 0
+#endif
+#ifndef __has_extension
+#define __has_extension(x) 0
+#endif
+
+#if __has_attribute(using_if_exists)
 #define STALIN_USING_IF_EXISTS(x) using x __attribute__((using_if_exists))
-#elif defined(__has_extension)
+#elif __has_extension(cxx_attributes_on_using_declarations)
 #define STALIN_USING_IF_EXISTS(x) [[clang::using_if_exists]] using x
 #elif defined(_MSC_VER)
 #define STALIN_USING_IF_EXISTS(x) __if_exists(x) using x
