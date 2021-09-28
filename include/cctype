@@ -1,0 +1,32 @@
+// cpp-stalin (c) Nikolas Wipper 2021
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
+#ifndef CPP_STALIN_INCLUDE_CCTYPE__
+#define CPP_STALIN_INCLUDE_CCTYPE__
+
+#include "__config"
+#ifndef STALIN_CXX_STD_FREESTANDING
+
+#include <ctype.h>
+
+STALIN_USING_IF_EXISTS(::isalnum);
+STALIN_USING_IF_EXISTS(::isalpha);
+STALIN_USING_IF_EXISTS(::islower);
+STALIN_USING_IF_EXISTS(::isupper);
+STALIN_USING_IF_EXISTS(::isdigit);
+STALIN_USING_IF_EXISTS(::isxdigit);
+STALIN_USING_IF_EXISTS(::iscntrl);
+STALIN_USING_IF_EXISTS(::isgraph);
+STALIN_USING_IF_EXISTS(::isspace);
+STALIN_USING_IF_EXISTS(::isblank);
+STALIN_USING_IF_EXISTS(::isprint);
+STALIN_USING_IF_EXISTS(::ispunct);
+STALIN_USING_IF_EXISTS(::tolower);
+STALIN_USING_IF_EXISTS(::toupper);
+
+#endif
+
+#endif //CPP_STALIN_INCLUDE_CCTYPE__

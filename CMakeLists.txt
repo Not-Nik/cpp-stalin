@@ -83,7 +83,7 @@ target_link_libraries(init_list_test stalin)
 add_executable(num_limit_test test/limits.cpp)
 target_link_libraries(num_limit_test stalin)
 
-add_executable(bit_test test/bit.cpp)
+add_executable(bit_test test/bit.cpp include/cctype)
 target_link_libraries(bit_test stalin)
 
 add_executable(bitset_test test/bitset.cpp)
