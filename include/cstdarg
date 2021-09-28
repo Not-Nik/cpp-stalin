@@ -1,12 +1,12 @@
-// cpp-stalin (c) Nikolas Wipper 2021
+// untitled (c) Nikolas Wipper 2021
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef CPP_STALIN_INCLUDE_CLIMITS__
-#define CPP_STALIN_INCLUDE_CLIMITS__
+#ifndef CPP_STALIN_INCLUDE_CSTDARG__
+#define CPP_STALIN_INCLUDE_CSTDARG__
 
-#include <limits.h>
+#include <stdarg.h>
 
-#endif //CPP_STALIN_INCLUDE_CLIMITS__
+#endif //CPP_STALIN_INCLUDE_CSTDARG__

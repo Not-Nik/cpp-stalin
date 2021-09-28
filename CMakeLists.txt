@@ -67,7 +67,7 @@ add_library(stalin
         src/new.cpp
         src/memory.cpp
         src/system_error.cpp
-        src/typeinfo.cpp)
+        src/typeinfo.cpp include/cstdarg)
 
 target_include_directories(stalin PUBLIC include)
 

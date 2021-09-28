@@ -7,6 +7,6 @@
 #ifndef CPP_STALIN_INCLUDE_CFLOAT__
 #define CPP_STALIN_INCLUDE_CFLOAT__
 
-#include "float.h"
+#include <float.h>
 
 #endif //CPP_STALIN_INCLUDE_CFLOAT__
