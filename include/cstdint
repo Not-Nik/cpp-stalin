@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "__config"
+
 namespace std {
 STALIN_USING_IF_EXISTS(::int8_t);
 STALIN_USING_IF_EXISTS(::int16_t);
