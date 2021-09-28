@@ -161,7 +161,7 @@ public:
 
 template <class charT, class traits>
 class basic_ios : public ios_base {
-    static_assert(is_char_traits<traits>());
+    static_assert(__stalin_is_char_traits<traits>());
 public:
     typedef charT char_type;
     typedef traits traits_type;

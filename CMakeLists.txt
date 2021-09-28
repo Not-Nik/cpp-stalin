@@ -66,7 +66,6 @@ add_library(stalin
         src/ios.cpp
         src/new.cpp
         src/memory.cpp
-        src/string.cpp
         src/system_error.cpp
         src/typeinfo.cpp)
 
