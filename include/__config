@@ -122,13 +122,13 @@
 #define __has_attribute(x) 0
 #endif
 #ifndef __has_extension
-#define __has_extension(x) 0
+#define __has_extension __has_feature // Compatibility with pre-3.0 compilers.
 #endif
 
 #if __has_attribute(using_if_exists)
 #define STALIN_USING_IF_EXISTS(x) using x __attribute__((using_if_exists))
 #elif __has_extension(cxx_attributes_on_using_declarations)
-#define STALIN_USING_IF_EXISTS(x) [[clang::using_if_exists]] using x
+#define STALIN_USING_IF_EXISTS(x) using x [[clang::using_if_exists]]
 #elif defined(_MSC_VER)
 #define STALIN_USING_IF_EXISTS(x) __if_exists(x) using x
 #else

@@ -6,7 +6,6 @@
 
 #include <new>
 #include <cstdlib>
-#include <type_traits>
 
 const std::nothrow_t std::nothrow;
 std::new_handler handler = nullptr; // todo memory safety
