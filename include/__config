@@ -9,6 +9,7 @@
 
 //#define STALIN_CXX_STD_NO_IO
 //#define STALIN_CXX_STD_FREESTANDING
+//#define STALIN_CXX_STD_NO_RTTI
 
 //#define STALIN_CXX_STD_STRICT
 

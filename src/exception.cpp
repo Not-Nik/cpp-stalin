@@ -7,15 +7,29 @@
 #include <exception>
 
 #include <typeinfo>
+#include <__config>
 
 std::exception::exception(const std::exception &other) noexcept {
-    if (typeid(*this) == typeid(other)) {
+    if (
+        #ifdef STALIN_CXX_STD_NO_RTTI
+            true
+            #else
+            typeid(*this) == typeid(other)
+        #endif
+        ) {
         what_ = other.what_;
     }
 }
 
 std::exception &std::exception::operator=(const std::exception &other) noexcept {
-    if (typeid(*this) == typeid(other)) {
+    if (&other == this) return *this;
+    if (
+        #ifdef STALIN_CXX_STD_NO_RTTI
+            true
+            #else
+            typeid(*this) == typeid(other)
+        #endif
+        ) {
         what_ = other.what_;
     }
 
