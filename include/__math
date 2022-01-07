@@ -10,19 +10,21 @@
 #include "type_traits"
 
 namespace std {
-constexpr long double __stalin_const_pow(long double base, size_t exp) {
+template <class T = size_t>
+constexpr T __stalin_const_pow(T base, T exp) {
     if (base == 0 || base == 1) return base;
-    long double res = base;
-    for (size_t i = 1; i < exp; i++) res *= base;
+    T res = base;
+    for (T i = 1; i < exp; i++) res *= base;
     return res;
 }
 
-constexpr long double __stalin_const_ln(long double x) {
+template <class T>
+constexpr long double __stalin_const_ln(T x) {
     if (x <= 0) return 0;
-    long double res = 0;
-    size_t exp = 1;
-    for (int i = 0; i < 10; i++) {
-        res += (1.0 / (double) exp) * __stalin_const_pow((x - 1) / (x + 1), exp);
+    T res = 0;
+    T exp = 1;
+    for (T i = 0; i < 10; i++) {
+        res += (1.0 / (double) exp) * __stalin_const_pow<T>((x - 1) / (x + 1), exp);
         exp += 2;
     }
     return 2 * res;

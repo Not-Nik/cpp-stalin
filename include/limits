@@ -122,7 +122,7 @@ public:
 
     static constexpr int digits = sizeof(T) * 8 - is_signed;
     STALIN_NONSTRICT_MAYBE_UNUSED static constexpr int digits10 = digits * __stalin_const_log10(2);
-    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr int max_digits10 = is_integer ? 0 : ceil(digits * std::log10(2) + 1);
+    STALIN_NONSTRICT_MAYBE_UNUSED static constexpr int max_digits10 = 0;
 
     STALIN_NONSTRICT_MAYBE_UNUSED static constexpr int min_exponent = 0;
     STALIN_NONSTRICT_MAYBE_UNUSED static constexpr int min_exponent10 = 0;
